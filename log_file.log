@@ -1,0 +1,29 @@
+  Step 1: Text Editor Encoding (e.g., VS Code)
+  1. Open the problematic file (lib/practice-data.ts or any other .ts, .tsx file with Malayalam characters) in your editor.
+  2. Check the status bar for encoding (e.g., "UTF-8"). If it's "UTF-8 with BOM", click it, select "Save with Encoding", and choose "UTF-8" (without BOM).
+  3. (Optional) Verify line endings are "LF".
+  4. Save the file and repeat for other relevant files.
+
+
+  Step 2: Browser Character Encoding (Less Common)
+  1. Open your Next.js app in Chrome.
+  2. Right-click, "Inspect", go to "Elements" tab.
+  3. Confirm <meta charset="UTF-8"> is in the <head>.
+
+
+  Step 3: OS Font Rendering Settings (Windows Specific)
+  1. Clear Font Cache: Stop "Windows Font Cache Service" in services.msc, delete files in C:\Windows\ServiceProfiles\LocalService\AppData\Local\FontCache,
+  then restart the service.
+  2. Adjust ClearType Text: Search "Adjust ClearType text" and re-run the wizard.
+  3. Check Regional Settings: In "Settings" -> "Time & Language" -> "Language & region", ensure Malayalam language packs are installed if needed.
+
+
+  After Checks:
+  1. Save all files.
+  2. Perform a clean build: rm -rf .next, rm -rf node_modules, rm package-lock.json, npm install, npm run dev.
+  3. Check the application and, importantly, re-run the manual test.html to confirm the issue's resolution at the rendering level.
+
+
+  Report the outcome, especially the test.html results, for further diagnosis.
+  I did all the above steps. Now,
+  How can i test the page test.html?
