@@ -93,7 +93,11 @@ const gameLevels: GameLevel[] = [
   },
 ];
 
-const LetterHuntGame: React.FC = () => {
+interface LetterHuntGameProps {
+  onGameComplete?: () => void;
+}
+
+const LetterHuntGame: React.FC<LetterHuntGameProps> = ({ onGameComplete }) => {
   const [currentLevelIndex, setCurrentLevelIndex] = useState(0);
   const currentLevel = gameLevels[currentLevelIndex];
 
@@ -124,6 +128,7 @@ const LetterHuntGame: React.FC = () => {
       setFeedbackMessage('Find the words and give it a try! You can do it!');
     } else if (incorrectSelections.length === 0 && missedCorrect.length === 0) {
       setFeedbackMessage('Excellent! All correct!');
+      onGameComplete?.();
     } else if (incorrectSelections.length > 0) {
       setFeedbackMessage('Oops! Some incorrect selections. Try again!');
     } else if (missedCorrect.length > 0) {
@@ -204,9 +209,9 @@ const LetterHuntGame: React.FC = () => {
         </div>
 
         {showResults && ( // Display feedback only after checking answers
-          <div className="text-center mt-4">
+          (<div className="text-center mt-4">
             <p className="text-xl font-semibold text-kerala-green-700">{feedbackMessage}</p>
-          </div>
+          </div>)
         )}
 
         <div className="flex justify-center gap-4 mt-6">

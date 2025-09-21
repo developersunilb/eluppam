@@ -20,7 +20,11 @@ export default function ReviewPage() {
           
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {reviewModules.map((module) => (
-              <Link href={module.href} key={module.title} className="block bg-white p-6 rounded-xl shadow-lg hover:shadow-2xl transition-shadow transform hover:-translate-y-1 border-t-4 border-marigold-500">
+              <Link
+                href={module.href}
+                key={module.title}
+                className="block bg-white p-6 rounded-xl shadow-lg hover:shadow-2xl transition-shadow transform hover:-translate-y-1 border-t-4 border-marigold-500"
+                legacyBehavior>
                 <div className="flex flex-col h-full">
                   <div className="flex-shrink-0">
                     <div className="inline-block bg-marigold-500 text-white p-3 rounded-lg">

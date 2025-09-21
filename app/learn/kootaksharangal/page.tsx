@@ -155,7 +155,11 @@ export default function KootaksharangalMenu() {
     <LearnLayout title="Kootaksharangal (Conjuncts)">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {categories.map((category) => (
-          <Link href={category.href} key={category.name} className="block hover:no-underline">
+          <Link
+            href={category.href}
+            key={category.name}
+            className="block hover:no-underline"
+            legacyBehavior>
             <Card className="h-full flex flex-col justify-between transition-all duration-300 hover:shadow-lg hover:border-kerala-green-500/50">
               <CardHeader>
                 <div className="flex items-center justify-between">
@@ -173,14 +177,14 @@ export default function KootaksharangalMenu() {
           </Link>
         ))}
       </div>
-       <div className="mt-8 text-center">
-          <p className="text-gray-500">More categories will be added soon.</p>
-        </div>
-        <div className="mt-8 flex justify-center">
-          <Button onClick={() => router.push('/learn')} variant="outline">
-            Back to Learn Dashboard
-          </Button>
-        </div>
+      <div className="mt-8 text-center">
+         <p className="text-gray-500">More categories will be added soon.</p>
+       </div>
+      <div className="mt-8 flex justify-center">
+        <Button onClick={() => router.push('/learn')} variant="outline">
+          Back to Learn Dashboard
+        </Button>
+      </div>
     </LearnLayout>
   );
 }

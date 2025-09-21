@@ -50,24 +50,29 @@ const QuizBattleGame: React.FC<QuizBattleGameProps> = ({ onComplete }) => {
     } else {
       setFeedback('incorrect');
     }
+  };
 
-    setTimeout(() => {
+  const handleNextQuestion = () => {
+    if (currentQuestionIndex < quizQuestions.length - 1) {
       setFeedback(null);
       setSelectedOption(null);
-      if (currentQuestionIndex < quizQuestions.length - 1) {
-        setCurrentQuestionIndex(currentQuestionIndex + 1);
-      } else {
-        // Game over
-        onComplete(score === quizQuestions.length); // All correct for success
-        setCurrentQuestionIndex(0); // Reset for next play
-        setScore(0);
-      }
-    }, 1500);
+      setCurrentQuestionIndex(currentQuestionIndex + 1);
+    } else {
+      // Game over - the score state is now up-to-date
+      onComplete(score === quizQuestions.length);
+      
+      // Reset for next play
+      setCurrentQuestionIndex(0);
+      setScore(0);
+      setFeedback(null);
+      setSelectedOption(null);
+    }
   };
 
   return (
     <Card className="w-full max-w-md mx-auto">
       <CardHeader>
+        <CardTitle className="text-center">Quiz Battle</CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="flex flex-col items-center justify-center">
@@ -82,11 +87,12 @@ const QuizBattleGame: React.FC<QuizBattleGameProps> = ({ onComplete }) => {
               key={option}
               onClick={() => handleOptionClick(option)}
               className={`text-lg whitespace-normal h-auto w-full px-8 py-2 flex items-center justify-center text-center
-                ${selectedOption === option
-                  ? feedback === 'correct'
-                    ? 'bg-green-500 text-white'
-                    : 'bg-red-500 text-white'
-                  : feedback && option === currentQuestion.correctAnswer
+                ${
+                  selectedOption === option
+                    ? feedback === 'correct'
+                      ? 'bg-green-500 text-white'
+                      : 'bg-red-500 text-white'
+                    : feedback && option === currentQuestion.correctAnswer
                     ? 'bg-green-300 text-white' // Show correct answer if incorrect selection
                     : 'bg-white text-kerala-green-700 border border-kerala-green-700'
                 }
@@ -99,9 +105,16 @@ const QuizBattleGame: React.FC<QuizBattleGameProps> = ({ onComplete }) => {
         </div>
 
         {feedback && (
-          <div className={`text-center text-2xl font-bold mt-4 ${feedback === 'correct' ? 'text-green-600' : 'text-red-600'}`}>
-            {feedback === 'correct' ? 'Correct!' : 'Incorrect!'}
-          </div>
+          <>
+            <div className={`text-center text-2xl font-bold mt-4 ${feedback === 'correct' ? 'text-green-600' : 'text-red-600'}`}>
+              {feedback === 'correct' ? 'Correct!' : 'Incorrect!'}
+            </div>
+            <div className="flex justify-center mt-4">
+              <Button onClick={handleNextQuestion} className="px-8 py-3 text-lg bg-gradient-to-r from-marigold-500 to-marigold-600 hover:from-marigold-600 hover:to-marigold-700 text-white shadow-lg hover:shadow-xl transition-all">
+                Next
+              </Button>
+            </div>
+          </>
         )}
       </CardContent>
     </Card>

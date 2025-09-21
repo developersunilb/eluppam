@@ -65,9 +65,11 @@ const WordJigsawGame: React.FC<WordJigsawGameProps> = ({ onComplete }) => {
 
   const checkAnswer = () => {
     const isCorrect = placedSyllables.join('') === currentPuzzle.word;
+    let updatedScore = score;
     if (isCorrect) {
       setFeedback('correct');
-      setScore(score + 1);
+      updatedScore = score + 1;
+      setScore(updatedScore);
     } else {
       setFeedback('incorrect');
     }
@@ -77,7 +79,7 @@ const WordJigsawGame: React.FC<WordJigsawGameProps> = ({ onComplete }) => {
         setCurrentPuzzleIndex(currentPuzzleIndex + 1);
       } else {
         // Game over
-        onComplete(score === wordJigsaws.length); // All correct for success
+        onComplete(updatedScore === wordJigsaws.length); // Use the updated score
         setCurrentPuzzleIndex(0); // Reset for next play
         setScore(0);
       }
@@ -121,7 +123,7 @@ const WordJigsawGame: React.FC<WordJigsawGameProps> = ({ onComplete }) => {
                 {syllable}
               </div>
             ) : (
-              <div key={index} className="w-24 h-24"></div> // Empty space for removed syllable
+              (<div key={index} className="w-24 h-24"></div>) // Empty space for removed syllable
             )
           ))}
         </div>

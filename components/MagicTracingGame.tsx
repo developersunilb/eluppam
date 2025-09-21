@@ -1,93 +1,191 @@
 'use client';
 
-import { useRef, useState, useEffect } from 'react';
-import { ReactSketchCanvas } from 'react-sketch-canvas';
+import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
-import { Check, XCircle } from 'lucide-react';
+import { RotateCcw, Check, Lightbulb } from 'lucide-react';
 
 interface MagicTracingGameProps {
   character: string;
   onComplete: (success: boolean) => void;
+  clearTrigger: number;
 }
 
-const MagicTracingGame = ({ character, onComplete }: MagicTracingGameProps) => {
-  const canvasRef = useRef<any>(null);
-  const [feedback, setFeedback] = useState<'correct' | 'incorrect' | null>(null);
-  const [backgroundImage, setBackgroundImage] = useState<string | null>(null);
+const CHARACTER_GIF_MAP: { [key: string]: string } = {
+  'അ': 'a',
+  'ആ': 'aa',
+  'ഇ': 'i',
+  'ഈ': 'ee',
+  'ഉ': 'u',
+  // Add more as needed for other characters in TRACING_CHARACTERS
+};
 
-  // Function to generate a simple SVG for the character outline
-  const generateCharacterOutline = (char: string) => {
-    // This is a very basic placeholder. For real implementation, 
-    // you'd need pre-rendered SVG/PNG outlines for each character.
-    // For now, we'll just display the character itself.
-    const svg = `
-      <svg width="600" height="600" xmlns="http://www.w3.org/2000/svg">
-        <rect width="600" height="600" fill="white"/>
-        <text x="50%" y="50%" font-family="Noto Sans Malayalam" font-size="400" fill="gray" text-anchor="middle" dominant-baseline="middle">${char}</text>
-      </svg>
-    `;
-    const encodedSvg = encodeURIComponent(svg)
-      .replace(/'/g, '%27')
-      .replace(/"/g, '%22');
-    const dataUrl = `data:image/svg+xml;base64,${btoa(encodedSvg)}`;
-    return dataUrl;
-  };
+const MagicTracingGame: React.FC<MagicTracingGameProps> = ({ character, onComplete, clearTrigger }) => {
+  const drawCanvasRef = useRef<HTMLCanvasElement>(null);
+  const guideCanvasRef = useRef<HTMLCanvasElement>(null);
+  const [isDrawing, setIsDrawing] = useState(false);
+  const [showHintGif, setShowHintGif] = useState(false);
 
-  useEffect(() => {
-    setBackgroundImage(generateCharacterOutline(character));
+  const canvasWidth = 400;
+  const canvasHeight = 400;
+  const TRACE_THRESHOLD = 0.6; // 60% of the character must be traced over
+
+  const drawGuide = useCallback(() => {
+    const canvas = guideCanvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+    ctx.font = '200px Noto Sans Malayalam';
+    ctx.fillStyle = '#E0E0E0'; // Light grey for the guide
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(character, canvasWidth / 2, canvasHeight / 2);
   }, [character]);
 
-  const handleCheckTrace = async () => {
-    if (!canvasRef.current) return;
+  useEffect(() => {
+    drawGuide();
+  }, [drawGuide]);
 
-    // For now, this is a placeholder for actual trace comparison logic.
-    // In a real scenario, you'd compare the drawn path with the expected path.
-    // For demonstration, let's just assume it's correct if something is drawn.
-    const paths = await canvasRef.current.exportPaths();
-    const minStrokes = 3; // A very basic heuristic: require at least 3 strokes
+  useEffect(() => {
+    clearCanvas();
+  }, [clearTrigger]);
 
-    if (paths.length >= minStrokes) {
-      setFeedback('correct');
+  const getCoords = (e: React.MouseEvent | React.TouchEvent): { x: number; y: number } | null => {
+    const canvas = drawCanvasRef.current;
+    if (!canvas) return null;
+    const rect = canvas.getBoundingClientRect();
+
+    let clientX, clientY;
+    if (e.nativeEvent instanceof MouseEvent) {
+      clientX = e.nativeEvent.clientX;
+      clientY = e.nativeEvent.clientY;
+    } else if (e.nativeEvent instanceof TouchEvent) {
+      if (e.nativeEvent.touches.length === 0) return null;
+      clientX = e.nativeEvent.touches[0].clientX;
+      clientY = e.nativeEvent.touches[0].clientY;
+    } else {
+        return null;
+    }
+
+    return { x: clientX - rect.left, y: clientY - rect.top };
+  };
+
+  const startDrawing = (e: React.MouseEvent | React.TouchEvent) => {
+    const coords = getCoords(e);
+    if (!coords) return;
+    const ctx = drawCanvasRef.current?.getContext('2d');
+    if (!ctx) return;
+
+    ctx.beginPath();
+    ctx.moveTo(coords.x, coords.y);
+    ctx.strokeStyle = '#10B981'; // A nice green color
+    ctx.lineWidth = 15;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    setIsDrawing(true);
+  };
+
+  const draw = (e: React.MouseEvent | React.TouchEvent) => {
+    if (!isDrawing) return;
+    const coords = getCoords(e);
+    if (!coords) return;
+    const ctx = drawCanvasRef.current?.getContext('2d');
+    if (!ctx) return;
+
+    ctx.lineTo(coords.x, coords.y);
+    ctx.stroke();
+  };
+
+  const endDrawing = () => {
+    setIsDrawing(false);
+  };
+
+  const clearCanvas = () => {
+    const canvas = drawCanvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    ctx?.clearRect(0, 0, canvasWidth, canvasHeight);
+  };
+
+  const checkTrace = () => {
+    const drawCtx = drawCanvasRef.current?.getContext('2d', { willReadFrequently: true });
+    const guideCtx = guideCanvasRef.current?.getContext('2d', { willReadFrequently: true });
+
+    if (!drawCtx || !guideCtx) {
+      onComplete(false);
+      return;
+    }
+
+    const guideData = guideCtx.getImageData(0, 0, canvasWidth, canvasHeight).data;
+    const drawData = drawCtx.getImageData(0, 0, canvasWidth, canvasHeight).data;
+
+    let guidePixelCount = 0;
+    let tracedPixelCount = 0;
+
+    for (let i = 0; i < guideData.length; i += 4) {
+      if (guideData[i + 3] > 0) {
+        guidePixelCount++;
+        if (drawData[i + 3] > 0) {
+          tracedPixelCount++;
+        }
+      }
+    }
+
+    const matchPercentage = guidePixelCount > 0 ? tracedPixelCount / guidePixelCount : 0;
+
+    if (matchPercentage >= TRACE_THRESHOLD) {
       onComplete(true);
     } else {
-      setFeedback('incorrect');
       onComplete(false);
     }
   };
 
-  const handleClear = () => {
-    if (canvasRef.current) {
-      canvasRef.current.clearCanvas();
-      setFeedback(null);
-    }
-  };
-
   return (
-    <div className="flex flex-col items-center gap-4">
-      <p className="text-lg text-gray-600 mb-4">Trace the letter {character} with your finger!</p>
-      
-      <div className="relative border-2 border-dashed border-marigold-500 rounded-lg">
-        {backgroundImage && (
-          <ReactSketchCanvas
-            ref={canvasRef}
-            strokeWidth={10}
-            strokeColor="black"
-            canvasColor="white"
-            backgroundImage={backgroundImage}
-            width="600px"
-            height="600px"
-          />
-        )}
+    <div className="flex flex-col items-center p-4 bg-cream-50 rounded-lg shadow-lg">
+      <h1 className="text-2xl font-bold text-kerala-green-800 mb-4">Trace the letter: {character}</h1>
+      <div style={{ position: 'relative', width: canvasWidth, height: canvasHeight }}>
+        <canvas
+          ref={guideCanvasRef}
+          width={canvasWidth}
+          height={canvasHeight}
+          style={{ position: 'absolute', left: 0, top: 0, zIndex: 1 }}
+        />
+        <canvas
+          ref={drawCanvasRef}
+          width={canvasWidth}
+          height={canvasHeight}
+          onMouseDown={startDrawing}
+          onMouseUp={endDrawing}
+          onMouseLeave={endDrawing}
+          onMouseMove={draw}
+          onTouchStart={startDrawing}
+          onTouchEnd={endDrawing}
+          onTouchCancel={endDrawing}
+          onTouchMove={draw}
+          style={{ position: 'absolute', left: 0, top: 0, zIndex: 2, cursor: 'crosshair' }}
+          className="touch-none"
+        />
+      </div>
+      <div className="mt-4 space-x-4">
+        <Button onClick={clearCanvas} variant="outline">
+          <RotateCcw className="h-5 w-5 mr-2" />
+          Clear
+        </Button>
+        <Button onClick={checkTrace} className="bg-green-500 hover:bg-green-600 text-white">
+          <Check className="h-5 w-5 mr-2" />
+          Check Trace
+        </Button>
+        <Button onClick={() => setShowHintGif(true)} variant="outline">
+          <Lightbulb className="h-5 w-5 mr-2" />
+          Hint
+        </Button>
       </div>
 
-      <div className="flex gap-4 mt-4">
-        <Button onClick={handleClear}>Clear</Button>
-        <Button onClick={handleCheckTrace}>Check Trace</Button>
-      </div>
-
-      {feedback && (
-        <div className={`mt-4 p-4 rounded-lg flex items-center ${feedback === 'correct' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-          {feedback === 'correct' ? 'Great job!' : 'Try again!'}
+      {showHintGif && (
+        <div className="absolute inset-0 bg-black bg-opacity-70 flex items-center justify-center z-30"
+             onClick={() => setShowHintGif(false)}>
+          <img src={`/writing/${CHARACTER_GIF_MAP[character]}.gif`} alt={`Hint for ${character}`} className="max-w-full max-h-full" />
         </div>
       )}
     </div>

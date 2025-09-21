@@ -17,17 +17,17 @@ interface Flashcard {
 
 const flashcards: Flashcard[] = [
   {
-    imageUrl: '/image/elephant.png', // Placeholder image
+    imageUrl: '/image/elephant.png',
     correctAnswer: 'ആന',
     options: ['ആന', 'പുലി', 'സിംഹം', 'മാൻ'],
   },
   {
-    imageUrl: '/image/apple.png', // Placeholder image
+    imageUrl: '/image/apple.png',
     correctAnswer: 'ആപ്പിൾ',
     options: ['മാങ്ങ', 'ആപ്പിൾ', 'വാഴപ്പഴം', 'മുന്തിരി'],
   },
   {
-    imageUrl: '/image/house.png', // Placeholder image
+    imageUrl: '/image/house.png',
     correctAnswer: 'വീട്',
     options: ['മരം', 'വീട്', 'പുഴ', 'കാർ'],
   },
@@ -47,23 +47,32 @@ const FlashcardBattleGame: React.FC<FlashcardBattleGameProps> = ({ onComplete })
     setSelectedOption(option);
     if (option === currentFlashcard.correctAnswer) {
       setFeedback('correct');
-      setScore(score + 1);
     } else {
       setFeedback('incorrect');
     }
+  };
 
-    setTimeout(() => {
+  const handleNextQuestion = () => {
+    let updatedScore = score;
+    if (feedback === 'correct') {
+      updatedScore = score + 1;
+      setScore(updatedScore);
+    }
+
+    if (currentFlashcardIndex < flashcards.length - 1) {
       setFeedback(null);
       setSelectedOption(null);
-      if (currentFlashcardIndex < flashcards.length - 1) {
-        setCurrentFlashcardIndex(currentFlashcardIndex + 1);
-      } else {
-        // Game over
-        onComplete(score === flashcards.length); // All correct for success
-        setCurrentFlashcardIndex(0); // Reset for next play
-        setScore(0);
-      }
-    }, 1500);
+      setCurrentFlashcardIndex(currentFlashcardIndex + 1);
+    } else {
+      // Game over
+      onComplete(updatedScore === flashcards.length);
+      
+      // Reset for next play
+      setCurrentFlashcardIndex(0);
+      setScore(0);
+      setFeedback(null);
+      setSelectedOption(null);
+    }
   };
 
   return (
@@ -92,11 +101,12 @@ const FlashcardBattleGame: React.FC<FlashcardBattleGameProps> = ({ onComplete })
               key={option}
               onClick={() => handleOptionClick(option)}
               className={`text-lg whitespace-normal h-auto w-full px-8 py-2 flex items-center justify-center text-center
-                ${selectedOption === option
-                  ? feedback === 'correct'
-                    ? 'bg-green-500 text-white'
-                    : 'bg-red-500 text-white'
-                  : feedback && option === currentFlashcard.correctAnswer
+                ${
+                  selectedOption === option
+                    ? feedback === 'correct'
+                      ? 'bg-green-500 text-white'
+                      : 'bg-red-500 text-white'
+                    : feedback && option === currentFlashcard.correctAnswer
                     ? 'bg-green-300 text-white' // Show correct answer if incorrect selection
                     : 'bg-white text-kerala-green-700 border border-kerala-green-700'
                 }
@@ -109,9 +119,16 @@ const FlashcardBattleGame: React.FC<FlashcardBattleGameProps> = ({ onComplete })
         </div>
 
         {feedback && (
-          <div className={`text-center text-2xl font-bold mt-4 ${feedback === 'correct' ? 'text-green-600' : 'text-red-600'}`}>
-            {feedback === 'correct' ? 'Correct!' : 'Incorrect!'}
-          </div>
+          <>
+            <div className={`text-center text-2xl font-bold mt-4 ${feedback === 'correct' ? 'text-green-600' : 'text-red-600'}`}>
+              {feedback === 'correct' ? 'Correct!' : 'Incorrect!'}
+            </div>
+            <div className="flex justify-center mt-4">
+              <Button onClick={handleNextQuestion} className="px-8 py-3 text-lg bg-gradient-to-r from-marigold-500 to-marigold-600 hover:from-marigold-600 hover:to-marigold-700 text-white shadow-lg hover:shadow-xl transition-all">
+                Next Question
+              </Button>
+            </div>
+          </>
         )}
       </CardContent>
     </Card>

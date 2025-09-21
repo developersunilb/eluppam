@@ -31,6 +31,10 @@ import { Button } from '@/components/ui/button';
 // Import data arrays for total counts
 import { vowels } from '@/app/learn/vowels/page';
 import { practiceVowels, practiceConsonants, practiceChillaksharangal, practiceNumbers, practiceKootaksharangal, practiceFestivals, practiceSeasons, practiceCities } from '@/lib/practice-data';
+import { TOTAL_QUESTIONS as WhackAVowelTotalQuestions } from '@/components/WhackAVowelGame';
+import { TOTAL_QUESTIONS as EmojiWordMatchTotalQuestions } from '@/components/EmojiWordMatchGame';
+import { MALAYALAM_CONSONANTS } from '@/components/ConsonantGame';
+
 
 const ProgressPage = () => {
   const { userProgress, loading, error, resetModuleProgress } = useProgress();
@@ -83,6 +87,12 @@ const ProgressPage = () => {
         return practiceSeasons.length;
       case 'common-words-cities-practice':
         return practiceCities.length;
+      case 'whack-a-vowel':
+        return WhackAVowelTotalQuestions;
+      case 'emoji-word-match':
+        return EmojiWordMatchTotalQuestions;
+      case 'consonant-runner':
+        return MALAYALAM_CONSONANTS.length;
       default:
         return 0;
     }
@@ -164,7 +174,7 @@ const ProgressPage = () => {
                 <span>{moduleProgressPercentage.toFixed(0)}%</span>
               </div>
               <Progress value={moduleProgressPercentage} className="w-full" />
-              <Link href={resumeLink}>
+              <Link href={resumeLink} legacyBehavior>
                 <Button size="sm" className="mt-2 w-full bg-kerala-green-500 hover:bg-kerala-green-600 text-white">
                   <Play className="h-4 w-4 mr-2" /> Resume
                 </Button>
@@ -236,7 +246,7 @@ const ProgressPage = () => {
   return (
     <LearnLayout title="Your Progress">
       <div className="flex justify-end mb-4">
-        <Link href="/progress/faq">
+        <Link href="/progress/faq" legacyBehavior>
           <Button variant="outline">
             <HelpCircle className="h-4 w-4 mr-2" />
             FAQ

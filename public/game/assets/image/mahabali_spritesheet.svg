@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="96" viewBox="0 0 128 96">
+  <!-- Frame 1: Idle -->
+  <g transform="translate(0, 0)">
+    <rect x="22" y="40" width="20" height="30" fill="#ffcc80" /> <!-- Body -->
+    <circle cx="32" cy="24" r="16" fill="#ffe0b2" /> <!-- Head -->
+    <rect x="22" y="70" width="8" height="20" fill="#d2691e" /> <!-- Left Leg -->
+    <rect x="34" y="70" width="8" height="20" fill="#d2691e" /> <!-- Right Leg -->
+  </g>
+  <!-- Frame 2: Walk -->
+  <g transform="translate(64, 0)">
+    <rect x="22" y="40" width="20" height="30" fill="#ffcc80" /> <!-- Body -->
+    <circle cx="32" cy="24" r="16" fill="#ffe0b2" /> <!-- Head -->
+    <rect x="18" y="70" width="8" height="20" fill="#d2691e" transform="rotate(-20, 22, 80)" /> <!-- Left Leg (walking) -->
+    <rect x="38" y="70" width="8" height="20" fill="#d2691e" transform="rotate(20, 42, 80)" /> <!-- Right Leg (walking) -->
+  </g>
+</svg>

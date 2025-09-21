@@ -83,13 +83,16 @@ export default function KootaksharamCategoryPage({ params }: { params: { categor
 
   return (
     <LearnLayout title={`Kootaksharangal: ${baseConsonant} group`}>
-        <div className="mb-8">
-            <Link href="/learn/kootaksharangal" className="inline-flex items-center text-sm font-medium text-kerala-green-700 hover:text-kerala-green-900">
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Back to Kootaksharangal Menu
-            </Link>
-        </div>
-        <KootaksharamClient data={filteredData} moduleId={`kootaksharangal-${params.category}`} />
+      <div className="mb-8">
+          <Link
+            href="/learn/kootaksharangal"
+            className="inline-flex items-center text-sm font-medium text-kerala-green-700 hover:text-kerala-green-900"
+            legacyBehavior>
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Back to Kootaksharangal Menu
+          </Link>
+      </div>
+      <KootaksharamClient data={filteredData} moduleId={`kootaksharangal-${params.category}`} />
     </LearnLayout>
   );
 }

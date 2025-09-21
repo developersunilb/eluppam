@@ -36,7 +36,9 @@ export default function Navigation() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <Link href="/" className="flex items-center space-x-3 cursor-pointer">
+          <Link
+            href="/"
+            className="flex items-center space-x-3 cursor-pointer">
             <div className="bg-gradient-to-r from-marigold-500 to-marigold-600 p-2 rounded-xl">
               <BookOpen className="h-6 w-6 text-white" />
             </div>
@@ -49,43 +51,45 @@ export default function Navigation() {
           <NavigationMenu className="hidden md:flex">
             <NavigationMenuList>
               <NavigationMenuItem>
-                <Link href="/learn">
-                  <NavigationMenuLink className={navigationMenuTriggerStyle()} href="/learn" onClick={() => console.log('Learn link clicked')}>
+                <Link href="/learn" legacyBehavior passHref>
+                  <NavigationMenuLink className={navigationMenuTriggerStyle()}>
                     Learn
                   </NavigationMenuLink>
                 </Link>
               </NavigationMenuItem>
               <NavigationMenuItem>
-                <Link href="/practice">
-                  <NavigationMenuLink className={navigationMenuTriggerStyle()} href="/practice">
+                <Link href="/practice" legacyBehavior passHref>
+                  <NavigationMenuLink className={navigationMenuTriggerStyle()}>
                     Practice
                   </NavigationMenuLink>
                 </Link>
               </NavigationMenuItem>
               <NavigationMenuItem>
-                <Link href="/review">
-                  <NavigationMenuLink className={navigationMenuTriggerStyle()} href="/review">
+                <Link href="/review" legacyBehavior passHref>
+                  <NavigationMenuLink className={navigationMenuTriggerStyle()}>
                     Review
                   </NavigationMenuLink>
                 </Link>
               </NavigationMenuItem>
               <NavigationMenuItem>
-                <Link href="/games">
-                  <NavigationMenuLink className={navigationMenuTriggerStyle()} href="/games">
+                <Link href="/games" legacyBehavior passHref>
+                  <NavigationMenuLink className={navigationMenuTriggerStyle()}>
                     Games
                   </NavigationMenuLink>
                 </Link>
               </NavigationMenuItem>
               <NavigationMenuItem>
-                <Link href="/culture">
-                  <NavigationMenuLink className={navigationMenuTriggerStyle()} href="/culture">
+                <Link href="/culture" legacyBehavior passHref>
+                  <NavigationMenuLink className={navigationMenuTriggerStyle()}>
                     Culture
                   </NavigationMenuLink>
                 </Link>
               </NavigationMenuItem>
               <NavigationMenuItem>
-                <Link href="/progress" className={navigationMenuTriggerStyle()}> {/* Simplified Link */}
-                  Progress
+                <Link href="/progress" legacyBehavior passHref>
+                  <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                    Progress
+                  </NavigationMenuLink>
                 </Link>
               </NavigationMenuItem>
             </NavigationMenuList>
@@ -107,7 +111,7 @@ export default function Navigation() {
                 Sign In
               </Button>
             )}
-            <Link href="/learn">
+            <Link href="/learn" legacyBehavior>
               <Button className="bg-gradient-to-r from-marigold-500 to-marigold-600 hover:from-marigold-600 hover:to-marigold-700 text-white shadow-lg hover:shadow-xl transition-all">
                 Start Learning
               </Button>
@@ -127,7 +131,6 @@ export default function Navigation() {
           </button>
         </div>
       </div>
-
       {/* Mobile Navigation */}
       {isOpen && (
         <div className="md:hidden bg-white/95 backdrop-blur-md border-t border-kerala-green-200/30">
@@ -147,7 +150,10 @@ export default function Navigation() {
             <Link href="/culture" className="block text-kerala-green-700 hover:text-marigold-600 transition-colors font-medium">
               Culture
             </Link>
-            <Link href="/progress" className="block text-kerala-green-700 hover:text-marigold-600 transition-colors font-medium"> {/* Simplified Link */}
+            <Link
+              href="/progress"
+              className="block text-kerala-green-700 hover:text-marigold-600 transition-colors font-medium"
+              legacyBehavior> {/* Simplified Link */}
               Progress
             </Link>
             <div className="pt-4 space-y-3">
@@ -165,7 +171,7 @@ export default function Navigation() {
                   Sign In
                 </Button>
               )}
-              <Link href="/learn" className="w-full">
+              <Link href="/learn" className="w-full" legacyBehavior>
                 <Button className="w-full bg-gradient-to-r from-marigold-500 to-marigold-600 hover:from-marigold-600 hover:to-marigold-700 text-white">
                   Start Learning
                 </Button>
@@ -175,5 +181,5 @@ export default function Navigation() {
         </div>
       )}
     </nav>
-  )
+  );
 }

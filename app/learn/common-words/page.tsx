@@ -151,7 +151,6 @@ export default function CommonWordsPage() {
           </p>
         )}
       </div>
-
       <div className="mt-8 flex justify-between items-center">
         <Button onClick={goToPrevious} disabled={currentStep === 0} className="bg-kerala-green-600 hover:bg-kerala-green-700 text-white">
           Previous
@@ -181,9 +180,8 @@ export default function CommonWordsPage() {
           </Button>
         ) : (
           !isFinished && ( // Only show Finish if not already finished
-            <Button onClick={goToNext} className="bg-green-500 hover:bg-green-600 text-white">
-              Finish
-            </Button>
+            (<Button onClick={goToNext} className="bg-green-500 hover:bg-green-600 text-white">Finish
+                          </Button>)
           )
         )}
       </div>

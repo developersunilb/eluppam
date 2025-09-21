@@ -12,6 +12,7 @@ interface SentencePuzzle {
   sentence: string;
   correctAnswer: string;
   options: string[];
+  imageUrl: string;
 }
 
 const sentencePuzzles: SentencePuzzle[] = [
@@ -19,16 +20,19 @@ const sentencePuzzles: SentencePuzzle[] = [
     sentence: 'ഞാൻ ___ പോകുന്നു.',
     correctAnswer: 'വീട്ടിൽ',
     options: ['വീട്ടിൽ', 'മരത്തിൽ', 'പുഴയിൽ', 'ആകാശത്തിൽ'],
+    imageUrl: '🏠',
   },
   {
     sentence: 'അവൾ ഒരു ___ ആണ്.',
     correctAnswer: 'കുട്ടി',
     options: ['മരം', 'കുട്ടി', 'പൂച്ച', 'നായ'],
+    imageUrl: '👧',
   },
   {
     sentence: 'ഇത് ഒരു ___ ആണ്.',
     correctAnswer: 'പുസ്തകം',
     options: ['പേന', 'പുസ്തകം', 'പെൻസിൽ', 'ബാഗ്'],
+    imageUrl: '📖',
   },
 ];
 
@@ -47,35 +51,31 @@ const FillInTheBlanksGame: React.FC<FillInTheBlanksGameProps> = ({ onComplete })
     setSelectedOption(option);
     if (option === currentPuzzle.correctAnswer) {
       setFeedback('correct');
-      setScore(score + 1);
     } else {
       setFeedback('incorrect');
     }
-
-    setTimeout(() => {
-      setFeedback(null);
-      setSelectedOption(null);
-      if (currentPuzzleIndex < sentencePuzzles.length - 1) {
-        setCurrentPuzzleIndex(currentPuzzleIndex + 1);
-      } else {
-        // Game over
-        onComplete(score === sentencePuzzles.length); // All correct for success
-        setCurrentPuzzleIndex(0); // Reset for next play
-        setScore(0);
-      }
-    }, 1500);
   };
 
   const handleNextQuestion = () => {
-    setFeedback(null);
-    setSelectedOption(null);
+    let updatedScore = score;
+    if (feedback === 'correct') {
+      updatedScore = score + 1;
+      setScore(updatedScore);
+    }
+
     if (currentPuzzleIndex < sentencePuzzles.length - 1) {
+      setFeedback(null);
+      setSelectedOption(null);
       setCurrentPuzzleIndex(currentPuzzleIndex + 1);
     } else {
       // Game over
-      onComplete(score === sentencePuzzles.length); // All correct for success
-      setCurrentPuzzleIndex(0); // Reset for next play
+      onComplete(updatedScore === sentencePuzzles.length);
+      
+      // Reset for next play
+      setCurrentPuzzleIndex(0);
       setScore(0);
+      setFeedback(null);
+      setSelectedOption(null);
     }
   };
 
@@ -86,17 +86,20 @@ const FillInTheBlanksGame: React.FC<FillInTheBlanksGameProps> = ({ onComplete })
       <CardContent className="space-y-6">
         <div className="flex flex-col items-center justify-center">
           {currentPuzzle && (
-            <p className="text-xl mb-4 text-kerala-green-700">
-              {sentenceParts[0]}
-              {selectedOption && feedback ? (
-                <span className={feedback === 'correct' ? 'text-green-600' : 'text-red-600'}>
-                  {selectedOption}
-                </span>
-              ) : (
-                <span className="text-gray-400">___</span>
-              )}
-              {sentenceParts[1]}
-            </p>
+            <>
+              <div className="text-7xl mb-6">{currentPuzzle.imageUrl}</div>
+              <p className="text-xl mb-4 text-kerala-green-700">
+                {sentenceParts[0]}
+                {selectedOption && feedback ? (
+                  <span className={feedback === 'correct' ? 'text-green-600' : 'text-red-600'}>
+                    {selectedOption}
+                  </span>
+                ) : (
+                  <span className="text-gray-400">___</span>
+                )}
+                {sentenceParts[1]}
+              </p>
+            </>
           )}
         </div>
 
@@ -106,11 +109,12 @@ const FillInTheBlanksGame: React.FC<FillInTheBlanksGameProps> = ({ onComplete })
               key={option}
               onClick={() => handleOptionClick(option)}
               className={`text-lg whitespace-normal h-auto w-full px-8 py-2 flex items-center justify-center text-center
-                ${selectedOption === option
-                  ? feedback === 'correct'
-                    ? 'bg-green-500 text-white'
-                    : 'bg-red-500 text-white'
-                  : feedback && option === currentPuzzle.correctAnswer
+                ${
+                  selectedOption === option
+                    ? feedback === 'correct'
+                      ? 'bg-green-500 text-white'
+                      : 'bg-red-500 text-white'
+                    : feedback && option === currentPuzzle.correctAnswer
                     ? 'bg-green-300 text-white' // Show correct answer if incorrect selection
                     : 'bg-white text-kerala-green-700 border border-kerala-green-700'
                 }

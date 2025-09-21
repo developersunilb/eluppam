@@ -6,15 +6,25 @@ import { Button } from '@/components/ui/button';
 import LearnLayout from '@/components/LearnLayout';
 import { useProgress } from '@/context/ProgressContext';
 import { useRouter } from 'next/navigation';
+import StrokeAnimation from '@/components/StrokeAnimation';
+
+// Placeholder data for 'അ'
+// IMPORTANT: This is placeholder data and does not represent the actual character.
+// You need to replace this with the real SVG path data for 'അ'.
+// The 'length' property is the length of the path, which can be measured.
+const aVowelStrokes = [
+  { d: "M 25,85 C 25,20 75,20 75,85", length: 150 },
+  { d: "M 50,55 C 65,45 75,65 50,85", length: 70 },
+];
 
 export const vowels = [
-  { vowel: 'അ', word: 'അമ്മ', meaning: 'Mother', transliteration: 'amma', audioSrc: '/audio/malayalam/vowels/a.mp3' },
-  { vowel: 'ആ', word: 'ആന', meaning: 'Elephant', transliteration: 'aana', audioSrc: '/audio/malayalam/vowels/aa.mp3' },
-  { vowel: 'ഇ', word: 'ഇല', meaning: 'Leaf', transliteration: 'ila', audioSrc: '/audio/malayalam/vowels/i.mp3' },
-  { vowel: 'ഈ', word: 'ഈച്ച', meaning: 'Housefly', transliteration: 'eecha', audioSrc: '/audio/malayalam/vowels/ee.mp3' },
-  { vowel: 'ഉ', word: 'ഉറക്കം', meaning: 'Sleep', transliteration: 'urakkam', audioSrc: '/audio/malayalam/vowels/u.mp3' },
-  { vowel: 'ഊ', word: 'ഊഞ്ഞാൽ', meaning: 'Swing', transliteration: 'oonjaal', audioSrc: '/audio/malayalam/vowels/oo.mp3' },
-  { vowel: 'ഋ', word: 'ഋഷി', meaning: 'Sage', transliteration: 'rishi', audioSrc: '/audio/malayalam/vowels/ru.mp3' },
+  { vowel: 'അ', word: 'അമ്മ', meaning: 'Mother', transliteration: 'amma', audioSrc: '/audio/malayalam/vowels/അ.wav', gifSrc: '/writing/vowels/അ.gif' },
+  { vowel: 'ആ', word: 'ആന', meaning: 'Elephant', transliteration: 'aana', audioSrc: '/audio/malayalam/vowels/ആ.wav', gifSrc: '/writing/vowels/ആ.gif' },
+  { vowel: 'ഇ', word: 'ഇല', meaning: 'Leaf', transliteration: 'ila', audioSrc: '/audio/malayalam/vowels/ഇ.wav', gifSrc: '/writing/vowels/ഇ.gif' },
+  { vowel: 'ഈ', word: 'ഈച്ച', meaning: 'Housefly', transliteration: 'eecha', audioSrc: '/audio/malayalam/vowels/ഈ.wav', gifSrc: '/writing/vowels/ഈ.gif' },
+  { vowel: 'ഉ', word: 'ഉറക്കം', meaning: 'Sleep', transliteration: 'urakkam', audioSrc: '/audio/malayalam/vowels/ഉ.wav', gifSrc: '/writing/vowels/ഉ.gif' },
+  { vowel: 'ഊ', word: 'ഊഞ്ഞാൽ', meaning: 'Swing', transliteration: 'oonjaal', audioSrc: '/audio/malayalam/vowels/ഊ.wav', gifSrc: '/writing/vowels/ഊ.gif' },
+  { vowel: 'ഋ', word: 'ഋഷി', meaning: 'Sage', transliteration: 'rishi', audioSrc: '/audio/malayalam/vowels/ഋ.wav', gifSrc: '/writing/vowels/ഋ.gif' },
   { vowel: 'എ', word: 'എലി', meaning: 'Rat', transliteration: 'eli', audioSrc: '/audio/malayalam/vowels/e.mp3' },
   { vowel: 'ഏ', word: 'ഏണി', meaning: 'Ladder', transliteration: 'Eni', audioSrc: '/audio/malayalam/vowels/E.mp3' },
   { vowel: 'ഐ', word: 'ഐരാവതം', meaning: 'Airavatham', transliteration: 'airaavatham', audioSrc: '/audio/malayalam/vowels/ai.mp3' },
@@ -155,6 +165,10 @@ export default function VowelsPage() {
       <div className="text-center">
         {/* The Card */}
         <div className="relative h-80 bg-marigold-100 rounded-lg flex flex-col items-center justify-center">
+          {/* GIF Image */}
+          {currentVowel.gifSrc && (
+            <img src={currentVowel.gifSrc} alt={`${currentVowel.vowel} writing`} className="absolute top-4 left-4 w-24 h-24 rounded-lg shadow-md" />
+          )}
           {/* Vowel */}
           <h1 className="text-8xl font-bold text-kerala-green-800">{currentVowel.vowel}</h1>
           
@@ -174,6 +188,19 @@ export default function VowelsPage() {
             <Volume2 className="h-6 w-6" />
           </Button>
         </div>
+
+        {/* Stroke Animation for 'അ' */}
+        {currentVowel.vowel === 'അ' && (
+          <div className="mt-8 p-4 bg-white rounded-lg shadow-inner">
+            <h3 className="text-xl font-semibold text-kerala-green-700 mb-4">Stroke Order Animation</h3>
+            <StrokeAnimation
+              key={currentIndex} // Re-mount component when vowel changes to restart animation
+              strokes={aVowelStrokes}
+              viewBox="0 0 100 100"
+              className="w-48 h-48 mx-auto"
+            />
+          </div>
+        )}
 
         {/* Navigation */}
         <div className="flex justify-between items-center mt-8">
