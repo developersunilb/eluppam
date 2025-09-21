@@ -1,63 +1,26 @@
-3/3
+PS F:\Startup Business\Solopreneur\eluppam> npm run build
 
-Next.js 15.5.3
-Webpack
-Runtime ReferenceError
+> nextjs@0.1.0 build
+> next build
 
+   ▲ Next.js 15.5.3
 
-React is not defined
+   Creating an optimized production build ...
+ ✓ Compiled successfully in 11.0s
+   Skipping linting
+   Checking validity of types  ..Failed to compile.
 
-components\MalayalamKeyboard.tsx (151:24) @ eval
+   Checking validity of types  ....next/types/app/learn/kootaksharangal/[category]/page.ts:34:29
+Type error: Type '{ params: { category: string; }; }' does not satisfy the constraint 'PageProps'.
+  Types of property 'params' are incompatible.
+    Type '{ category: string; }' is missing the following properties from type 'Promise<any>': then, catch, finally, [Symbol.toStringTag]
 
-
-  149 |                     }
-  150 |                     return (
-> 151 |                       <React.Fragment key={char}> {/* Use React.Fragment to return multiple elements */}
-      |                        ^
-  152 |                         <Button onClick={() => onKeyPress(char)} variant="outline" className={buttonClass}>
-  153 |                           {char}
-  154 |                         </Button>
-Call Stack
-20
-
-Hide 14 ignore-listed frame(s)
-eval
-components\MalayalamKeyboard.tsx (151:24)
-Array.map
-<anonymous>
-eval
-components\MalayalamKeyboard.tsx (143:57)
-Array.map
-<anonymous>
-MalayalamKeyboard
-components\MalayalamKeyboard.tsx (85:21)
-Object.react_stack_bottom_frame
-node_modules\next\dist\compiled\react-dom\cjs\react-dom-client.development.js (23583:1)
-renderWithHooks
-node_modules\next\dist\compiled\react-dom\cjs\react-dom-client.development.js (6792:1)
-updateFunctionComponent
-node_modules\next\dist\compiled\react-dom\cjs\react-dom-client.development.js (9246:1)
-beginWork
-node_modules\next\dist\compiled\react-dom\cjs\react-dom-client.development.js (10857:1)
-runWithFiberInDEV
-node_modules\next\dist\compiled\react-dom\cjs\react-dom-client.development.js (871:1)
-performUnitOfWork
-node_modules\next\dist\compiled\react-dom\cjs\react-dom-client.development.js (15726:1)
-workLoopSync
-node_modules\next\dist\compiled\react-dom\cjs\react-dom-client.development.js (15546:39)
-renderRootSync
-node_modules\next\dist\compiled\react-dom\cjs\react-dom-client.development.js (15526:1)
-performWorkOnRoot
-node_modules\next\dist\compiled\react-dom\cjs\react-dom-client.development.js (15033:1)
-performSyncWorkOnRoot
-node_modules\next\dist\compiled\react-dom\cjs\react-dom-client.development.js (16830:1)
-flushSyncWorkAcrossRoots_impl
-node_modules\next\dist\compiled\react-dom\cjs\react-dom-client.development.js (16676:1)
-processRootScheduleInMicrotask
-node_modules\next\dist\compiled\react-dom\cjs\react-dom-client.development.js (16714:1)
-eval
-node_modules\next\dist\compiled\react-dom\cjs\react-dom-client.development.js (16849:1)
-AboutYourselfPage
-app\learn\about-yourself\page.tsx (109:33)
-ClientPageRoot
-..\src\client\components\client-page.tsx (60:12)
+  32 |
+  33 | // Check the prop type of the entry function
+> 34 | checkFields<Diff<PageProps, FirstArg<TEntry['default']>, 'default'>>()
+     |                             ^
+  35 |
+  36 | // Check the arguments and return type of the generateMetadata function
+  37 | if ('generateMetadata' in entry) {
+Next.js build worker exited with code: 1 and signal: null
+PS F:\Startup Business\Solopreneur\eluppam> 

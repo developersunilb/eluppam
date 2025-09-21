@@ -23,7 +23,7 @@ const EMOJI_WORD_DATA: EmojiWordPair[] = [
   { emoji: '✈️', word: 'വിമാനം' }, { emoji: '⭐', word: 'നക്ഷത്രം' },
 ];
 
-const TOTAL_QUESTIONS = 20;
+export const TOTAL_QUESTIONS = 20;
 
 interface EmojiWordMatchGameProps {
   onComplete: (success: boolean) => void;

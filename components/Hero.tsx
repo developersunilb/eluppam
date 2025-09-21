@@ -2,8 +2,11 @@
 
 import { Button } from '@/components/ui/button'
 import { Play, Star, Users, Award } from 'lucide-react'
+import { useAuth } from '@/context/AuthContext'
 
 export default function Hero() {
+  const { login } = useAuth();
+
   return (
     <section className="relative pt-16 pb-20 px-4 sm:px-6 lg:px-8">
       {/* Background Pattern */}
@@ -43,6 +46,7 @@ export default function Hero() {
             <Button 
               size="lg" 
               className="bg-gradient-to-r from-marigold-500 to-marigold-600 hover:from-marigold-600 hover:to-marigold-700 text-white shadow-xl hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-200 px-8"
+              onClick={() => login('guestUser', 'Guest', 'guest@example.com')}
             >
               Begin Your Journey
             </Button>

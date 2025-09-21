@@ -3,8 +3,12 @@
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { ArrowRight, Sparkles, Users, Calendar } from 'lucide-react'
+import { useAuth } from '@/context/AuthContext'
+import Link from 'next/link'
 
 export default function CallToAction() {
+  const { login } = useAuth();
+
   return (
     <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-kerala-green-50 via-marigold-50 to-backwater-blue-50">
       <div className="max-w-4xl mx-auto text-center">
@@ -67,17 +71,20 @@ export default function CallToAction() {
                 <Button 
                   size="lg" 
                   className="bg-gradient-to-r from-marigold-500 to-marigold-600 hover:from-marigold-600 hover:to-marigold-700 text-white shadow-xl hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-200 px-8"
+                  onClick={() => login('guestUser', 'Guest', 'guest@example.com')}
                 >
                   Begin Learning Now
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
-                <Button 
-                  size="lg" 
-                  variant="outline" 
-                  className="border-2 border-kerala-green-300 text-kerala-green-700 hover:bg-kerala-green-50 hover:border-kerala-green-400 px-8"
-                >
-                  Explore Features
-                </Button>
+                <Link href="/#learn" passHref>
+                  <Button 
+                    size="lg" 
+                    variant="outline" 
+                    className="border-2 border-kerala-green-300 text-kerala-green-700 hover:bg-kerala-green-50 hover:border-kerala-green-400 px-8"
+                  >
+                    Explore Features
+                  </Button>
+                </Link>
               </div>
 
               {/* Trust Indicators */}

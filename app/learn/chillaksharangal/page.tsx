@@ -7,39 +7,7 @@ import LearnLayout from '@/components/LearnLayout';
 import { useProgress } from '@/context/ProgressContext';
 import { useRouter } from 'next/navigation';
 
-export const chillaksharangal = [
-    { letter: 'ൻ', word: 'തേൻ', meaning: 'Honey', transliteration: 'thaen', audioSrc: '/audio/malayalam/chillaksharangal/n.mp3' },
-    { letter: 'ൽ', word: 'പാൽ', meaning: 'Milk', transliteration: 'paal', audioSrc: '/audio/malayalam/chillaksharangal/l.mp3' },
-    { letter: 'ൾ', word: 'തേൾ', meaning: 'Scorpion', transliteration: 'thael', audioSrc: '/audio/malayalam/chillaksharangal/L.mp3' },
-    { letter: 'ൺ', word: 'കൂൺ', meaning: 'Mushroom', transliteration: 'koon', audioSrc: '/audio/malayalam/chillaksharangal/N.mp3' },
-    { letter: 'ർ', word: 'കാർ', meaning: 'Car', transliteration: 'kaar', audioSrc: '/audio/malayalam/chillaksharangal/r.mp3' },
-];
-
-const moreChillaksharangalWords = {
-  'ൻ': [
-    { malayalam: 'അവൻ', meaning: 'He', audioSrc: '/audio/malayalam/chillaksharangal/more/avan.mp3' },
-    { malayalam: 'അവൾ', meaning: 'She', audioSrc: '/audio/malayalam/chillaksharangal/more/aval.mp3' },
-    { malayalam: 'അവർ', meaning: 'They', audioSrc: '/audio/malayalam/chillaksharangal/more/avar.mp3' },
-  ],
-  'ൽ': [
-    { malayalam: 'അവൽ', meaning: 'Flattened rice', audioSrc: '/audio/malayalam/chillaksharangal/more/aval.mp3' },
-    { malayalam: 'കൽ', meaning: 'Stone', audioSrc: '/audio/malayalam/chillaksharangal/more/kal.mp3' },
-    { malayalam: 'നൽ', meaning: 'Good', audioSrc: '/audio/malayalam/chillaksharangal/more/nal.mp3' },
-  ],
-  'ൾ': [
-    { malayalam: 'അവൾ', meaning: 'She', audioSrc: '/audio/malayalam/chillaksharangal/more/aval.mp3' },
-    { malayalam: 'കൽ', meaning: 'Stone', audioSrc: '/audio/malayalam/chillaksharangal/more/kal.mp3' },
-    { malayalam: 'നൽ', meaning: 'Good', audioSrc: '/audio/malayalam/chillaksharangal/more/nal.mp3' },
-  ],
-  'ൺ': [
-    { malayalam: 'കണ്ണ്', meaning: 'Eye', audioSrc: '/audio/malayalam/chillaksharangal/more/kannu.mp3' },
-    { malayalam: 'മണ്ണ്', meaning: 'Soil', audioSrc: '/audio/malayalam/chillaksharangal/more/mannu.mp3' },
-  ],
-  'ർ': [
-    { malayalam: 'അവർ', meaning: 'They', audioSrc: '/audio/malayalam/chillaksharangal/more/avar.mp3' },
-    { malayalam: 'കയർ', meaning: 'Rope', audioSrc: '/audio/malayalam/chillaksharangal/more/kayar.mp3' },
-  ],
-};
+import { chillaksharangal, moreChillaksharangalWords } from '@/lib/data';
 
 const MODULE_ID = 'chillaksharangal';
 

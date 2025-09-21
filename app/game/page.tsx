@@ -19,10 +19,14 @@ const GamePage: NextPage = () => {
     setIsClient(true);
   }, []);
 
+  const handleGameComplete = (success: boolean) => {
+    console.log(success ? "Game completed successfully!" : "Game failed.");
+  };
+
   return (
     <div className="w-full h-screen flex items-center justify-center bg-gray-900">
       <h1 className="text-white text-2xl absolute top-5">Maveli's Letter Hunt</h1>
-      {isClient ? <MaveliGame /> : <p className="text-white">Loading game...</p>}
+      {isClient ? <MaveliGame onComplete={handleGameComplete} /> : <p className="text-white">Loading game...</p>}
     </div>
   );
 };

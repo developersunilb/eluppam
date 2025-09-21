@@ -29,7 +29,7 @@ import { Button } from '@/components/ui/button';
 
 
 // Import data arrays for total counts
-import { vowels } from '@/app/learn/vowels/page';
+import { vowels } from '@/lib/data';
 import { practiceVowels, practiceConsonants, practiceChillaksharangal, practiceNumbers, practiceKootaksharangal, practiceFestivals, practiceSeasons, practiceCities } from '@/lib/practice-data';
 import { TOTAL_QUESTIONS as WhackAVowelTotalQuestions } from '@/components/WhackAVowelGame';
 import { TOTAL_QUESTIONS as EmojiWordMatchTotalQuestions } from '@/components/EmojiWordMatchGame';

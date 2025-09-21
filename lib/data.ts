@@ -1,3 +1,255 @@
+export const chillaksharangal = [
+    { letter: 'ൻ', word: 'തേൻ', meaning: 'Honey', transliteration: 'thaen', audioSrc: '/audio/malayalam/chillaksharangal/n.mp3' },
+    { letter: 'ൽ', word: 'പാൽ', meaning: 'Milk', transliteration: 'paal', audioSrc: '/audio/malayalam/chillaksharangal/l.mp3' },
+    { letter: 'ൾ', word: 'തേൾ', meaning: 'Scorpion', transliteration: 'thael', audioSrc: '/audio/malayalam/chillaksharangal/L.mp3' },
+    { letter: 'ൺ', word: 'കൂൺ', meaning: 'Mushroom', transliteration: 'koon', audioSrc: '/audio/malayalam/chillaksharangal/N.mp3' },
+    { letter: 'ർ', word: 'കാർ', meaning: 'Car', transliteration: 'kaar', audioSrc: '/audio/malayalam/chillaksharangal/r.mp3' },
+];
+
+export const moreChillaksharangalWords: Record<string, { malayalam: string; meaning: string; audioSrc: string; }[]> = {
+  'ൻ': [
+    { malayalam: 'അവൻ', meaning: 'He', audioSrc: '/audio/malayalam/chillaksharangal/more/avan.mp3' },
+    { malayalam: 'അവൾ', meaning: 'She', audioSrc: '/audio/malayalam/chillaksharangal/more/aval.mp3' },
+    { malayalam: 'അവർ', meaning: 'They', audioSrc: '/audio/malayalam/chillaksharangal/more/avar.mp3' },
+  ],
+  'ൽ': [
+    { malayalam: 'അവൽ', meaning: 'Flattened rice', audioSrc: '/audio/malayalam/chillaksharangal/more/aval.mp3' },
+    { malayalam: 'കൽ', meaning: 'Stone', audioSrc: '/audio/malayalam/chillaksharangal/more/kal.mp3' },
+    { malayalam: 'നൽ', meaning: 'Good', audioSrc: '/audio/malayalam/chillaksharangal/more/nal.mp3' },
+  ],
+  'ൾ': [
+    { malayalam: 'അവൾ', meaning: 'She', audioSrc: '/audio/malayalam/chillaksharangal/more/aval.mp3' },
+    { malayalam: 'കൽ', meaning: 'Stone', audioSrc: '/audio/malayalam/chillaksharangal/more/kal.mp3' },
+    { malayalam: 'നൽ', meaning: 'Good', audioSrc: '/audio/malayalam/chillaksharangal/more/nal.mp3' },
+  ],
+  'ൺ': [
+    { malayalam: 'കണ്ണ്', meaning: 'Eye', audioSrc: '/audio/malayalam/chillaksharangal/more/kannu.mp3' },
+    { malayalam: 'മണ്ണ്', meaning: 'Soil', audioSrc: '/audio/malayalam/chillaksharangal/more/mannu.mp3' },
+  ],
+  'ർ': [
+    { malayalam: 'അവർ', meaning: 'They', audioSrc: '/audio/malayalam/chillaksharangal/more/avar.mp3' },
+    { malayalam: 'കയർ', meaning: 'Rope', audioSrc: '/audio/malayalam/chillaksharangal/more/kayar.mp3' },
+  ],
+};
+
+export const vowels = [
+  { vowel: 'അ', word: 'അമ്മ', meaning: 'Mother', transliteration: 'amma', audioSrc: '/audio/malayalam/vowels/അ.wav', gifSrc: '/writing/vowels/അ.gif' },
+  { vowel: 'ആ', word: 'ആന', meaning: 'Elephant', transliteration: 'aana', audioSrc: '/audio/malayalam/vowels/ആ.wav', gifSrc: '/writing/vowels/ആ.gif' },
+  { vowel: 'ഇ', word: 'ഇല', meaning: 'Leaf', transliteration: 'ila', audioSrc: '/audio/malayalam/vowels/ഇ.wav', gifSrc: '/writing/vowels/ഇ.gif' },
+  { vowel: 'ഈ', word: 'ഈച്ച', meaning: 'Housefly', transliteration: 'eecha', audioSrc: '/audio/malayalam/vowels/ഈ.wav', gifSrc: '/writing/vowels/ഈ.gif' },
+  { vowel: 'ഉ', word: 'ഉറക്കം', meaning: 'Sleep', transliteration: 'urakkam', audioSrc: '/audio/malayalam/vowels/ഉ.wav', gifSrc: '/writing/vowels/ഉ.gif' },
+  { vowel: 'ഊ', word: 'ഊഞ്ഞാൽ', meaning: 'Swing', transliteration: 'oonjaal', audioSrc: '/audio/malayalam/vowels/ഊ.wav', gifSrc: '/writing/vowels/ഊ.gif' },
+  { vowel: 'ഋ', word: 'ഋഷി', meaning: 'Sage', transliteration: 'rishi', audioSrc: '/audio/malayalam/vowels/ഋ.wav', gifSrc: '/writing/vowels/ഋ.gif' },
+  { vowel: 'എ', word: 'എലി', meaning: 'Rat', transliteration: 'eli', audioSrc: '/audio/malayalam/vowels/e.mp3' },
+  { vowel: 'ഏ', word: 'ഏണി', meaning: 'Ladder', transliteration: 'Eni', audioSrc: '/audio/malayalam/vowels/E.mp3' },
+  { vowel: 'ഐ', word: 'ഐരാവതം', meaning: 'Airavatham', transliteration: 'airaavatham', audioSrc: '/audio/malayalam/vowels/ai.mp3' },
+  { vowel: 'ഒ', word: 'ഒട്ടകം', meaning: 'Camel', transliteration: 'ottakam', audioSrc: '/audio/malayalam/vowels/o.mp3' },
+  { vowel: 'ഓ', word: 'ഓല', meaning: 'Palm leaf', transliteration: 'Ola', audioSrc: '/audio/malayalam/vowels/O.mp3' },
+  { vowel: 'ഔ', word: 'ഔഷധം', meaning: 'Medicine', transliteration: 'oushadham', audioSrc: '/audio/malayalam/vowels/au.mp3' },
+  { vowel: 'അം', word: 'അംബുജം', meaning: 'Lotus', transliteration: 'ambujam', audioSrc: '/audio/malayalam/vowels/am.mp3' },
+  { vowel: 'അഃ', word: 'ദുഃഖം', meaning: 'Sadness', transliteration: 'duhkham', audioSrc: '/audio/malayalam/vowels/ah.mp3' },
+];
+
+export const moreVowelWords: Record<string, { malayalam: string; meaning: string; audioSrc: string; }[]> = {
+  'അ': [
+    { malayalam: 'അച്ഛൻ', meaning: 'Father', audioSrc: '/audio/malayalam/vowels/more/achchan.mp3' },
+    { malayalam: 'അടുക്കള', meaning: 'Kitchen', audioSrc: '/audio/malayalam/vowels/more/adukkala.mp3' },
+    { malayalam: 'അരി', meaning: 'Rice', audioSrc: '/audio/malayalam/vowels/more/ari.mp3' },
+  ],
+  'ആ': [
+    { malayalam: 'ആകാശം', meaning: 'Sky', audioSrc: '/audio/malayalam/vowels/more/aakaasham.mp3' },
+    { malayalam: 'ആഹാരം', meaning: 'Food', audioSrc: '/audio/malayalam/vowels/more/aahaaram.mp3' },
+    { malayalam: 'ആട്', meaning: 'Goat', audioSrc: '/audio/malayalam/vowels/more/aadu.mp3' },
+  ],
+  'ഇ': [
+    { malayalam: 'ഇരുമ്പ്', meaning: 'Iron', audioSrc: '/audio/malayalam/vowels/more/irumb.mp3' },
+    { malayalam: 'ഇടം', meaning: 'Place', audioSrc: '/audio/malayalam/vowels/more/idam.mp3' },
+    { malayalam: 'ഇരുട്ട്', meaning: 'Darkness', audioSrc: '/audio/malayalam/vowels/more/irutt.mp3' },
+  ],
+  'ഈ': [
+    { malayalam: 'ഈന്തപ്പഴം', meaning: 'Date (fruit)', audioSrc: '/audio/malayalam/vowels/more/eenthappazham.mp3' },
+    { malayalam: 'ഈശ്വരൻ', meaning: 'God', audioSrc: '/audio/malayalam/vowels/more/eeswaran.mp3' },
+    { malayalam: 'ഈണം', meaning: 'Melody', audioSrc: '/audio/malayalam/vowels/more/eenam.mp3' },
+  ],
+  'ഉ': [
+    { malayalam: 'ഉറുമ്പ്', meaning: 'Ant', audioSrc: '/audio/malayalam/vowels/more/urumb.mp3' },
+    { malayalam: 'ഉത്തരം', meaning: 'Answer', audioSrc: '/audio/malayalam/vowels/more/uttharam.mp3' },
+    { malayalam: 'ഉപ്പ്', meaning: 'Salt', audioSrc: '/audio/malayalam/vowels/more/uppu.mp3' },
+  ],
+  'ഊ': [
+    { malayalam: 'ഊണ്', meaning: 'Meal', audioSrc: '/audio/malayalam/vowels/more/oonu.mp3' },
+    { malayalam: 'ഊഷ്മാവ്', meaning: 'Temperature', audioSrc: '/audio/malayalam/vowels/more/ooshmaav.mp3' },
+    { malayalam: 'ഊർജ്ജം', meaning: 'Energy', audioSrc: '/audio/malayalam/vowels/more/oorjjam.mp3' },
+  ],
+  'ഋ': [
+    { malayalam: 'ഋതു', meaning: 'Season', audioSrc: '/audio/malayalam/vowels/more/ruthu.mp3' },
+    { malayalam: 'ഋഗ്വേദം', meaning: 'Rigveda', audioSrc: '/audio/malayalam/vowels/more/rigvedam.mp3' },
+  ],
+  'എ': [
+    { malayalam: 'എണ്ണ', meaning: 'Oil', audioSrc: '/audio/malayalam/vowels/more/enna.mp3' },
+    { malayalam: 'എഴുത്ത്', meaning: 'Writing', audioSrc: '/audio/malayalam/vowels/more/ezhuth.mp3' },
+    { malayalam: 'എട്ട്', meaning: 'Eight', audioSrc: '/audio/malayalam/vowels/more/ett.mp3' },
+  ],
+  'ഏ': [
+    { malayalam: 'ഏകത്വം', meaning: 'Unity', audioSrc: '/audio/malayalam/vowels/more/ekathwam.mp3' },
+    { malayalam: 'ഏണിപ്പടി', meaning: 'Ladder step', audioSrc: '/audio/malayalam/vowels/more/enippadi.mp3' },
+    { malayalam: 'ഏഴ്', meaning: 'Seven', audioSrc: '/audio/malayalam/vowels/more/ezh.mp3' },
+  ],
+  'ഐ': [
+    { malayalam: 'ഐക്യം', meaning: 'Unity', audioSrc: '/audio/malayalam/vowels/more/aikyam.mp3' },
+    { malayalam: 'ഐതിഹ്യം', meaning: 'Legend', audioSrc: '/audio/malayalam/vowels/more/aithihyam.mp3' },
+  ],
+  'ഒ': [
+    { malayalam: 'ഒന്ന്', meaning: 'One', audioSrc: '/audio/malayalam/vowels/more/onnu.mp3' },
+    { malayalam: 'ഒച്ച', meaning: 'Sound', audioSrc: '/audio/malayalam/vowels/more/ochcha.mp3' },
+    { malayalam: 'ഒഴുക്ക്', meaning: 'Flow', audioSrc: '/audio/malayalam/vowels/more/ozhukk.mp3' },
+  ],
+  'ഓ': [
+    { malayalam: 'ഓണം', meaning: 'Onam (festival)', audioSrc: '/audio/malayalam/vowels/more/onam.mp3' },
+    { malayalam: 'ഓർമ്മ', meaning: 'Memory', audioSrc: '/audio/malayalam/vowels/more/ormma.mp3' },
+    { malayalam: 'ഓട്ടം', meaning: 'Run', audioSrc: '/audio/malayalam/vowels/more/ottam.mp3' },
+  ],
+  'ഔ': [
+    { malayalam: 'ഔദ്യോഗികം', meaning: 'Official', audioSrc: '/audio/malayalam/vowels/more/audyogikam.mp3' },
+    { malayalam: 'ഔചിത്യം', meaning: 'Propriety', audioSrc: '/audio/malayalam/vowels/more/auchithyam.mp3' },
+  ],
+  'അം': [
+    { malayalam: 'അംബരം', meaning: 'Sky', audioSrc: '/audio/malayalam/vowels/more/ambaram.mp3' },
+    { malayalam: 'അംശം', meaning: 'Part', audioSrc: '/audio/malayalam/vowels/more/amsham.mp3' },
+  ],
+  'അഃ': [
+    { malayalam: 'ദുഃസ്വപ്നം', meaning: 'Nightmare', audioSrc: '/audio/malayalam/vowels/more/duhswapnam.mp3' },
+  ],
+};
+
+export const consonants = [
+    { consonant: 'ക', word: 'കപ്പൽ', meaning: 'Ship', transliteration: 'kappal', audioSrc: '/audio/malayalam/consonants/ka.mp3' },
+    { consonant: 'ഖ', word: 'മുഖം', meaning: 'Face', transliteration: 'mukham', audioSrc: '/audio/malayalam/consonants/kha.mp3' },
+    { consonant: 'ഗ', word: 'ഗരുഡൻ', meaning: 'Eagle', transliteration: 'garudan', audioSrc: '/audio/malayalam/consonants/ga.mp3' },
+    { consonant: 'ഘ', word: 'മേഘം', meaning: 'Cloud', transliteration: 'megham', audioSrc: '/audio/malayalam/consonants/gha.mp3' },
+    { consonant: 'ങ', word: 'മാങ്ങ', meaning: 'Mango', transliteration: 'maanga', audioSrc: '/audio/malayalam/consonants/nga.mp3' },
+    { consonant: 'ച', word: 'ചക്രം', meaning: 'Wheel', transliteration: 'chakram', audioSrc: '/audio/malayalam/consonants/cha.mp3' },
+    { consonant: 'ഛ', word: 'ഛായ', meaning: 'Photo', transliteration: 'chhaaya', audioSrc: '/audio/malayalam/consonants/chha.mp3' },
+    { consonant: 'ജ', word: 'ജനൽ', meaning: 'Window', transliteration: 'janal', audioSrc: '/audio/malayalam/consonants/ja.mp3' },
+    { consonant: 'ഝ', word: 'ഝഷം', meaning: 'Fish', transliteration: 'jhasham', audioSrc: '/audio/malayalam/consonants/jha.mp3' },
+    { consonant: 'ഞ', word: 'ഞണ്ട്', meaning: 'Crab', transliteration: 'njandu', audioSrc: '/audio/malayalam/consonants/nja.mp3' },
+    { consonant: 'ട', word: 'കുട', meaning: 'Umbrella', transliteration: 'kuda', audioSrc: '/audio/malayalam/consonants/Ta.mp3' },
+    { consonant: 'ഠ', word: 'മിഠായി', meaning: 'Sweet', transliteration: 'mithaayi', audioSrc: '/audio/malayalam/consonants/Tha.mp3' },
+    { consonant: 'ഡ', word: 'ഡപ്പി', meaning: 'Small Box', transliteration: 'dappi', audioSrc: '/audio/malayalam/consonants/Da.mp3' },
+    { consonant: 'ഢ', word: 'ഢക്ക', meaning: 'Drum', transliteration: 'dhakka', audioSrc: '/audio/malayalam/consonants/Dha.mp3' },
+    { consonant: 'ണ', word: 'പണം', meaning: 'Money', transliteration: 'panam', audioSrc: '/audio/malayalam/consonants/Na.mp3' },
+    { consonant: 'ത', word: 'തല', meaning: 'Head', transliteration: 'thala', audioSrc: '/audio/malayalam/consonants/tha.mp3' },
+    { consonant: 'ഥ', word: 'രഥം', meaning: 'Chariot', transliteration: 'ratham', audioSrc: '/audio/malayalam/consonants/thha.mp3' },
+    { consonant: 'ദ', word: 'ദീപം', meaning: 'Lamp', transliteration: 'deepam', audioSrc: '/audio/malayalam/consonants/da.mp3' },
+    { consonant: 'ധ', word: 'ധനുസ്സ്', meaning: 'Bow', transliteration: 'dhanuss', audioSrc: '/audio/malayalam/consonants/dha.mp3' },
+    { consonant: 'ന', word: 'നദി', meaning: 'River', transliteration: 'nadi', audioSrc: '/audio/malayalam/consonants/na.mp3' },
+    { consonant: 'പ', word: 'പശു', meaning: 'Cow', transliteration: 'pashu', audioSrc: '/audio/malayalam/consonants/pa.mp3' },
+    { consonant: 'ഫ', word: 'ഫലം', meaning: 'Fruit', transliteration: 'phalam', audioSrc: '/audio/malayalam/consonants/pha.mp3' },
+    { consonant: 'ബ', word: 'ബലൂൺ', meaning: 'Balloon', transliteration: 'baloon', audioSrc: '/audio/malayalam/consonants/ba.mp3' },
+    { consonant: 'ഭ', word: 'ഭരണി', meaning: 'Jar', transliteration: 'bharani', audioSrc: '/audio/malayalam/consonants/bha.mp3' },
+    { consonant: 'മ', word: 'മരം', meaning: 'Tree', transliteration: 'maram', audioSrc: '/audio/malayalam/consonants/ma.mp3' },
+    { consonant: 'യ', word: 'മുയൽ', meaning: 'Rabbit', transliteration: 'muyal', audioSrc: '/audio/malayalam/consonants/ya.mp3' },
+    { consonant: 'ര', word: 'ശരം', meaning: 'Arrow', transliteration: 'sharam', audioSrc: '/audio/malayalam/consonants/ra.mp3' },
+    { consonant: 'ല', word: 'ലഡ്ഡു', meaning: 'Laddu', transliteration: 'laddu', audioSrc: '/audio/malayalam/consonants/la.mp3' },
+    { consonant: 'വ', word: 'വല', meaning: 'Net', transliteration: 'vala', audioSrc: '/audio/malayalam/consonants/va.mp3' },
+    { consonant: 'ശ', word: 'ശലഭം', meaning: 'Butterfly', transliteration: 'shalabham', audioSrc: '/audio/malayalam/consonants/sha.mp3' },
+    { consonant: 'ഷ', word: 'ഷഡ്പദം', meaning: 'Insect', transliteration: 'shatpadam', audioSrc: '/audio/malayalam/consonants/Sha.mp3' },
+    { consonant: 'സ', word: 'സിംഹം', meaning: 'Lion', transliteration: 'simham', audioSrc: '/audio/malayalam/consonants/sa.mp3' },
+    { consonant: 'ഹ', word: 'ഹംസം', meaning: 'Swan', transliteration: 'hamsam', audioSrc: '/audio/malayalam/consonants/ha.mp3' },
+    { consonant: 'ള', word: 'വാഴപ്പഴം', meaning: 'Banana', transliteration: 'vaazhappazham', audioSrc: '/audio/malayalam/consonants/La.mp3' },
+    { consonant: 'ഴ', word: 'പുഴ', meaning: 'River', transliteration: 'puzha', audioSrc: '/audio/malayalam/consonants/zha.mp3' },
+    { consonant: 'റ', word: 'പറ', meaning: 'Measuring Vessel', transliteration: 'para', audioSrc: '/audio/malayalam/consonants/Ra.mp3' },
+];
+
+export const numbers = [
+    { number: '1', word: 'ഒന്ന്', transliteration: 'onnu', audioSrc: '/audio/malayalam/numbers/1.mp3', malayalamNumeral: '൧' },
+    { number: '2', word: 'രണ്ട്', transliteration: 'randu', audioSrc: '/audio/malayalam/numbers/2.mp3', malayalamNumeral: '൨' },
+    { number: '3', word: 'മൂന്ന്', transliteration: 'moonnu', audioSrc: '/audio/malayalam/numbers/3.mp3', malayalamNumeral: '൩' },
+    { number: '4', word: 'നാല്', transliteration: 'naalu', audioSrc: '/audio/malayalam/numbers/4.mp3', malayalamNumeral: '൪' },
+    { number: '5', word: 'അഞ്ച്', transliteration: 'anchu', audioSrc: '/audio/malayalam/numbers/5.mp3', malayalamNumeral: '൫' },
+    { number: '6', word: 'ആറ്', transliteration: 'aaru', audioSrc: '/audio/malayalam/numbers/6.mp3', malayalamNumeral: '൬' },
+    { number: '7', word: 'ഏഴ്', transliteration: 'ezhu', audioSrc: '/audio/malayalam/numbers/7.mp3', malayalamNumeral: '൭' },
+    { number: '8', word: 'എട്ട്', transliteration: 'ettu', audioSrc: '/audio/malayalam/numbers/8.mp3', malayalamNumeral: '൮' },
+    { number: '9', word: 'ഒമ്പത്', transliteration: 'onpathu', audioSrc: '/audio/malayalam/numbers/9.mp3', malayalamNumeral: '൯' },
+    { number: '10', word: 'പത്ത്', transliteration: 'pathu', audioSrc: '/audio/malayalam/numbers/10.mp3', malayalamNumeral: '൰' },
+    { number: '20', word: 'ഇരുപത്', transliteration: 'irupath', audioSrc: '/audio/malayalam/numbers/20.mp3', malayalamNumeral: '൱' },
+    { number: '30', word: 'മുപ്പത്', transliteration: 'muppath', audioSrc: '/audio/malayalam/numbers/30.mp3', malayalamNumeral: '൲' },
+    { number: '40', word: 'നാല്പത്', transliteration: 'naalpth', audioSrc: '/audio/malayalam/numbers/40.mp3', malayalamNumeral: '൳' },
+    { number: '50', word: 'അമ്പത്', transliteration: 'ampath', audioSrc: '/audio/malayalam/numbers/50.mp3', malayalamNumeral: '൴' },
+    { number: '60', word: 'അറുപത്', transliteration: 'arupath', audioSrc: '/audio/malayalam/numbers/60.mp3', malayalamNumeral: '൵' },
+    { number: '70', word: 'എഴുപത്', transliteration: 'ezhupath', audioSrc: '/audio/malayalam/numbers/70.mp3', malayalamNumeral: '൶' },
+    { number: '80', word: 'എൺപത്', transliteration: 'enpath', audioSrc: '/audio/malayalam/numbers/80.mp3', malayalamNumeral: '൷' },
+    { number: '90', word: 'തൊണ്ണൂറ്', transliteration: 'thonnooru', audioSrc: '/audio/malayalam/numbers/90.mp3', malayalamNumeral: '൸' },
+    { number: '100', word: 'നൂറ്', transliteration: 'nooru', audioSrc: '/audio/malayalam/numbers/100.mp3', malayalamNumeral: '൹' },
+    { number: '1000', word: 'ആയിരം', transliteration: 'aayiram', audioSrc: '/audio/malayalam/numbers/1000.mp3', malayalamNumeral: 'ൠ' },
+    { number: '10000', word: 'പതിനായിരം', transliteration: 'pathinaayiram', audioSrc: '/audio/malayalam/numbers/10000.mp3', malayalamNumeral: 'ൡ' },
+    { number: '100000', word: 'ലക്ഷം', transliteration: 'laksham', audioSrc: '/audio/malayalam/numbers/100000.mp3', malayalamNumeral: 'ൢ' },
+];
+
+export const festivals = [
+    { malayalam: 'ഓണം', transliteration: 'Onam', audioSrc: '/audio/malayalam/common-words/onam.mp3' },
+    { malayalam: 'വിഷു', transliteration: 'Vishu', audioSrc: '/audio/malayalam/common-words/vishu.mp3' },
+    { malayalam: 'ക്രിസ്തുമസ്', transliteration: 'Christmas', audioSrc: '/audio/malayalam/common-words/christmas.mp3' },
+    { malayalam: 'റംസാൻ', transliteration: 'Ramzan', audioSrc: '/audio/malayalam/common-words/ramzan.mp3' },
+    { malayalam: 'ദീപാവലി', transliteration: 'Deepavali', audioSrc: '/audio/malayalam/common-words/deepavali.mp3' },
+];
+
+export const seasons = [
+    { malayalam: 'വേനൽക്കാലം', transliteration: 'venalkkalam', meaning: 'Summer', audioSrc: '/audio/malayalam/common-words/summer.mp3' },
+    { malayalam: 'മഴക്കാലം', transliteration: 'mazhakkalam', meaning: 'Monsoon Season', audioSrc: '/audio/malayalam/common-words/monsoon.mp3' },
+    { malayalam: 'മഞ്ഞുകാലം', transliteration: 'manjukalam', meaning: 'Winter', audioSrc: '/audio/malayalam/common-words/winter.mp3' },
+];
+
+export const cities = [
+    { malayalam: 'തിരുവനന്തപുരം', transliteration: 'Thiruvananthapuram', audioSrc: '/audio/malayalam/common-words/thiruvananthapuram.mp3' },
+    { malayalam: 'കൊച്ചി', transliteration: 'Kochi', audioSrc: '/audio/malayalam/common-words/kochi.mp3' },
+    { malayalam: 'കോഴിക്കോട്', transliteration: 'Kozhikode', audioSrc: '/audio/malayalam/common-words/kozhikode.mp3' },
+    { malayalam: 'തൃശ്ശൂർ', transliteration: 'Thrissur', audioSrc: '/audio/malayalam/common-words/thrissur.mp3' },
+    { malayalam: 'കണ്ണൂർ', transliteration: 'Kannur', audioSrc: '/audio/malayalam/common-words/kannur.mp3' },
+];
+
+export const districts = [
+    { malayalam: 'കാസർകോട്', transliteration: 'Kasaragod', audioSrc: '/audio/malayalam/districts/kasaragod.mp3' },
+    { malayalam: 'കണ്ണൂർ', transliteration: 'Kannur', audioSrc: '/audio/malayalam/districts/kannur.mp3' },
+    { malayalam: 'വയനാട്', transliteration: 'Wayanad', audioSrc: '/audio/malayalam/districts/wayanad.mp3' },
+    { malayalam: 'കോഴിക്കോട്', transliteration: 'Kozhikode', audioSrc: '/audio/malayalam/districts/kozhikode.mp3' },
+    { malayalam: 'മലപ്പുറം', transliteration: 'Malappuram', audioSrc: '/audio/malayalam/districts/malappuram.mp3' },
+    { malayalam: 'പാലക്കാട്', transliteration: 'Palakkad', audioSrc: '/audio/malayalam/districts/palakkad.mp3' },
+    { malayalam: 'തൃശൂർ', transliteration: 'Thrissur', audioSrc: '/audio/malayalam/districts/thrissur.mp3' },
+    { malayalam: 'എറണാകുളം', transliteration: 'Ernakulam', audioSrc: '/audio/malayalam/districts/ernakulam.mp3' },
+    { malayalam: 'ഇടുക്കി', transliteration: 'Idukki', audioSrc: '/audio/malayalam/districts/idukki.mp3' },
+    { malayalam: 'കോട്ടയം', transliteration: 'Kottayam', audioSrc: '/audio/malayalam/districts/kottayam.mp3' },
+    { malayalam: 'ആലപ്പുഴ', transliteration: 'Alappuzha', audioSrc: '/audio/malayalam/districts/alappuzha.mp3' },
+    { malayalam: 'പത്തനംതിട്ട', transliteration: 'Pathanamthitta', audioSrc: '/audio/malayalam/districts/pathanamthitta.mp3' },
+    { malayalam: 'കൊല്ലം', transliteration: 'Kollam', audioSrc: '/audio/malayalam/districts/kollam.mp3' },
+    { malayalam: 'തിരുവനന്തപുരം', transliteration: 'Thiruvananthapuram', audioSrc: '/audio/malayalam/districts/thiruvananthapuram.mp3' },
+];
+
+export const malayalamDays = [
+    { malayalam: 'ഞായർ', transliteration: 'Njayar', meaning: 'Sunday', audioSrc: '/audio/malayalam/days/sunday.mp3' },
+    { malayalam: 'തിങ്കൾ', transliteration: 'Thinkal', meaning: 'Monday', audioSrc: '/audio/malayalam/days/monday.mp3' },
+    { malayalam: 'ചൊവ്വ', transliteration: 'Chovva', meaning: 'Tuesday', audioSrc: '/audio/malayalam/days/tuesday.mp3' },
+    { malayalam: 'ബുധൻ', transliteration: 'Budhan', meaning: 'Wednesday', audioSrc: '/audio/malayalam/days/wednesday.mp3' },
+    { malayalam: 'വ്യാഴം', transliteration: 'Vyazham', meaning: 'Thursday', audioSrc: '/audio/malayalam/days/thursday.mp3' },
+    { malayalam: 'വെള്ളി', transliteration: 'Velli', meaning: 'Friday', audioSrc: '/audio/malayalam/days/friday.mp3' },
+    { malayalam: 'ശനി', transliteration: 'Shani', meaning: 'Saturday', audioSrc: '/audio/malayalam/days/saturday.mp3' },
+];
+
+export const malayalamMonths = [
+    { malayalam: 'ചിങ്ങം', transliteration: 'Chingam', meaning: 'August 17 to September 16', audioSrc: '/audio/malayalam/months/chingam.mp3' },
+    { malayalam: 'കന്നി', transliteration: 'Kanni', meaning: 'September 17 to October 17', audioSrc: '/audio/malayalam/months/kanni.mp3' },
+    { malayalam: 'തുലാം', transliteration: 'Thulam', meaning: 'October 18 to November 16', audioSrc: '/audio/malayalam/months/thulam.mp3' },
+    { malayalam: 'വൃശ്ചികം', transliteration: 'Vrischikam', meaning: 'November 17 to December 16', audioSrc: '/audio/malayalam/months/vrischikam.mp3' },
+    { malayalam: 'ധനു', transliteration: 'Dhanu', meaning: 'December 17 to January 14', audioSrc: '/audio/malayalam/months/dhanu.mp3' },
+    { malayalam: 'മകരം', transliteration: 'Makaram', meaning: 'January 15 to February 12', audioSrc: '/audio/malayalam/months/makaram.mp3' },
+    { malayalam: 'കുംഭം', transliteration: 'Kumbham', meaning: 'February 13 to March 14', audioSrc: '/audio/malayalam/months/kumbham.mp3' },
+    { malayalam: 'മീനം', transliteration: 'Meenam', meaning: 'March 15 to April 13', audioSrc: '/audio/malayalam/months/meenam.mp3' },
+    { malayalam: 'മേടം', transliteration: 'Medam', meaning: 'April 14 to May 14', audioSrc: '/audio/malayalam/months/medam.mp3' },
+    { malayalam: 'ഇടവം', transliteration: 'Edavam', meaning: 'May 15 to June 15', audioSrc: '/audio/malayalam/months/edavam.mp3' },
+    { malayalam: 'മിഥുനം', transliteration: 'Mithunam', meaning: 'June 16 to July 16', audioSrc: '/audio/malayalam/months/mithunam.mp3' },
+    { malayalam: 'കർക്കിടകം', transliteration: 'Karkidakam', meaning: 'July 17 to August 16', audioSrc: '/audio/malayalam/months/karkidakam.mp3' },
+];
+
 export interface ExampleWord {
   word: string;
   meaning: string;

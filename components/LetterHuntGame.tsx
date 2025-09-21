@@ -5,17 +5,19 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 
+
+
 interface WordData {
   word: string;
   containsTarget: boolean;
 }
 
-interface GameLevel {
+interface LetterHuntGameLevel {
   targetLetter: string;
   words: WordData[];
 }
 
-const gameLevels: GameLevel[] = [
+const gameLevels: LetterHuntGameLevel[] = [
   {
     targetLetter: 'അ',
     words: [

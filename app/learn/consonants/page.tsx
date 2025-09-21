@@ -7,44 +7,7 @@ import LearnLayout from '@/components/LearnLayout';
 import { useProgress } from '@/context/ProgressContext';
 import { useRouter } from 'next/navigation';
 
-export const consonants = [
-    { consonant: 'ക', word: 'കപ്പൽ', meaning: 'Ship', transliteration: 'kappal', audioSrc: '/audio/malayalam/consonants/ka.mp3' },
-    { consonant: 'ഖ', word: 'മുഖം', meaning: 'Face', transliteration: 'mukham', audioSrc: '/audio/malayalam/consonants/kha.mp3' },
-    { consonant: 'ഗ', word: 'ഗരുഡൻ', meaning: 'Eagle', transliteration: 'garudan', audioSrc: '/audio/malayalam/consonants/ga.mp3' },
-    { consonant: 'ഘ', word: 'മേഘം', meaning: 'Cloud', transliteration: 'megham', audioSrc: '/audio/malayalam/consonants/gha.mp3' },
-    { consonant: 'ങ', word: 'മാങ്ങ', meaning: 'Mango', transliteration: 'maanga', audioSrc: '/audio/malayalam/consonants/nga.mp3' },
-    { consonant: 'ച', word: 'ചക്രം', meaning: 'Wheel', transliteration: 'chakram', audioSrc: '/audio/malayalam/consonants/cha.mp3' },
-    { consonant: 'ഛ', word: 'ഛായ', meaning: 'Photo', transliteration: 'chhaaya', audioSrc: '/audio/malayalam/consonants/chha.mp3' },
-    { consonant: 'ജ', word: 'ജനൽ', meaning: 'Window', transliteration: 'janal', audioSrc: '/audio/malayalam/consonants/ja.mp3' },
-    { consonant: 'ഝ', word: 'ഝഷം', meaning: 'Fish', transliteration: 'jhasham', audioSrc: '/audio/malayalam/consonants/jha.mp3' },
-    { consonant: 'ഞ', word: 'ഞണ്ട്', meaning: 'Crab', transliteration: 'njandu', audioSrc: '/audio/malayalam/consonants/nja.mp3' },
-    { consonant: 'ട', word: 'കുട', meaning: 'Umbrella', transliteration: 'kuda', audioSrc: '/audio/malayalam/consonants/Ta.mp3' },
-    { consonant: 'ഠ', word: 'മിഠായി', meaning: 'Sweet', transliteration: 'mithaayi', audioSrc: '/audio/malayalam/consonants/Tha.mp3' },
-    { consonant: 'ഡ', word: 'ഡപ്പി', meaning: 'Small Box', transliteration: 'dappi', audioSrc: '/audio/malayalam/consonants/Da.mp3' },
-    { consonant: 'ഢ', word: 'ഢക്ക', meaning: 'Drum', transliteration: 'dhakka', audioSrc: '/audio/malayalam/consonants/Dha.mp3' },
-    { consonant: 'ണ', word: 'പണം', meaning: 'Money', transliteration: 'panam', audioSrc: '/audio/malayalam/consonants/Na.mp3' },
-    { consonant: 'ത', word: 'തല', meaning: 'Head', transliteration: 'thala', audioSrc: '/audio/malayalam/consonants/tha.mp3' },
-    { consonant: 'ഥ', word: 'രഥം', meaning: 'Chariot', transliteration: 'ratham', audioSrc: '/audio/malayalam/consonants/thha.mp3' },
-    { consonant: 'ദ', word: 'ദീപം', meaning: 'Lamp', transliteration: 'deepam', audioSrc: '/audio/malayalam/consonants/da.mp3' },
-    { consonant: 'ധ', word: 'ധനുസ്സ്', meaning: 'Bow', transliteration: 'dhanuss', audioSrc: '/audio/malayalam/consonants/dha.mp3' },
-    { consonant: 'ന', word: 'നദി', meaning: 'River', transliteration: 'nadi', audioSrc: '/audio/malayalam/consonants/na.mp3' },
-    { consonant: 'പ', word: 'പശു', meaning: 'Cow', transliteration: 'pashu', audioSrc: '/audio/malayalam/consonants/pa.mp3' },
-    { consonant: 'ഫ', word: 'ഫലം', meaning: 'Fruit', transliteration: 'phalam', audioSrc: '/audio/malayalam/consonants/pha.mp3' },
-    { consonant: 'ബ', word: 'ബലൂൺ', meaning: 'Balloon', transliteration: 'baloon', audioSrc: '/audio/malayalam/consonants/ba.mp3' },
-    { consonant: 'ഭ', word: 'ഭരണി', meaning: 'Jar', transliteration: 'bharani', audioSrc: '/audio/malayalam/consonants/bha.mp3' },
-    { consonant: 'മ', word: 'മരം', meaning: 'Tree', transliteration: 'maram', audioSrc: '/audio/malayalam/consonants/ma.mp3' },
-    { consonant: 'യ', word: 'മുയൽ', meaning: 'Rabbit', transliteration: 'muyal', audioSrc: '/audio/malayalam/consonants/ya.mp3' },
-    { consonant: 'ര', word: 'ശരം', meaning: 'Arrow', transliteration: 'sharam', audioSrc: '/audio/malayalam/consonants/ra.mp3' },
-    { consonant: 'ല', word: 'ലഡ്ഡു', meaning: 'Laddu', transliteration: 'laddu', audioSrc: '/audio/malayalam/consonants/la.mp3' },
-    { consonant: 'വ', word: 'വല', meaning: 'Net', transliteration: 'vala', audioSrc: '/audio/malayalam/consonants/va.mp3' },
-    { consonant: 'ശ', word: 'ശലഭം', meaning: 'Butterfly', transliteration: 'shalabham', audioSrc: '/audio/malayalam/consonants/sha.mp3' },
-    { consonant: 'ഷ', word: 'ഷഡ്പദം', meaning: 'Insect', transliteration: 'shatpadam', audioSrc: '/audio/malayalam/consonants/Sha.mp3' },
-    { consonant: 'സ', word: 'സിംഹം', meaning: 'Lion', transliteration: 'simham', audioSrc: '/audio/malayalam/consonants/sa.mp3' },
-    { consonant: 'ഹ', word: 'ഹംസം', meaning: 'Swan', transliteration: 'hamsam', audioSrc: '/audio/malayalam/consonants/ha.mp3' },
-    { consonant: 'ള', word: 'വാഴപ്പഴം', meaning: 'Banana', transliteration: 'vaazhappazham', audioSrc: '/audio/malayalam/consonants/La.mp3' },
-    { consonant: 'ഴ', word: 'പുഴ', meaning: 'River', transliteration: 'puzha', audioSrc: '/audio/malayalam/consonants/zha.mp3' },
-    { consonant: 'റ', word: 'പറ', meaning: 'Measuring Vessel', transliteration: 'para', audioSrc: '/audio/malayalam/consonants/Ra.mp3' },
-];
+import { consonants } from '@/lib/data';
 
 const MODULE_ID = 'consonants';
 

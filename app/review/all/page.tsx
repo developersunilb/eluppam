@@ -3,12 +3,7 @@
 import LearnLayout from '@/components/LearnLayout';
 
 // Import data from learning modules
-import { vowels } from '@/app/learn/vowels/page'; // Assuming export of vowels array
-import { consonants } from '@/app/learn/consonants/page'; // Assuming export of consonants array
-import { chillaksharangal } from '@/app/learn/chillaksharangal/page'; // Assuming export of chillaksharangal array
-import { kootaksharamData } from '@/lib/kootaksharam-data';
-import { numbers } from '@/app/learn/numbers/page'; // Assuming export of numbers array
-import { festivals, seasons, cities, districts, malayalamDays, malayalamMonths } from '@/app/learn/common-words/page';
+import { vowels, consonants, chillaksharangal, kootaksharamData, numbers, festivals, seasons, cities, districts, malayalamDays, malayalamMonths } from '@/lib/data';
 
 const ReviewItem = ({ letter, word, meaning, transliteration, combination, number }) => (
   <div className="flex items-center justify-between p-3 border-b border-gray-200 last:border-b-0">

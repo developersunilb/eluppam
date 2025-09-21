@@ -2,11 +2,11 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 import LearnLayout from '@/components/LearnLayout';
-import { kootaksharamData } from '@/lib/kootaksharam-data';
+import { kootaksharamData } from '@/lib/data';
 import KootaksharamClient from '@/components/Kootaksharam-Client';
 
 // This function generates the static paths for all categories at build time
-export async function generateStaticParams() {
+export function generateStaticParams() {
   // Create a reverse map for easy lookup from base to slug
   const reverseCategoryMap: { [key: string]: string } = {
       'ക': 'ka',
@@ -20,7 +20,7 @@ export async function generateStaticParams() {
       'ണ': 'nna',
       'ത': 'ta',
       'ദ': 'da',
-      'ന': 'na',
+      'ന': 'ന',
       'പ': 'pa',
       'മ': 'ma',
       'യ': 'ya',
@@ -36,7 +36,7 @@ export async function generateStaticParams() {
   };
 
   // Get all unique base consonants from the data
-  const uniqueBases = [...new Set(kootaksharamData.map(item => item.base))];
+  const uniqueBases = Array.from(new Set(kootaksharamData.map(item => item.base)));
 
   // Map the unique bases to the params object expected by Next.js
   return uniqueBases.map(base => ({

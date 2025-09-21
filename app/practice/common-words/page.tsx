@@ -24,7 +24,21 @@ import { useRouter } from 'next/navigation';
 
 import { practiceFestivals, practiceSeasons, practiceCities } from '@/lib/practice-data';
 
-const PracticeSection = ({ items, moduleId, emailSubject }) => {
+interface PracticeItem {
+  originalWord: string;
+  correctAnswer: string;
+  meaning: string;
+  transliteration: string;
+  blankedWord: string;
+}
+
+interface PracticeSectionProps {
+  items: PracticeItem[];
+  moduleId: string;
+  emailSubject: string;
+}
+
+const PracticeSection = ({ items, moduleId, emailSubject }: PracticeSectionProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [userAnswers, setUserAnswers] = useState<{ [key: number]: string }>({});
   const [isSessionFinished, setIsSessionFinished] = useState(false);
@@ -40,7 +54,7 @@ const PracticeSection = ({ items, moduleId, emailSubject }) => {
   const { updateModuleProgress, userProgress, resetModuleProgress } = useProgress();
   const router = useRouter();
 
-  const shuffle = (array) => {
+  const shuffle = <T>(array: T[]): T[] => {
     let currentIndex = array.length,  randomIndex;
 
     // While there remain elements to shuffle.

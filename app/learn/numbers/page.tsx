@@ -7,30 +7,7 @@ import LearnLayout from '@/components/LearnLayout';
 import { useProgress } from '@/context/ProgressContext';
 import { useRouter } from 'next/navigation';
 
-export const numbers = [
-    { number: '1', word: 'ഒന്ന്', transliteration: 'onnu', audioSrc: '/audio/malayalam/numbers/1.mp3', malayalamNumeral: '൧' },
-    { number: '2', word: 'രണ്ട്', transliteration: 'randu', audioSrc: '/audio/malayalam/numbers/2.mp3', malayalamNumeral: '൨' },
-    { number: '3', word: 'മൂന്ന്', transliteration: 'moonnu', audioSrc: '/audio/malayalam/numbers/3.mp3', malayalamNumeral: '൩' },
-    { number: '4', word: 'നാല്', transliteration: 'naalu', audioSrc: '/audio/malayalam/numbers/4.mp3', malayalamNumeral: '൪' },
-    { number: '5', word: 'അഞ്ച്', transliteration: 'anchu', audioSrc: '/audio/malayalam/numbers/5.mp3', malayalamNumeral: '൫' },
-    { number: '6', word: 'ആറ്', transliteration: 'aaru', audioSrc: '/audio/malayalam/numbers/6.mp3', malayalamNumeral: '൬' },
-    { number: '7', word: 'ഏഴ്', transliteration: 'ezhu', audioSrc: '/audio/malayalam/numbers/7.mp3', malayalamNumeral: '൭' },
-    { number: '8', word: 'എട്ട്', transliteration: 'ettu', audioSrc: '/audio/malayalam/numbers/8.mp3', malayalamNumeral: '൮' },
-    { number: '9', word: 'ഒമ്പത്', transliteration: 'onpathu', audioSrc: '/audio/malayalam/numbers/9.mp3', malayalamNumeral: '൯' },
-    { number: '10', word: 'പത്ത്', transliteration: 'pathu', audioSrc: '/audio/malayalam/numbers/10.mp3', malayalamNumeral: '൰' },
-    { number: '20', word: 'ഇരുപത്', transliteration: 'irupath', audioSrc: '/audio/malayalam/numbers/20.mp3', malayalamNumeral: '൱' },
-    { number: '30', word: 'മുപ്പത്', transliteration: 'muppath', audioSrc: '/audio/malayalam/numbers/30.mp3', malayalamNumeral: '൲' },
-    { number: '40', word: 'നാല്പത്', transliteration: 'naalpth', audioSrc: '/audio/malayalam/numbers/40.mp3', malayalamNumeral: '൳' },
-    { number: '50', word: 'അമ്പത്', transliteration: 'ampath', audioSrc: '/audio/malayalam/numbers/50.mp3', malayalamNumeral: '൴' },
-    { number: '60', word: 'അറുപത്', transliteration: 'arupath', audioSrc: '/audio/malayalam/numbers/60.mp3', malayalamNumeral: '൵' },
-    { number: '70', word: 'എഴുപത്', transliteration: 'ezhupath', audioSrc: '/audio/malayalam/numbers/70.mp3', malayalamNumeral: '൶' },
-    { number: '80', word: 'എൺപത്', transliteration: 'enpath', audioSrc: '/audio/malayalam/numbers/80.mp3', malayalamNumeral: '൷' },
-    { number: '90', word: 'തൊണ്ണൂറ്', transliteration: 'thonnooru', audioSrc: '/audio/malayalam/numbers/90.mp3', malayalamNumeral: '൸' },
-    { number: '100', word: 'നൂറ്', transliteration: 'nooru', audioSrc: '/audio/malayalam/numbers/100.mp3', malayalamNumeral: '൹' },
-    { number: '1000', word: 'ആയിരം', transliteration: 'aayiram', audioSrc: '/audio/malayalam/numbers/1000.mp3', malayalamNumeral: 'ൠ' },
-    { number: '10000', word: 'പതിനായിരം', transliteration: 'pathinaayiram', audioSrc: '/audio/malayalam/numbers/10000.mp3', malayalamNumeral: 'ൡ' },
-    { number: '100000', word: 'ലക്ഷം', transliteration: 'laksham', audioSrc: '/audio/malayalam/numbers/100000.mp3', malayalamNumeral: 'ൢ' },
-];
+import { numbers } from '@/lib/data';
 
 const MODULE_ID = 'numbers';
 

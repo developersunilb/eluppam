@@ -15,7 +15,7 @@ export default function ReviewPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-cream-50 to-marigold-50">
       <main className="p-4 sm:p-6 lg:p-8">
-        <div className="max-w-5xl mx-auto">
+        <div className="max-w-5xl mx-auto bg-white p-8 rounded-xl shadow-lg">
           <h1 className="text-4xl font-bold text-kerala-green-800 mb-8 text-center">Review Zone</h1>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">

@@ -10,7 +10,7 @@ interface WhackAVowelGameProps {
 
 const VOWELS = ['അ', 'ആ', 'ഇ', 'ഈ', 'ഉ', 'ഊ', 'ഋ', 'എ', 'ഏ', 'ഐ', 'ഒ', 'ഓ', 'ഔ'];
 const CONSONANTS = ['ക', 'ഖ', 'ഗ', 'ഘ', 'ങ', 'ച', 'ഛ', 'ജ', 'ಝ', 'ഞ', 'ട', 'ഠ', 'ഡ', 'ഢ', 'ണ'];
-const TOTAL_QUESTIONS = 20; // Increased total questions for the new challenge
+export const TOTAL_QUESTIONS = 20;
 const CONSONANT_CHANCE = 0.3; // 30% chance for a consonant to appear
 
 export default function WhackAVowelGame({ onComplete }: WhackAVowelGameProps) {

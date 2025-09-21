@@ -12,6 +12,7 @@ import WhackAVowelGame from '@/components/WhackAVowelGame'; // Import the new Wh
 export default function VowelsAdventurePage() {
   const router = useRouter();
   const [currentStage, setCurrentStage] = useState(1);
+  const [clearTrigger, setClearTrigger] = useState(0);
 
   const handleTracingComplete = (success: boolean) => {
     if (success) {
@@ -27,13 +28,13 @@ export default function VowelsAdventurePage() {
   const renderStage = () => {
     switch (currentStage) {
       case 1:
-        return <MagicTracingGame character="അ" onComplete={handleTracingComplete} />;
+        return <MagicTracingGame character="അ" onComplete={handleTracingComplete} clearTrigger={clearTrigger} />;
       case 2:
-        return <MagicTracingGame character="ആ" onComplete={handleTracingComplete} />;
+        return <MagicTracingGame character="ആ" onComplete={handleTracingComplete} clearTrigger={clearTrigger} />;
       case 3:
-        return <MagicTracingGame character="ഇ" onComplete={handleTracingComplete} />;
+        return <MagicTracingGame character="ഇ" onComplete={handleTracingComplete} clearTrigger={clearTrigger} />;
       case 4:
-        return <MagicTracingGame character="ഈ" onComplete={handleTracingComplete} />;
+        return <MagicTracingGame character="ഈ" onComplete={handleTracingComplete} clearTrigger={clearTrigger} />;
       case 5:
         return <SoundMatchGame onComplete={handleTracingComplete} />;
       case 6:
