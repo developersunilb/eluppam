@@ -127,7 +127,7 @@ const SoundMatchGame: React.FC<SoundMatchGameProps> = ({ onComplete }) => {
     if (feedback === 'incorrect' && currentVowel && letter === currentVowel.letter) {
       return 'bg-green-300 text-white';
     }
-    return 'bg-gray-200 text-gray-800 hover:bg-gray-300';
+    return 'bg-marigold-200 text-marigold-800 hover:bg-marigold-300';
   };
 
   return (
@@ -140,8 +140,8 @@ const SoundMatchGame: React.FC<SoundMatchGameProps> = ({ onComplete }) => {
       <CardContent className="space-y-6">
         {gameState === 'idle' && (
           <div className="text-center">
-            <h2 className="text-2xl font-bold text-kerala-green-700 mb-4">Sound Match</h2>
-            <p className="text-lg mb-6 text-gray-600">Listen to the sound and match it to the correct vowel. Get 5 in a row to win!</p>
+            {/*<h2 className="text-2xl font-bold text-kerala-green-700 mb-4">Sound Match</h2>*/}
+            <p className="text-lg mb-6 text-marigold-600">Listen to the sound and match it to the correct vowel. Get 5 in a row to win!</p>
             <Button onClick={startGame} className="px-8 py-4 text-xl bg-marigold-500 hover:bg-marigold-600 text-white">
               <Play className="mr-2" /> Start Game
             </Button>
@@ -154,11 +154,11 @@ const SoundMatchGame: React.FC<SoundMatchGameProps> = ({ onComplete }) => {
               <p className="text-xl mb-4 text-kerala-green-700">Listen and select the correct vowel:</p>
               <Button
                 onClick={replaySound}
-                className="p-4 rounded-full bg-marigold-500 hover:bg-marigold-600 text-white shadow-lg"
+                className="rounded-full bg-marigold-500 hover:bg-marigold-600 text-white shadow-lg"
                 size="icon"
                 disabled={!!feedback}
               >
-                <Volume2 size={96} />
+                <Volume2 size={24} />
               </Button>
             </div>
 
@@ -167,7 +167,7 @@ const SoundMatchGame: React.FC<SoundMatchGameProps> = ({ onComplete }) => {
                 <Button
                   key={vowel.letter}
                   onClick={() => handleOptionClick(vowel.letter)}
-                  className={`text-5xl p-6 ${getButtonClassName(vowel.letter)}`}
+                  className={`text-4xl p-6 ${getButtonClassName(vowel.letter)}`}
                   disabled={!!feedback}
                 >
                   {vowel.letter}

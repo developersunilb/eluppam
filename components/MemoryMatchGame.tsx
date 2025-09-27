@@ -41,7 +41,27 @@ const MemoryMatchGame: React.FC<MemoryMatchGameProps> = ({ onComplete }) => {
   const [canFlip, setCanFlip] = useState(true);
 
   useEffect(() => {
-    setCards(generateCards());
+    const initialCards = generateCards();
+    // Initially show all cards for memorization
+    const revealedCards = initialCards.map(card => ({ ...card, flipped: true }));
+    setCards(revealedCards);
+    setMatches(0); // Reset matches for a new game
+    setFlippedCards([]); // Clear any previously flipped cards
+
+    // Disable flipping during memorization phase
+    setCanFlip(false);
+
+    const timer = setTimeout(() => {
+      // After 3 seconds, hide all non-matched cards
+      setCards(prevCards =>
+        prevCards.map(card =>
+          card.matched ? card : { ...card, flipped: false }
+        )
+      );
+      setCanFlip(true); // Re-enable flipping after memorization
+    }, 3000); // 3 seconds
+
+    return () => clearTimeout(timer); // Cleanup the timer if component unmounts
   }, []);
 
   useEffect(() => {

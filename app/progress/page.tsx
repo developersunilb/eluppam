@@ -27,6 +27,7 @@ import { CheckCircle2, Loader, XCircle, Play, RefreshCw, HelpCircle } from 'luci
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 
+import { ModuleProgress, PracticeAttempt, LessonProgress } from '@/lib/types/progress';
 
 // Import data arrays for total counts
 import { vowels } from '@/lib/data';
@@ -58,10 +59,10 @@ const ProgressPage = () => {
     );
   }
 
-  if (!userProgress || userProgress.modules.length === 0) {
+  if (!userProgress || (userProgress.modules.length === 0 && userProgress.badges.length === 0)) {
     return (
         <div className="min-h-screen flex flex-col items-center justify-center text-center">
-          <p className="text-lg text-gray-600">No progress recorded yet. Start learning to see your progress here!</p>
+          <p className="text-lg text-gray-600">No progress recorded yet. Start learning or earning badges to see your progress here!</p>
         </div>
     );
   }
@@ -106,7 +107,7 @@ const ProgressPage = () => {
   const learningModules = userProgress.modules.filter(m => m.moduleType === 'learn');
   const practiceModules = userProgress.modules.filter(m => m.moduleType === 'practice');
 
-  const ModuleCard = ({ module }) => {
+  const ModuleCard = ({ module }: { module: ModuleProgress }) => {
     const totalItems = getTotalItems(module.moduleId);
     const currentProgressIndex = module.practiceState?.currentIndex !== undefined 
       ? module.practiceState.currentIndex 
@@ -215,7 +216,7 @@ const ProgressPage = () => {
             <div className="mt-4">
               <h3 className="text-md font-semibold text-kerala-green-600 mb-2">Practice Attempts:</h3>
               <ul className="space-y-1">
-                {module.practiceAttempts.map((attempt, index) => (
+                {module.practiceAttempts.map((attempt: PracticeAttempt, index) => (
                   <li key={attempt.attemptId || index} className="text-sm text-gray-700 flex justify-between items-center">
                     <span>Attempt {index + 1}: {attempt.score.toFixed(0)}%</span>
                     <span className="text-xs text-gray-500">{new Date(attempt.timestamp).toLocaleString()}</span>
@@ -229,7 +230,7 @@ const ProgressPage = () => {
             <div className="mt-4">
               <h3 className="text-md font-semibold text-kerala-green-600">Lessons:</h3>
               <ul className="list-disc list-inside text-sm text-gray-700">
-                {module.lessons.map(lesson => (
+                {module.lessons.map((lesson: LessonProgress) => (
                   <li key={lesson.lessonId} className="flex items-center">
                     {lesson.completed ? <CheckCircle2 className="h-4 w-4 text-green-500 mr-1" /> : <XCircle className="h-4 w-4 text-red-500 mr-1" />}
                     {lesson.lessonId} {lesson.score !== undefined ? `(${lesson.score}%)` : ''}
@@ -245,7 +246,14 @@ const ProgressPage = () => {
 
   return (
     <LearnLayout title="Your Progress">
-      <div className="flex justify-end mb-4">
+      <div className="flex justify-end mb-4 space-x-2"> {/* Added space-x-2 for spacing */}
+        {userProgress?.badges && userProgress.badges.length > 0 && (
+          <Link href="/badgesearned" legacyBehavior>
+            <Button variant="outline">
+              Badges
+            </Button>
+          </Link>
+        )}
         <Link href="/progress/faq" legacyBehavior>
           <Button variant="outline">
             <HelpCircle className="h-4 w-4 mr-2" />

@@ -13,6 +13,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useProgress } from '@/context/ProgressContext';
+import Image from 'next/image';
 
 import { GameLevel } from '@/lib/types/progress';
 import { GAME_LEVELS } from '@/lib/game-levels';
@@ -80,8 +81,8 @@ export default function GamesPage() {
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <Link href={level.href} passHref>
-                            <div className="relative w-full max-w-6 mx-auto aspect-square rounded-lg flex items-center justify-center cursor-pointer overflow-hidden">
-                              <img src="/lockicons/unlocked.png" alt={level.title} className="w-full h-full object-cover" />
+                            <div className="relative w-24 h-24 mx-auto aspect-square rounded-lg flex items-center justify-center cursor-pointer overflow-hidden">
+                              <Image src="/lockicons/unlocked.png" alt={level.title} fill className="w-full h-full object-cover" />
                               <div className="absolute inset-0 flex items-center justify-center">
                                 <Unlock className="h-12 w-12 text-white drop-shadow-md" />
                               </div>
@@ -93,8 +94,8 @@ export default function GamesPage() {
                         </TooltipContent>
                       </Tooltip>
                     ) : (
-                      <div className="relative w-full max-w-6 mx-auto aspect-square rounded-lg overflow-hidden">
-                        <img src="/lockicons/lock2.png" alt={level.title} className="w-full h-full object-cover" />
+                      <div className="relative w-24 h-24 mx-auto aspect-square rounded-lg overflow-hidden">
+                        <Image src="/lockicons/lock2.png" alt={level.title} fill className="w-full h-full object-cover" />
                         <div className="absolute inset-0 flex items-center justify-center">
                           <Lock className="h-12 w-12 text-white opacity-75 drop-shadow-md" />
                         </div>

@@ -13,7 +13,7 @@ export default function CulturalHighlight() {
           <div className="inline-flex items-center px-4 py-2 rounded-full bg-gradient-to-r from-marigold-100 to-kerala-green-100 border border-marigold-200 mb-6">
             <MapPin className="h-4 w-4 text-marigold-600 mr-2" />
             <span className="text-sm font-medium text-kerala-green-700">
-              Discover Kerala's Rich Heritage
+              Discover Kerala&apos;s Rich Heritage
             </span>
           </div>
           <h2 className="text-3xl sm:text-4xl font-bold mb-4">
@@ -24,7 +24,7 @@ export default function CulturalHighlight() {
             <span className="text-kerala-green-800">Cultural Stories</span>
           </h2>
           <p className="text-lg text-kerala-green-600 max-w-2xl mx-auto">
-            Immerse yourself in Kerala's vibrant traditions, festivals, and folklore 
+            Immerse yourself in Kerala&apos;s vibrant traditions, festivals, and folklore 
             while naturally acquiring Malayalam vocabulary and cultural understanding.
           </p>
         </div>
@@ -43,7 +43,7 @@ export default function CulturalHighlight() {
                   The Magic of Onam
                 </h3>
                 <p className="text-white/90 text-sm">
-                  Learn Malayalam while discovering Kerala's harvest festival
+                  Learn Malayalam while discovering Kerala&apos;s harvest festival
                 </p>
               </div>
             </div>
@@ -60,7 +60,7 @@ export default function CulturalHighlight() {
               </div>
               <p className="text-kerala-green-700 mb-4">
                 Explore the vibrant Onam celebration through interactive stories, learn traditional 
-                greetings, and understand the cultural significance behind Kerala's most beloved festival.
+                greetings, and understand the cultural significance behind Kerala&apos;s most beloved festival.
               </p>
               <Button className="bg-gradient-to-r from-marigold-500 to-marigold-600 hover:from-marigold-600 hover:to-marigold-700 text-white w-full">
                 Start Cultural Journey
@@ -78,7 +78,7 @@ export default function CulturalHighlight() {
             {[
               {
                 title: "Backwater Tales",
-                description: "Navigate Kerala's serene waterways while learning directional vocabulary",
+                description: "Navigate Kerala&apos;s serene waterways while learning directional vocabulary",
                 color: "from-backwater-blue-500 to-backwater-blue-600",
                 lessons: 12
               },

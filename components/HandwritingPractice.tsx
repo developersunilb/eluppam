@@ -49,22 +49,39 @@ const HandwritingPractice: React.FC<HandwritingPracticeProps> = ({ character, on
     }
   }, [context, drawGuideCharacter]);
 
-  const startDrawing = useCallback(({
-    nativeEvent
-  }: React.MouseEvent | React.TouchEvent) => {
+  const getCoordinates = (event: React.MouseEvent | React.TouchEvent): { x: number; y: number } | null => {
+    const canvas = canvasRef.current;
+    if (!canvas) return null;
+
+    const rect = canvas.getBoundingClientRect();
+
+    if (event.nativeEvent instanceof MouseEvent) {
+        return { x: event.nativeEvent.offsetX, y: event.nativeEvent.offsetY };
+    } else if (event.nativeEvent instanceof TouchEvent) {
+        if (event.nativeEvent.touches.length > 0) {
+            const touch = event.nativeEvent.touches[0];
+            return { x: touch.clientX - rect.left, y: touch.clientY - rect.top };
+        }
+    }
+    return null;
+  };
+
+  const startDrawing = useCallback((event: React.MouseEvent | React.TouchEvent) => {
     if (!context) return;
-    const { offsetX, offsetY } = (nativeEvent as React.MouseEvent).touches ? (nativeEvent as React.TouchEvent).touches[0] : (nativeEvent as React.MouseEvent);
+    const coords = getCoordinates(event);
+    if (!coords) return;
+    const { x, y } = coords;
     context.beginPath();
-    context.moveTo(offsetX, offsetY);
+    context.moveTo(x, y);
     setIsDrawing(true);
   }, [context]);
 
-  const draw = useCallback(({
-    nativeEvent
-  }: React.MouseEvent | React.TouchEvent) => {
+  const draw = useCallback((event: React.MouseEvent | React.TouchEvent) => {
     if (!isDrawing || !context) return;
-    const { offsetX, offsetY } = (nativeEvent as React.MouseEvent).touches ? (nativeEvent as React.TouchEvent).touches[0] : (nativeEvent as React.MouseEvent);
-    context.lineTo(offsetX, offsetY);
+    const coords = getCoordinates(event);
+    if (!coords) return;
+    const { x, y } = coords;
+    context.lineTo(x, y);
     context.stroke();
     setHasDrawn(true);
   }, [isDrawing, context]);
@@ -105,8 +122,7 @@ const HandwritingPractice: React.FC<HandwritingPracticeProps> = ({ character, on
         onTouchEnd={endDrawing}
         onTouchCancel={endDrawing}
         onTouchMove={draw}
-        className="border-2 border-kerala-green-300 rounded-lg bg-white touch-none"
-        style={{ width: canvasWidth, height: canvasHeight }}
+        className="border-2 border-kerala-green-300 rounded-lg bg-white touch-none handwriting-canvas"
       />
       <div className="mt-4 space-x-2">
         <Button onClick={clearCanvas} variant="outline" className="bg-traditional-red-100 hover:bg-traditional-red-200 text-traditional-red-800">

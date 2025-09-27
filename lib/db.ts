@@ -22,6 +22,18 @@ export class MathrebashaDexie extends Dexie {
 
   constructor() {
     super('MathrebashaDB');
+    this.version(3).stores({
+      userProgress: 'userId,modules,badges', // Add badges to schema
+      userSessions: 'id',
+      feedback: '++id,moduleId,timestamp',
+    }).upgrade(tx => {
+      // For existing users, ensure badges array is initialized
+      tx.table('userProgress').toCollection().modify(progress => {
+        if (!progress.badges) {
+          progress.badges = [];
+        }
+      });
+    });
     this.version(2).stores({
       feedback: '++id,moduleId,timestamp',
     }).upgrade(tx => {
@@ -52,6 +64,7 @@ export async function getOrCreateUserProgress(userId: string): Promise<UserProgr
     progress = {
       userId,
       modules: [],
+      badges: [], // Initialize badges array
       lastUpdated: Date.now(),
     };
     await db.userProgress.add(progress);

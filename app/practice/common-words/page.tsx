@@ -23,6 +23,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useRouter } from 'next/navigation';
 
 import { practiceFestivals, practiceSeasons, practiceCities } from '@/lib/practice-data';
+import { shuffle } from '@/lib/utils';
 
 interface PracticeItem {
   originalWord: string;
@@ -48,39 +49,20 @@ const PracticeSection = ({ items, moduleId, emailSubject }: PracticeSectionProps
   const [isInitialLoad, setIsInitialLoad] = useState(true);
   const isModuleCompletedRef = useRef(false);
   const [feedbackInput, setFeedbackInput] = useState('');
-  const [shuffledQuestions, setShuffledQuestions] = useState([]);
-  const [incorrectAnswersSummary, setIncorrectAnswersSummary] = useState([]);
+  const [shuffledQuestions, setShuffledQuestions] = useState<PracticeItem[]>([]);
+  const [incorrectAnswersSummary, setIncorrectAnswersSummary] = useState<any[]>([]);
 
   const { updateModuleProgress, userProgress, resetModuleProgress } = useProgress();
   const router = useRouter();
-
-  const shuffle = <T>(array: T[]): T[] => {
-    let currentIndex = array.length,  randomIndex;
-
-    // While there remain elements to shuffle.
-    while (currentIndex != 0) {
-
-      // Pick a remaining element.
-      randomIndex = Math.floor(Math.random() * currentIndex);
-      currentIndex--;
-
-      // And swap it with the current element.
-      [array[currentIndex], array[randomIndex]] = [
-        array[randomIndex], array[currentIndex]];
-    }
-
-    return array;
-  }
 
   const currentItem = shuffledQuestions[currentIndex];
 
   // Load saved practice state on mount
   useEffect(() => {
-    setShuffledQuestions(shuffle([...items]));
-    // The rest of the logic for loading saved practice state should be handled carefully
-    // to avoid re-shuffling or resetting state unnecessarily.
-    // For now, we'll assume initial load is handled by the parent component or context.
-  }, [items]);
+    if (shuffledQuestions.length === 0) {
+      setShuffledQuestions(shuffle([...items]));
+    }
+  }, [items, shuffledQuestions.length]);
 
   // Save practice state on unmount
   useEffect(() => {
@@ -128,8 +110,6 @@ const PracticeSection = ({ items, moduleId, emailSubject }: PracticeSectionProps
     resetModuleProgress(moduleId); // Reset progress in context/DB
   };
 
-  
-
   const goToNext = () => {
     if (!shuffledQuestions.length) return;
     const nextIndex = currentIndex + 1;
@@ -148,7 +128,7 @@ const PracticeSection = ({ items, moduleId, emailSubject }: PracticeSectionProps
 
   const checkAnswers = () => {
     let correctCount = 0;
-    const incorrects = [];
+    const incorrects: any[] = [];
     shuffledQuestions.forEach((question, index) => {
       if (userAnswers[index] === question.correctAnswer) {
         correctCount++;
@@ -254,7 +234,7 @@ const PracticeSection = ({ items, moduleId, emailSubject }: PracticeSectionProps
             Previous
           </Button>
           <div className="text-sm text-gray-500">
-            {currentIndex + 1} / {items.length}
+            {currentIndex + 1} / {shuffledQuestions.length}
           </div>
           {currentIndex < shuffledQuestions.length - 1 ? (
             <Button onClick={goToNext} className="bg-kerala-green-600 hover:bg-kerala-green-700 text-white">
@@ -294,7 +274,6 @@ const PracticeSection = ({ items, moduleId, emailSubject }: PracticeSectionProps
     </div>
   );
 };
-
 
 export default function CommonWordsPracticePage() {
   return (

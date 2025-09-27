@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, Volume2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Kootaksharam } from '@/lib/kootaksharam-data';
+import { Kootaksharam, ExampleWord } from '@/lib/data';
 import { useProgress } from '@/context/ProgressContext';
 import { useRouter } from 'next/navigation';
 
@@ -100,7 +100,7 @@ export default function KootaksharamClient({ data, moduleId }: KootaksharamClien
       <div className="mt-12">
           <h2 className="text-2xl font-semibold text-kerala-green-800 mb-4">Example Words</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {currentItem.examples.map((example, index) => (
+              {currentItem.examples.map((example: ExampleWord, index: number) => (
                   <Card key={index} className="text-left">
                       <CardHeader>
                           <div className="flex justify-between items-start">

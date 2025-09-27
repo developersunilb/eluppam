@@ -143,7 +143,7 @@ export default function ChillaksharangalPage() {
 
         {showMoreWords && moreChillaksharangalWords[currentLetter.letter] && (
           <div className="mt-6 p-4 bg-marigold-50 rounded-lg shadow-inner">
-            <h3 className="text-xl font-semibold text-kerala-green-700 mb-3">More words with '{currentLetter.letter}':</h3>
+            <h3 className="text-xl font-semibold text-kerala-green-700 mb-3">More words with &apos;{currentLetter.letter}&apos;:</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
               {moreChillaksharangalWords[currentLetter.letter].map((wordItem, index) => (
                 <div key={index} className="relative bg-white p-3 rounded-md text-kerala-green-800 shadow-sm flex items-center justify-between">

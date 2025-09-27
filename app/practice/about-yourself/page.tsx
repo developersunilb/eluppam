@@ -135,7 +135,7 @@ export default function AboutYourselfPracticePage() {
         {isSessionFinished && (
           <div className="mt-8 text-center p-4 bg-green-100 rounded-lg">
             <h2 className="text-2xl font-bold text-green-800">Practice Session Completed!</h2>
-            <p className="text-green-700">You have successfully completed the "Introduce Yourself" practice session.</p>
+            <p className="text-green-700">You have successfully completed the &quot;Introduce Yourself&quot; practice session.</p>
             <Button onClick={() => { setCurrentIndex(0); setUserInput(''); setFeedback(null); setIsSessionFinished(false); resetModuleProgress(MODULE_ID); }} className="mt-4 bg-kerala-green-600 hover:bg-kerala-green-700 text-white">
               Restart
             </Button>

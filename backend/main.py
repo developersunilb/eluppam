@@ -1,12 +1,14 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, File, UploadFile, Form
 from pydantic import BaseModel
 from PIL import Image, ImageOps, ImageFilter
 import pytesseract
 import base64
 import io
-from fastapi.middleware.cors import CORSMiddleware
-import time
+import os
 import logging
+import speech_recognition as sr
+from pydub import AudioSegment
+from fastapi.middleware.cors import CORSMiddleware
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -17,6 +19,10 @@ logger = logging.getLogger(__name__)
 # Example for Windows: r'C:\Program Files\Tesseract-OCR\tesseract.exe'
 # Example for Linux/macOS: r'/usr/bin/tesseract' or r'/usr/local/bin/tesseract'
 pytesseract.pytesseract.tesseract_cmd = pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
+
+# IMPORTANT: Replace 'YOUR_FFMPEG_BIN_DIRECTORY' with the actual path to your FFmpeg bin directory
+# For example: r'C:\ffmpeg\bin'
+ffmpeg_bin_dir = r"C:\ffmpeg\bin" # Assuming user's path is C:\ffmpeg\bin
 
 app = FastAPI()
 
@@ -132,3 +138,49 @@ async def recognize_image(image_data: ImageData):
     except Exception as e:
         logger.error(f"Error during recognition: {e}", exc_info=True)
         return {"error": str(e)}
+
+@app.post("/recognize-speech")
+async def recognize_speech(audio_file: UploadFile = File(...), target_word: str = Form(...)):
+    logger.info(f"Received speech recognition request for target_word: {target_word}")
+    logger.info(f"FFMPEG_PATH: {os.path.join(ffmpeg_bin_dir, 'ffmpeg.exe')}") # Keep for debugging
+    logger.info(f"FFPROBE_PATH: {os.path.join(ffmpeg_bin_dir, 'ffprobe.exe')}") # Keep for debugging
+    try:
+            r = sr.Recognizer()
+            audio_content = await audio_file.read()
+
+            # Convert webm to wav using pydub, explicitly passing ffmpeg_path and ffprobe_path
+            audio_segment = AudioSegment.from_file(
+                io.BytesIO(audio_content),
+                format="webm",
+                ffmpeg_path=os.path.join(ffmpeg_bin_dir, "ffmpeg.exe"),
+                ffprobe_path=os.path.join(ffmpeg_bin_dir, "ffprobe.exe")
+            )
+            wav_file = io.BytesIO()
+            audio_segment.export(
+                wav_file,
+                format="wav",
+                ffmpeg_path=os.path.join(ffmpeg_bin_dir, "ffmpeg.exe") # Export also needs ffmpeg_path
+            )
+            wav_file.seek(0) # Rewind to the beginning of the file
+
+            audio_data = sr.AudioFile(wav_file) # Pass the WAV BytesIO object
+
+        with audio_data as source:
+            audio = r.record(source)
+
+        transcribed_text = r.recognize_google(audio, language="ml-IN")
+        logger.info(f"Transcribed text: '{transcribed_text}'")
+
+        is_correct = target_word.lower() in transcribed_text.lower()
+
+        return {"is_correct": is_correct, "transcribed_text": transcribed_text}
+
+    except sr.UnknownValueError:
+        logger.warning("Speech Recognition could not understand audio")
+        return {"is_correct": False, "transcribed_text": ""}
+    except sr.RequestError as e:
+        logger.error(f"Could not request results from Google Speech Recognition service; {e}")
+        return {"is_correct": False, "transcribed_text": "", "error": str(e)}
+    except Exception as e:
+        logger.error(f"Error during speech recognition: {e}", exc_info=True)
+        return {"is_correct": False, "transcribed_text": "", "error": str(e)}

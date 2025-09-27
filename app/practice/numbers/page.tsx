@@ -22,6 +22,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useRouter } from 'next/navigation';
 
 import { practiceNumbers } from '@/lib/practice-data';
+import { PracticeItem, IncorrectAnswerSummaryItem } from '@/lib/types';
 
 const MODULE_ID = 'numbers-practice';
 
@@ -35,13 +36,13 @@ export default function NumbersPracticePage() {
   const [isInitialLoad, setIsInitialLoad] = useState(true);
   const isModuleCompletedRef = useRef(false);
   const [feedbackInput, setFeedbackInput] = useState('');
-  const [shuffledQuestions, setShuffledQuestions] = useState([]);
-  const [incorrectAnswersSummary, setIncorrectAnswersSummary] = useState([]);
+  const [shuffledQuestions, setShuffledQuestions] = useState<PracticeItem[]>([]);
+  const [incorrectAnswersSummary, setIncorrectAnswersSummary] = useState<IncorrectAnswerSummaryItem[]>([]);
 
   const { updateModuleProgress, userProgress, resetModuleProgress } = useProgress();
   const router = useRouter();
 
-  const shuffle = (array) => {
+  const shuffle = (array: PracticeItem[]) => {
     let currentIndex = array.length,  randomIndex;
 
     // While there remain elements to shuffle.
@@ -83,7 +84,7 @@ export default function NumbersPracticePage() {
         );
       }
     };
-  }, [currentIndex, correctAnswersCount, updateModuleProgress, MODULE_ID]);
+  }, [currentIndex, correctAnswersCount, updateModuleProgress]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
@@ -130,8 +131,8 @@ export default function NumbersPracticePage() {
 
   const checkAnswers = () => {
     let correctCount = 0;
-    const incorrects = [];
-    shuffledQuestions.forEach((question, index) => {
+    const incorrects: IncorrectAnswerSummaryItem[] = [];
+    shuffledQuestions.forEach((question: PracticeItem, index) => {
       if (userAnswers[index] === question.correctAnswer) {
         correctCount++;
       } else {

@@ -2,6 +2,8 @@ import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { Play, Pause, RotateCcw, Volume2, VolumeX } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useProgress } from '@/context/ProgressContext';
+import MobileGameControls from './MobileGameControls';
+import Image from 'next/image';
 
 // --- Constants ---
 export const MALAYALAM_CONSONANTS = [
@@ -13,7 +15,7 @@ const GOOD_COLORS = ['#22c55e', '#3b82f6', '#8b5cf6', '#eab308']; // Green, Blue
 const BLACK_HOLE_COLOR = '#000000';
 const ACCRETION_DISK_COLOR = '#FFA500'; // Glowing Orange
 const NEON_CYAN = '#00ffff';
-const MAX_LIVES = 9;
+const MAX_LIVES = 5;
 const BONUS_POINTS_PERFECT_RUN = 500;
 
 const ConsonantGame = () => {
@@ -36,7 +38,12 @@ const ConsonantGame = () => {
   const [gameOver, setGameOver] = useState(false);
   const [levelComplete, setLevelComplete] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
-  const [gameSummary, setGameSummary] = useState({ collected: [], missed: [], hasBadge: false });
+  const [gameSummary, setGameSummary] = useState<{ collected: string[]; missed: string[]; hasBadge: boolean }>({ collected: [], missed: [], hasBadge: false });
+
+  // Mobile controls state
+  const [isUpPressed, setIsUpPressed] = useState(false);
+  const [isDownPressed, setIsDownPressed] = useState(false);
+  const [isJumpPressed, setIsJumpPressed] = useState(false);
 
   const isPlayingRef = useRef(isPlaying);
   useEffect(() => { isPlayingRef.current = isPlaying; }, [isPlaying]);
@@ -57,7 +64,7 @@ const ConsonantGame = () => {
     if (!canvas) return;
 
     gameRef.current = {
-        player: { x: 100, y: canvas.height / 2, width: 40, height: 20, velocityY: 0, invincibility: 0 },
+        player: { x: 100, y: canvas.height / 2, width: 40, height: 20, velocityY: 0, invincibility: 0, isJumping: false },
         obstacles: [],
         floatingLetters: [],
         stars: [],
@@ -240,8 +247,18 @@ const ConsonantGame = () => {
         const isGameActive = isPlaying && !gameOver && !levelComplete;
 
         if (isGameActive) {
-            if (game.keys.up) player.velocityY -= game.verticalSpeed;
-            if (game.keys.down) player.velocityY += game.verticalSpeed;
+            if (game.keys.up || isUpPressed) player.velocityY -= game.verticalSpeed;
+            if (game.keys.down || isDownPressed) player.velocityY += game.verticalSpeed;
+            if (isJumpPressed) {
+                // Trigger jump only once per press
+                if (!game.player.isJumping) {
+                    jumpAudioRef.current?.play();
+                    player.velocityY = game.jumpPower;
+                    game.player.isJumping = true; // Set a flag to prevent continuous jumping
+                }
+            } else {
+                game.player.isJumping = false; // Reset jump flag when button is released
+            }
         }
         
         player.velocityY *= 0.94;
@@ -335,7 +352,7 @@ const ConsonantGame = () => {
     return () => {
       if (animationFrameId.current) cancelAnimationFrame(animationFrameId.current);
     };
-  }, [isPlaying, gameOver, levelComplete, lives, resetGame]);
+  }, [isPlaying, gameOver, levelComplete, lives, resetGame, isUpPressed, isDownPressed, isJumpPressed]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -429,7 +446,7 @@ const ConsonantGame = () => {
         <div>Consonants: <span className="text-blue-400">{gameSummary.collected.length > 0 ? gameSummary.collected.length : (gameRef.current?.collectedConsonants.length || 0)} / {MALAYALAM_CONSONANTS.length}</span></div>
       </div>
 
-      <div className="relative mb-4 border-4 border-gray-700 rounded-lg overflow-hidden shadow-lg w-full max-w-[800px]">
+      <div className="mb-4 border-4 border-gray-700 rounded-lg overflow-hidden shadow-lg w-full max-w-[800px]">
         <canvas ref={canvasRef} className="w-full h-auto cursor-pointer" />
         {(gameOver || levelComplete) && (
           <div className="absolute inset-0 bg-black bg-opacity-80 flex items-center justify-center text-center p-4">
@@ -445,7 +462,7 @@ const ConsonantGame = () => {
               <div className="bg-gray-800 p-1 sm:p-4 rounded-lg shadow-2xl max-w-lg w-full relative">
                 <h2 className="font-bold text-green-400 mb-1 [font-size:clamp(0.9rem,3.5vw,1.3rem)]">Great job!</h2>
                 {gameSummary.hasBadge ? (
-                    <p className="mb-2 [font-size:clamp(0.65rem,2vw,0.8rem)]">You've earned the Consonants Badge for a perfect run!</p>
+                    <p className="mb-2 [font-size:clamp(0.65rem,2vw,0.8rem)]">You&apos;ve earned the Consonants Badge for a perfect run!</p>
                 ) : (
                     <p className="mb-2 [font-size:clamp(0.65rem,2vw,0.8rem)]">Try to get all of them next time and earn a consonants badge.</p>
                 )}
@@ -473,8 +490,8 @@ const ConsonantGame = () => {
                     Congrats, Next Level Unlocked!
                 </button>
                 {gameSummary.hasBadge && (
-                    <div className="absolute bottom-2 right-2 w-16 h-16 sm:w-20 sm:h-20 relative z-0">
-                        <img src="/badges/kaabadge.png" alt="Consonants Badge" className="absolute inset-0 w-full h-full" />
+                    <div className="absolute bottom-2 right-2 w-16 h-16 sm:w-20 sm:h-20 z-0">
+                        <Image src="/badges/kaabadge.png" alt="Consonants Badge" fill className="absolute inset-0 w-full h-full" />
                         <div className="absolute inset-0 flex items-center justify-center text-blue-700 font-bold text-2xl sm:text-3xl z-10 shadow-blue-500 shadow-lg">ക</div>
                     </div>
                 )}
@@ -486,22 +503,32 @@ const ConsonantGame = () => {
 
       <div className="flex gap-4 items-center justify-center">
         {!isPlaying && !gameOver && !levelComplete ? (
-          <button onClick={startGame} className="w-24 h-24 flex items-center justify-center bg-emerald-500 rounded-full text-white shadow-lg">
+          <button onClick={startGame} className="w-24 h-24 flex items-center justify-center bg-emerald-500 rounded-full text-white shadow-lg" title="Start Game">
             <Play size={40} />
           </button>
         ) : null}
         {isPlaying && (
-          <button onClick={pauseGame} className="w-24 h-24 flex items-center justify-center bg-yellow-500 rounded-full text-white shadow-lg">
+          <button onClick={pauseGame} className="w-24 h-24 flex items-center justify-center bg-yellow-500 rounded-full text-white shadow-lg" title="Pause Game">
             <Pause size={40} />
           </button>
         )}
-        <button onClick={resetGame} className="w-16 h-16 flex items-center justify-center bg-gray-700 rounded-full text-white shadow-lg">
+        <button onClick={resetGame} className="w-16 h-16 flex items-center justify-center bg-gray-700 rounded-full text-white shadow-lg" title="Reset Game">
             <RotateCcw size={28} />
         </button>
-        <button onClick={toggleMute} className="w-16 h-16 flex items-center justify-center bg-blue-500 rounded-full text-white shadow-lg">
+        <button onClick={toggleMute} className="w-16 h-16 flex items-center justify-center bg-blue-500 rounded-full text-white shadow-lg" title={isMuted ? 'Unmute' : 'Mute'}>
           {isMuted ? <VolumeX size={28} /> : <Volume2 size={28} />}
         </button>
       </div>
+
+      {/* Mobile Game Controls */}
+      <MobileGameControls
+        onUpPress={() => setIsUpPressed(true)}
+        onUpRelease={() => setIsUpPressed(false)}
+        onDownPress={() => setIsDownPressed(true)}
+        onDownRelease={() => setIsDownPressed(false)}
+        onJumpPress={() => setIsJumpPressed(true)}
+        onJumpRelease={() => setIsJumpPressed(false)}
+      />
     </div>
   );
 };

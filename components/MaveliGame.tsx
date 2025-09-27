@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { consonants } from '@/lib/data';
+import { consonants } from '../lib/malayalam-characters';
 import { Button } from './ui/button';
 import { toast } from '../hooks/use-toast';
 import { playAudio } from '../lib/utils';

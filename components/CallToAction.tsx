@@ -39,7 +39,7 @@ export default function CallToAction() {
 
               {/* Description */}
               <p className="text-lg text-kerala-green-600 mb-8 max-w-2xl mx-auto leading-relaxed">
-                Experience the joy of learning Malayalam through Kerala's rich culture, 
+                Experience the joy of learning Malayalam through Kerala&apos;s rich culture, 
                 beautiful stories, and proven gamification techniques. Your linguistic 
                 adventure awaits!
               </p>

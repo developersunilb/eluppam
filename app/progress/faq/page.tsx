@@ -37,7 +37,7 @@ const ProgressFAQPage = () => {
             <AccordionItem value="item-4">
               <AccordionTrigger>Can I reset my progress?</AccordionTrigger>
               <AccordionContent>
-                Yes, you can reset your progress for any module by clicking the "Reset Progress" button on the progress page. Please note that this action cannot be undone.
+                Yes, you can reset your progress for any module by clicking the &quot;Reset Progress&quot; button on the progress page. Please note that this action cannot be undone.
               </AccordionContent>
             </AccordionItem>
           </Accordion>

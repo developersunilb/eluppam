@@ -1,7 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
-import { UserProgress, ModuleProgress, LessonProgress, PracticeAttempt } from '@/lib/types/progress';
+import { UserProgress, ModuleProgress, LessonProgress, PracticeAttempt, Badge } from '@/lib/types/progress';
 import { getOrCreateUserProgress, updateUserProgress } from '@/lib/db';
 
 interface ProgressContextType {
@@ -11,6 +11,7 @@ interface ProgressContextType {
   updateModuleProgress: (moduleId: string, moduleType: 'learn' | 'practice', newStatus: 'not-started' | 'in-progress' | 'completed', score?: number, lastAccessedLessonId?: string, practiceState?: { currentIndex: number; correctAnswersCount: number; }) => Promise<void>;
   updateLessonProgress: (moduleId: string, lessonId: string, completed: boolean, score?: number) => Promise<void>;
   resetModuleProgress: (moduleId: string) => Promise<void>;
+  addBadge: (badge: Badge) => Promise<void>; // New function
 }
 
 const ProgressContext = createContext<ProgressContextType | undefined>(undefined);
@@ -29,12 +30,16 @@ export const ProgressProvider: React.FC<ProgressProviderProps> = ({ children, us
     setLoading(true);
     setError(null);
     if (userId === 'guest') {
-      setUserProgress({ userId: 'guest', modules: [], lastUpdated: Date.now() });
+      setUserProgress({ userId: 'guest', modules: [], badges: [], lastUpdated: Date.now() }); // Initialize badges for guest
       setLoading(false);
       return;
     }
     try {
       const progress = await getOrCreateUserProgress(userId);
+      // Ensure badges array exists
+      if (!progress.badges) {
+        progress.badges = [];
+      }
       setUserProgress(progress);
     } catch (err) {
       console.error("Failed to load user progress:", err);
@@ -63,6 +68,19 @@ export const ProgressProvider: React.FC<ProgressProviderProps> = ({ children, us
       setError("Failed to save user progress.");
     }
   }, []);
+
+  const addBadge = useCallback(async (newBadge: Badge) => {
+    if (!userProgress) return;
+
+    const updatedBadges = userProgress.badges ? [...userProgress.badges] : [];
+    // Prevent duplicate badges (e.g., if user refreshes page after earning)
+    if (!updatedBadges.some(badge => badge.id === newBadge.id)) {
+      updatedBadges.push(newBadge);
+    }
+
+    const newProgress = { ...userProgress, badges: updatedBadges, lastUpdated: Date.now() };
+    await saveProgress(newProgress);
+  }, [userProgress, saveProgress]);
 
   const updateModuleProgress = useCallback(async (moduleId: string, moduleType: 'learn' | 'practice', newStatus: 'not-started' | 'in-progress' | 'completed', score?: number, lastAccessedLessonId?: string, practiceState?: { currentIndex: number; correctAnswersCount: number; }) => {
     const prevUserProgress = userProgress; 
@@ -183,7 +201,7 @@ export const ProgressProvider: React.FC<ProgressProviderProps> = ({ children, us
           lastAccessed: Date.now(),
           lastAccessedLessonId: undefined,
           practiceState: undefined,
-        };
+        } as ModuleProgress;
       }
       return module;
     });
@@ -200,6 +218,7 @@ export const ProgressProvider: React.FC<ProgressProviderProps> = ({ children, us
     updateModuleProgress,
     updateLessonProgress,
     resetModuleProgress,
+    addBadge,
   };
 
   return (

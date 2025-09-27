@@ -26,26 +26,24 @@ export interface ModuleProgress {
   };
 }
 
-export interface UserProgress {
-  userId: string;
-  modules: ModuleProgress[];
-  lastUpdated: number;
-}
-
-export interface WordData {
-  word: string;
-  containsTarget: boolean;
-}
-
-export interface LetterHuntGameLevel {
-  targetLetter: string;
-  words: WordData[];
-}
-
 export interface GameLevel {
   id: string;
   title: string;
   description: string;
   href: string;
   prerequisite?: string;
+}
+
+export interface Badge {
+  id: string;
+  name: string;
+  image: string; // Data URL of the badge image
+  dateEarned: number; // Timestamp
+}
+
+export interface UserProgress {
+  userId: string;
+  modules: ModuleProgress[];
+  badges: Badge[]; // New field
+  lastUpdated: number;
 }

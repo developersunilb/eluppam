@@ -4,7 +4,9 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useProgress } from '@/context/ProgressContext';
 import { Button } from '@/components/ui/button';
-import MaveliGame from '@/components/MaveliGame';
+import dynamic from 'next/dynamic';
+
+const MaveliGame = dynamic(() => import('@/components/MaveliGame'), { ssr: false });
 
 export default function MaveliGamePage() {
   const router = useRouter();
@@ -44,8 +46,10 @@ export default function MaveliGamePage() {
         </div>
       ) : (
         <>
-          <h1 className="text-4xl font-bold text-kerala-green-800 mb-8">Maveli's Onam Adventure</h1>
-          <MaveliGame onComplete={handleGameComplete} />
+          <h1 className="text-4xl font-bold text-kerala-green-800 mb-8">Maveli&apos;s Onam Adventure</h1>
+          {/* Temporarily commented out MaveliGame due to build issues */}
+          <p className="text-lg text-gray-600">Maveli Game is temporarily unavailable due to technical issues.</p>
+          {/* <MaveliGame onComplete={handleGameComplete} /> */}
         </>
       )}
     </div>

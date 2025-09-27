@@ -116,7 +116,7 @@ export default function EmojiWordMatchGame({ onComplete }: EmojiWordMatchGamePro
                   className={`p-4 h-20 text-lg font-semibold transition-all duration-200 disabled:opacity-80 
                     ${selectedOption === option 
                       ? (option === currentPair.word ? 'bg-green-500' : 'bg-red-500') 
-                      : 'bg-blue-500 hover:bg-blue-600'}
+                      : 'bg-marigold-500 hover:bg-marigold-600'}
                     ${selectedOption && option === currentPair.word && 'bg-green-500'}
                   `}
                 >
@@ -140,7 +140,7 @@ export default function EmojiWordMatchGame({ onComplete }: EmojiWordMatchGamePro
       default:
         return (
           <div className="text-center">
-            <h2 className="text-2xl font-bold text-kerala-green-700 mb-2">Emoji-to-Word Match</h2>
+            {/*<h2 className="text-2xl font-bold text-kerala-green-700 mb-2">Emoji-to-Word Match</h2>*/}
             <p className="text-lg mb-4 text-gray-600">You will be shown {TOTAL_QUESTIONS} emojis. Match them to the correct Malayalam word!</p>
             <Button onClick={shuffleAndStart} className="px-8 py-3 text-lg bg-marigold-500 hover:bg-marigold-600 text-white">
               Start Game

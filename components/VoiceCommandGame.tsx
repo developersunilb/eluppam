@@ -5,6 +5,7 @@ import { Mic, MicOff, Play, RefreshCw, CheckCircle, XCircle } from 'lucide-react
 
 declare global {
   interface Window {
+    SpeechRecognition: any;
     webkitSpeechRecognition: any;
   }
 }
@@ -67,7 +68,7 @@ const VoiceCommandGame: React.FC<VoiceCommandGameProps> = ({ onComplete }) => {
         recognitionRef.current.stop();
       }
     };
-  }, []);
+  }, [isListening]);
 
   useEffect(() => {
     if (feedback === 'correct') {

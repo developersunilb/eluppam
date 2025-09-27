@@ -7,7 +7,8 @@ import { ProgressProvider } from '@/context/ProgressContext';
 import { useAuth } from '@/context/AuthContext';
 
 export default function AppLayoutContent({ children }: { children: React.ReactNode }) {
-  const { userId, loading: authLoading } = useAuth();
+  const { user, loading: authLoading } = useAuth();
+  const userId = user?.userId;
 
   if (authLoading) {
     // Optionally render a loading spinner or skeleton while auth is loading

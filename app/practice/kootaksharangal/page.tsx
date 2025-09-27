@@ -22,6 +22,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { useRouter } from 'next/navigation';
 
 import { practiceKootaksharangal } from '@/lib/practice-data';
+import { shuffle } from '@/lib/utils';
+import { PracticeItem, IncorrectAnswerSummaryItem } from '@/lib/types';
 
 const MODULE_ID = 'kootaksharangal-practice';
 
@@ -35,29 +37,11 @@ export default function KootaksharangalPracticePage() {
   const [isInitialLoad, setIsInitialLoad] = useState(true);
   const isModuleCompletedRef = useRef(false);
   const [feedbackInput, setFeedbackInput] = useState('');
-  const [shuffledQuestions, setShuffledQuestions] = useState([]);
-  const [incorrectAnswersSummary, setIncorrectAnswersSummary] = useState([]);
+  const [shuffledQuestions, setShuffledQuestions] = useState<PracticeItem[]>([]);
+  const [incorrectAnswersSummary, setIncorrectAnswersSummary] = useState<IncorrectAnswerSummaryItem[]>([]);
 
   const { updateModuleProgress, userProgress, resetModuleProgress } = useProgress();
   const router = useRouter();
-
-  const shuffle = (array) => {
-    let currentIndex = array.length,  randomIndex;
-
-    // While there remain elements to shuffle.
-    while (currentIndex != 0) {
-
-      // Pick a remaining element.
-      randomIndex = Math.floor(Math.random() * currentIndex);
-      currentIndex--;
-
-      // And swap it with the current element.
-      [array[currentIndex], array[randomIndex]] = [
-        array[randomIndex], array[currentIndex]];
-    }
-
-    return array;
-  }
 
   const currentItem = shuffledQuestions[currentIndex];
 
@@ -130,8 +114,8 @@ export default function KootaksharangalPracticePage() {
 
   const checkAnswers = () => {
     let correctCount = 0;
-    const incorrects = [];
-    shuffledQuestions.forEach((question, index) => {
+    const incorrects: IncorrectAnswerSummaryItem[] = [];
+    shuffledQuestions.forEach((question: PracticeItem, index) => {
       if (userAnswers[index] === question.correctAnswer) {
         correctCount++;
       } else {

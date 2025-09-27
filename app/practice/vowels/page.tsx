@@ -21,6 +21,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useRouter } from 'next/navigation';
 
 import { practiceVowels } from '@/lib/practice-data';
+import { PracticeItem, IncorrectAnswerSummaryItem } from '@/lib/types';
 
 const MODULE_ID = 'vowels-practice';
 
@@ -34,13 +35,13 @@ export default function VowelsPracticePage() {
   const [isInitialLoad, setIsInitialLoad] = useState(true); // New state to track initial load
   const isModuleCompletedRef = useRef(false); // New ref to track if module is completed
   const [feedbackInput, setFeedbackInput] = useState('');
-  const [shuffledQuestions, setShuffledQuestions] = useState([]);
-  const [incorrectAnswersSummary, setIncorrectAnswersSummary] = useState([]);
+  const [shuffledQuestions, setShuffledQuestions] = useState<PracticeItem[]>([]);
+  const [incorrectAnswersSummary, setIncorrectAnswersSummary] = useState<IncorrectAnswerSummaryItem[]>([]);
 
   const { updateModuleProgress, userProgress, resetModuleProgress } = useProgress();
   const router = useRouter();
 
-  const shuffle = (array) => {
+  const shuffle = (array: PracticeItem[]) => {
     let currentIndex = array.length,  randomIndex;
 
     // While there remain elements to shuffle.
@@ -131,8 +132,8 @@ export default function VowelsPracticePage() {
 
   const checkAnswers = () => {
     let correctCount = 0;
-    const incorrects = [];
-    shuffledQuestions.forEach((question, index) => {
+    const incorrects: IncorrectAnswerSummaryItem[] = [];
+    shuffledQuestions.forEach((question: PracticeItem, index) => {
       if (userAnswers[index] === question.correctAnswer) {
         correctCount++;
       } else {

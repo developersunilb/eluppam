@@ -63,6 +63,14 @@ const WordJigsawGame: React.FC<WordJigsawGameProps> = ({ onComplete }) => {
     }
   };
 
+  const resetPuzzle = () => {
+    if (currentPuzzle) {
+      setShuffledSyllables([...currentPuzzle.syllables].sort(() => Math.random() - 0.5));
+      setPlacedSyllables(new Array(currentPuzzle.syllables.length).fill(null));
+      setFeedback(null);
+    }
+  };
+
   const checkAnswer = () => {
     const isCorrect = placedSyllables.join('') === currentPuzzle.word;
     let updatedScore = score;
@@ -128,9 +136,12 @@ const WordJigsawGame: React.FC<WordJigsawGameProps> = ({ onComplete }) => {
           ))}
         </div>
 
-        <div className="flex justify-center">
+        <div className="flex justify-center gap-4">
           <Button onClick={checkAnswer} className="px-8 py-3 text-lg bg-gradient-to-r from-marigold-500 to-marigold-600 hover:from-marigold-600 hover:to-marigold-700 text-white shadow-lg hover:shadow-xl transition-all">
             Check Answer
+          </Button>
+          <Button onClick={resetPuzzle} className="px-8 py-3 text-lg bg-gray-500 hover:bg-gray-600 text-white shadow-lg hover:shadow-xl transition-all">
+            Clear
           </Button>
         </div>
 

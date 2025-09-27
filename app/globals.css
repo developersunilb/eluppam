@@ -87,3 +87,29 @@
     stroke-dashoffset: 0;
   }
 }
+
+.handwriting-canvas {
+  width: 300px;
+  height: 300px;
+}
+
+.magic-tracing-canvas-container {
+  position: relative;
+  width: 400px;
+  height: 400px;
+}
+
+.guide-canvas {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 1;
+}
+
+.draw-canvas {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 2;
+  cursor: crosshair;
+}

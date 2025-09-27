@@ -3,6 +3,7 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { RotateCcw, Check, Lightbulb } from 'lucide-react';
+import Image from 'next/image';
 
 interface MagicTracingGameProps {
   character: string;
@@ -141,15 +142,17 @@ const MagicTracingGame: React.FC<MagicTracingGameProps> = ({ character, onComple
     }
   };
 
+
+
   return (
     <div className="flex flex-col items-center p-4 bg-cream-50 rounded-lg shadow-lg">
       <h1 className="text-2xl font-bold text-kerala-green-800 mb-4">Trace the letter: {character}</h1>
-      <div style={{ position: 'relative', width: canvasWidth, height: canvasHeight }}>
+      <div className="magic-tracing-canvas-container">
         <canvas
           ref={guideCanvasRef}
           width={canvasWidth}
           height={canvasHeight}
-          style={{ position: 'absolute', left: 0, top: 0, zIndex: 1 }}
+          className="guide-canvas"
         />
         <canvas
           ref={drawCanvasRef}
@@ -163,8 +166,7 @@ const MagicTracingGame: React.FC<MagicTracingGameProps> = ({ character, onComple
           onTouchEnd={endDrawing}
           onTouchCancel={endDrawing}
           onTouchMove={draw}
-          style={{ position: 'absolute', left: 0, top: 0, zIndex: 2, cursor: 'crosshair' }}
-          className="touch-none"
+          className="draw-canvas touch-none"
         />
       </div>
       <div className="mt-4 space-x-4">
@@ -185,7 +187,7 @@ const MagicTracingGame: React.FC<MagicTracingGameProps> = ({ character, onComple
       {showHintGif && (
         <div className="absolute inset-0 bg-black bg-opacity-70 flex items-center justify-center z-30"
              onClick={() => setShowHintGif(false)}>
-          <img src={`/writing/${CHARACTER_GIF_MAP[character]}.gif`} alt={`Hint for ${character}`} className="max-w-full max-h-full" />
+          <Image src={`/writing/${CHARACTER_GIF_MAP[character]}.gif`} alt={`Hint for ${character}`} width={canvasWidth} height={canvasHeight} className="max-w-full max-h-full" />
         </div>
       )}
     </div>

@@ -1,89 +1,64 @@
-'use client';
-
-import React, { useState, useEffect } from 'react';
-import { Button } from './ui/button';
+import React from 'react';
+import { ArrowUp, ArrowDown, ChevronUp } from 'lucide-react';
 
 interface MobileGameControlsProps {
   onUpPress: () => void;
   onUpRelease: () => void;
-  onLeftPress: () => void;
-  onLeftRelease: () => void;
-  onRightPress: () => void;
-  onRightRelease: () => void;
+  onDownPress: () => void;
+  onDownRelease: () => void;
+  onJumpPress: () => void;
+  onJumpRelease: () => void;
 }
 
 const MobileGameControls: React.FC<MobileGameControlsProps> = ({
   onUpPress,
   onUpRelease,
-  onLeftPress,
-  onLeftRelease,
-  onRightPress,
-  onRightRelease,
+  onDownPress,
+  onDownRelease,
+  onJumpPress,
+  onJumpRelease,
 }) => {
-  const [showControls, setShowControls] = useState(false);
-  const [isMobileLandscape, setIsMobileLandscape] = useState(false);
-
-  const checkMobileLandscape = () => {
-    const isMobile = /Mobi|Android/i.test(navigator.userAgent);
-    const isLandscape = window.matchMedia("(orientation: landscape)").matches;
-    setIsMobileLandscape(isMobile && isLandscape);
-  };
-
-  useEffect(() => {
-    checkMobileLandscape();
-    window.addEventListener('resize', checkMobileLandscape);
-    return () => window.removeEventListener('resize', checkMobileLandscape);
-  }, []);
-
-  if (!isMobileLandscape) {
-    return null;
-  }
+  const buttonClass = "bg-gray-700 text-white p-4 rounded-full shadow-lg active:bg-gray-600 touch-action-manipulation";
 
   return (
-    <div className="fixed bottom-4 right-4 z-50">
-      {/* Toggle Button */}
-      <Button
-        className="w-16 h-16 rounded-full bg-red-500 hover:bg-red-600 text-white flex items-center justify-center shadow-lg"
-        onClick={() => setShowControls(!showControls)}
-        aria-label="Toggle Game Controls"
-      >
-        {showControls ? 'X' : '🎮'}
-      </Button>
+    <div className="absolute bottom-4 left-4 right-4 flex justify-between z-50">
+      {/* Left controls */}
+      <div className="flex flex-col gap-2">
+        <button
+          className={buttonClass}
+          onTouchStart={onUpPress}
+          onTouchEnd={onUpRelease}
+          onMouseDown={onUpPress}
+          onMouseUp={onUpRelease}
+          onMouseLeave={onUpRelease} // In case mouse drags off button
+        >
+          <ArrowUp size={24} />
+        </button>
+        <button
+          className={buttonClass}
+          onTouchStart={onDownPress}
+          onTouchEnd={onDownRelease}
+          onMouseDown={onDownPress}
+          onMouseUp={onDownRelease}
+          onMouseLeave={onDownRelease}
+        >
+          <ArrowDown size={24} />
+        </button>
+      </div>
 
-      {/* Gaming Keys */}
-      {showControls && (
-        <div className="absolute bottom-20 right-4 flex flex-col items-center space-y-2">
-          <Button
-            className="w-14 h-14 rounded-full bg-blue-500 hover:bg-blue-600 text-white flex items-center justify-center text-xl"
-            onMouseDown={onUpPress}
-            onMouseUp={onUpRelease}
-            onTouchStart={onUpPress}
-            onTouchEnd={onUpRelease}
-          >
-            ↑
-          </Button>
-          <div className="flex space-x-2">
-            <Button
-              className="w-14 h-14 rounded-full bg-blue-500 hover:bg-blue-600 text-white flex items-center justify-center text-xl"
-              onMouseDown={onLeftPress}
-              onMouseUp={onLeftRelease}
-              onTouchStart={onLeftPress}
-              onTouchEnd={onLeftRelease}
-            >
-              ←
-            </Button>
-            <Button
-              className="w-14 h-14 rounded-full bg-blue-500 hover:bg-blue-600 text-white flex items-center justify-center text-xl"
-              onMouseDown={onRightPress}
-              onMouseUp={onRightRelease}
-              onTouchStart={onRightPress}
-              onTouchEnd={onRightRelease}
-            >
-              →
-            </Button>
-          </div>
-        </div>
-      )}
+      {/* Right controls */}
+      <div>
+        <button
+          className={buttonClass}
+          onTouchStart={onJumpPress}
+          onTouchEnd={onJumpRelease}
+          onMouseDown={onJumpPress}
+          onMouseUp={onJumpRelease}
+          onMouseLeave={onJumpRelease}
+        >
+          <ChevronUp size={24} />
+        </button>
+      </div>
     </div>
   );
 };
