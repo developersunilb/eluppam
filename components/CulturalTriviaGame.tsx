@@ -61,8 +61,9 @@ const CulturalTriviaGame: React.FC<CulturalTriviaGameProps> = ({ onComplete }) =
   const [score, setScore] = useState(0);
   const [gamePhase, setGamePhase] = useState<'playing' | 'answer_revealed' | 'game_over'>('playing');
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
-  const [lifelines, setLifelines] = useState({ ammachisHint: true });
+  const [lifelines, setLifelines] = useState({ ammachisHint: true, removeTwo: true });
   const [hintUsed, setHintUsed] = useState(false);
+  const [disabledOptions, setDisabledOptions] = useState<string[]>([]);
 
   useEffect(() => {
     setQuestions(TRIVIA_QUESTIONS.sort(() => 0.5 - Math.random()));
@@ -108,6 +109,23 @@ const CulturalTriviaGame: React.FC<CulturalTriviaGameProps> = ({ onComplete }) =
     }
   };
 
+  const handleRemoveTwo = () => {
+    if (lifelines.removeTwo && currentQuestion) {
+      const allOptions = [...currentQuestion.options];
+      const correctAnswer = currentQuestion.correctAnswer;
+      
+      // Remove the correct answer from the list of options to consider for disabling
+      const optionsToConsider = allOptions.filter(option => option !== correctAnswer);
+
+      // Shuffle the options to consider and pick the first two
+      const shuffledOptionsToConsider = optionsToConsider.sort(() => 0.5 - Math.random());
+      const optionsToDisable = shuffledOptionsToConsider.slice(0, 2);
+      
+      setDisabledOptions(optionsToDisable);
+      setLifelines(prev => ({ ...prev, removeTwo: false }));
+    }
+  };
+
   if (!currentQuestion) {
     return <div className="text-white text-center">Loading questions...</div>;
   }
@@ -125,13 +143,13 @@ const CulturalTriviaGame: React.FC<CulturalTriviaGameProps> = ({ onComplete }) =
               key={option}
               onClick={() => handleOptionClick(option)}
               className={`p-4 rounded-lg text-lg font-semibold transition-all duration-200 text-left
+                ${disabledOptions.includes(option) ? 'bg-gray-300 text-gray-600 cursor-not-allowed' : ''}
                 ${selectedOption === option
                   ? option === currentQuestion.correctAnswer ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
                   : gamePhase === 'answer_revealed' && option === currentQuestion.correctAnswer ? 'bg-green-500 text-white'
                   : 'bg-blue-500 text-white hover:bg-blue-600'}
                 ${gamePhase === 'answer_revealed' ? 'cursor-not-allowed opacity-80' : 'cursor-pointer'}
-              `}
-              disabled={gamePhase === 'answer_revealed'}
+              `}              disabled={gamePhase === 'answer_revealed' || disabledOptions.includes(option)}
             >
               {option}
             </button>
@@ -148,6 +166,15 @@ const CulturalTriviaGame: React.FC<CulturalTriviaGameProps> = ({ onComplete }) =
               `}
             >
               <Lightbulb className="mr-2" /> Ask Ammachi
+            </button>
+            <button
+              onClick={handleRemoveTwo}
+              disabled={!lifelines.removeTwo || gamePhase !== 'playing'}
+              className={`p-3 rounded-lg text-sm font-semibold flex items-center
+                ${lifelines.removeTwo && gamePhase === 'playing' ? 'bg-purple-500 hover:bg-purple-600 text-white' : 'bg-gray-300 text-gray-600 cursor-not-allowed'}
+              `}
+            >
+              Remove Two Choices
             </button>
           </div>
           <p className="text-2xl font-bold text-gray-800">${score}</p>

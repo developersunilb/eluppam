@@ -33,3 +33,14 @@ interface PracticeItem {
 }
 
 const MODULE_ID = 'consonants-practice';
+
+const ConsonantsPracticePage = () => {
+    return (
+        <div>
+            <h1>Consonants Practice</h1>
+            <p>This page is under construction.</p>
+        </div>
+    );
+}
+
+export default ConsonantsPracticePage;

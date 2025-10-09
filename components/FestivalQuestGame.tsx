@@ -23,7 +23,7 @@ const onamQuestions: FestivalQuestion[] = [
   {
     question: 'What is the traditional flower carpet made during Onam called?',
     correctAnswer: 'പൂക്കളം',
-    options: ['രംഗോളി', 'കോലം', 'പൂക്കളം', 'അल्पना'],
+    options: ['രംഗോളി', 'കോലം', 'പൂക്കളം', 'പൂക്കാലം'],
   },
   {
     question: 'Which legendary king is associated with Onam?',
@@ -71,9 +71,6 @@ const FestivalQuestGame: React.FC<FestivalQuestGameProps> = ({ onComplete }) => 
 
   return (
     <Card className="w-full max-w-md mx-auto">
-      <CardHeader>
-        <CardTitle className="text-center">Festival Quest: Onam</CardTitle>
-      </CardHeader>
       <CardContent className="space-y-6">
         <div className="flex flex-col items-center justify-center">
           {currentQuestion && (
@@ -94,7 +91,7 @@ const FestivalQuestGame: React.FC<FestivalQuestGameProps> = ({ onComplete }) => 
                       : 'bg-red-500 text-white'
                     : feedback && option === currentQuestion.correctAnswer
                     ? 'bg-green-300 text-white' // Show correct answer if incorrect selection
-                    : 'bg-white text-kerala-green-700 border border-kerala-green-700'
+                    : 'bg-marigold-500 hover:bg-marigold-600 text-white'
                 }
               `}
               disabled={!!feedback}
@@ -110,7 +107,7 @@ const FestivalQuestGame: React.FC<FestivalQuestGameProps> = ({ onComplete }) => 
               {feedback === 'correct' ? 'Correct!' : 'Incorrect!'}
             </div>
             <div className="flex justify-center mt-4">
-              <Button onClick={handleNextQuestion} className="px-8 py-3 text-lg bg-gradient-to-r from-marigold-500 to-marigold-600 hover:from-marigold-600 hover:to-marigold-700 text-white shadow-lg hover:shadow-xl transition-all">
+              <Button onClick={handleNextQuestion} className="px-8 py-3 text-lg bg-marigold-500 hover:bg-marigold-600 text-white">
                 Next
               </Button>
             </div>

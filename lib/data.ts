@@ -1655,3 +1655,53 @@ export const kootaksharamData: Kootaksharam[] = [
     ],
   },
 ];
+
+export const nakshatras = [
+  { malayalam: 'അശ്വതി', transliteration: 'Ashwathy', audioSrc: '' },
+  { malayalam: 'ഭരണി', transliteration: 'Bharani', audioSrc: '' },
+  { malayalam: 'കാർത്തിക', transliteration: 'Karthika', audioSrc: '' },
+  { malayalam: 'രോഹിണി', transliteration: 'Rohini', audioSrc: '' },
+  { malayalam: 'മകയിരം', transliteration: 'Makayiram', audioSrc: '' },
+  { malayalam: 'തിരുവാതിര', transliteration: 'Thiruvathira', audioSrc: '' },
+  { malayalam: 'പുണർതം', transliteration: 'Punartham', audioSrc: '' },
+  { malayalam: 'പൂയം', transliteration: 'Pooyam', audioSrc: '' },
+  { malayalam: 'ആയില്യം', transliteration: 'Aayilyam', audioSrc: '' },
+  { malayalam: 'മകം', transliteration: 'Makam', audioSrc: '' },
+  { malayalam: 'പൂരം', transliteration: 'Pooram', audioSrc: '' },
+  { malayalam: 'ഉത്രം', transliteration: 'Uthram', audioSrc: '' },
+  { malayalam: 'അത്തം', transliteration: 'Atham', audioSrc: '' },
+  { malayalam: 'ചിത്തിര', transliteration: 'Chithira', audioSrc: '' },
+  { malayalam: 'ചോതി', transliteration: 'Chothi', audioSrc: '' },
+  { malayalam: 'വിശാഖം', transliteration: 'Vishakam', audioSrc: '' },
+  { malayalam: 'അനിഴം', transliteration: 'Anizham', audioSrc: '' },
+  { malayalam: 'തൃക്കേട്ട', transliteration: 'Thriketta', audioSrc: '' },
+  { malayalam: 'മൂലം', transliteration: 'Moolam', audioSrc: '' },
+  { malayalam: 'പൂരാടം', transliteration: 'Pooradam', audioSrc: '' },
+  { malayalam: 'ഉത്രാടം', transliteration: 'Uthradam', audioSrc: '' },
+  { malayalam: 'തിരുവോണം', transliteration: 'Thiruvonam', audioSrc: '' },
+  { malayalam: 'അവിട്ടം', transliteration: 'Avittam', audioSrc: '' },
+  { malayalam: 'ചതയം', transliteration: 'Chathayam', audioSrc: '' },
+  { malayalam: 'പൂരുരുട്ടാതി', transliteration: 'Poororottathy', audioSrc: '' },
+  { malayalam: 'ഉത്രട്ടാതി', transliteration: 'Uthratathy', audioSrc: '' },
+  { malayalam: 'രേവതി', transliteration: 'Revathi', audioSrc: '' },
+];
+
+export const directions = [
+  { malayalam: 'വടക്ക്', transliteration: 'Vadakke', meaning: 'North', audioSrc: '' },
+  { malayalam: 'കിഴക്ക്', transliteration: 'Kizhakke', meaning: 'East', audioSrc: '' },
+  { malayalam: 'പടിഞ്ഞാറ്', transliteration: 'Padinjaaru', meaning: 'West', audioSrc: '' },
+  { malayalam: 'തെക്ക്', transliteration: 'Thekku', meaning: 'South', audioSrc: '' },
+  { malayalam: 'വടക്കുകിഴക്ക്', transliteration: 'Vadakkukizhakku', meaning: 'Northeast', audioSrc: '' },
+  { malayalam: 'തെക്ക് കിഴക്ക്', transliteration: 'Thekkukizhakku', meaning: 'Southeast', audioSrc: '' },
+  { malayalam: 'തെക്ക് പടിഞ്ഞാറ്', transliteration: 'Thekkupadinjaaru', meaning: 'Southwest', audioSrc: '' },
+  { malayalam: 'വടക്ക് പടിഞ്ഞാറ്', transliteration: 'Vadakkupadinjaaru', meaning: 'Northwest', audioSrc: '' },
+];
+
+export const positionalWords = [
+    { malayalam: 'മുകളിലേക്ക്', transliteration: 'mukalilekku', meaning: 'Up', audioSrc: '' },
+    { malayalam: 'താഴേക്ക്', transliteration: 'thaazhekku', meaning: 'Down', audioSrc: '' },
+    { malayalam: 'മുകളിൽ', transliteration: 'mukalil', meaning: 'Top', audioSrc: '' },
+    { malayalam: 'താഴെ', transliteration: 'thaazhe', meaning: 'Bottom', audioSrc: '' },
+    { malayalam: 'വലത്', transliteration: 'valathu', meaning: 'Right', audioSrc: '' },
+    { malayalam: 'ഇടത്', transliteration: 'edathu', meaning: 'Left', audioSrc: '' },
+];

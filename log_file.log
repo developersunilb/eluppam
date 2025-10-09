@@ -1,135 +1,69 @@
-The issue is there is a Compiling /_not-found ...
- ✓ Compiled /_not-found in 20.2s (603 modules)
- GET /.well-known/appspecific/com.chrome.devtools.json 404 in 15222ms error while loading the page. Could be the reason details below,
-
-
-PS F:\Startup Business\Solopreneur\eluppam> npm run dev
-
-> nextjs@0.1.0 dev
-> next dev
-
-  ▲ Next.js 14.2.32
-  - Local:        http://localhost:3000
-
- ✓ Starting...
- ✓ Ready in 3.8s
- ○ Compiling /games/mahjong-3d ...
- ✓ Compiled /games/mahjong-3d in 13.2s (614 modules)
- GET /games/mahjong-3d 200 in 19607ms
- ○ Compiling /_not-found ...
- ✓ Compiled /_not-found in 20.2s (603 modules)
- GET /.well-known/appspecific/com.chrome.devtools.json 404 in 15222ms
-  GET /.well-known/appspecific/com.chrome.devtools.json 404 in 142ms
-
-
-
-See if this browser console log helps as below,
-
-Initialized driver at: Sat Sep 27 2025 09:39:24 GMT+0530 (India Standard Time)
-all.js:3 >=116
-contentscript.js:2 Cleared failed endpoints cache
-main-app.js?v=1758946154690:1836 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
-chext_loader.js:73 Initialized chextloader at: 1758946167464
-app-index.js:33 Warning: Extra attributes from the server: data-new-gr-c-s-check-loaded,data-gr-ext-installed
-    at body
-    at html
-    at RootLayout (Server)
-    at RedirectErrorBoundary (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/redirect-boundary.js:74:9)
-    at RedirectBoundary (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/redirect-boundary.js:82:11)
-    at NotFoundErrorBoundary (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/not-found-boundary.js:76:9)
-    at NotFoundBoundary (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/not-found-boundary.js:84:11)
-    at DevRootNotFoundBoundary (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/dev-root-not-found-boundary.js:33:11)
-    at ReactDevOverlay (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/ReactDevOverlay.js:87:9)
-    at HotReload (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/hot-reloader-client.js:321:11)
-    at Router (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/app-router.js:207:11)
-    at ErrorBoundaryHandler (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/error-boundary.js:113:9)
-    at ErrorBoundary (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/error-boundary.js:160:11)
-    at AppRouter (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/app-router.js:585:13)
-    at ServerRoot (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/app-index.js:112:27)
-    at Root (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/app-index.js:117:11)
-window.console.error @ app-index.js:33
-console.error @ hydration-error-info.js:63
-printWarning @ react-dom.development.js:94
-error @ react-dom.development.js:68
-warnForExtraAttributes @ react-dom.development.js:32731
-diffHydratedProperties @ react-dom.development.js:35117
-hydrateInstance @ react-dom.development.js:36127
-prepareToHydrateHostInstance @ react-dom.development.js:7246
-completeWork @ react-dom.development.js:19725
-completeUnitOfWork @ react-dom.development.js:25963
-performUnitOfWork @ react-dom.development.js:25759
-workLoopConcurrent @ react-dom.development.js:25734
-renderRootConcurrent @ react-dom.development.js:25690
-performConcurrentWorkOnRoot @ react-dom.development.js:24504
-workLoop @ scheduler.development.js:256
-flushWork @ scheduler.development.js:225
-performWorkUntilDeadline @ scheduler.development.js:534Understand this error
-Mahjong3D.tsx:48 WebGL: INVALID_OPERATION: texImage3D: FLIP_Y or PREMULTIPLY_ALPHA isn't allowed for uploading 3D textures
-createTexture @ three.module.js:9677
-WebGLState @ three.module.js:9694
-initGLContext @ three.module.js:15675
-WebGLRenderer @ three.module.js:15784
-init @ Mahjong3D.tsx:48
-eval @ Mahjong3D.tsx:529
-commitHookEffectListMount @ react-dom.development.js:21102
-invokePassiveEffectMountInDEV @ react-dom.development.js:23980
-invokeEffectsInDev @ react-dom.development.js:26852
-legacyCommitDoubleInvokeEffectsInDEV @ react-dom.development.js:26835
-commitDoubleInvokeEffectsInDEV @ react-dom.development.js:26816
-flushPassiveEffectsImpl @ react-dom.development.js:26514
-flushPassiveEffects @ react-dom.development.js:26438
-performSyncWorkOnRoot @ react-dom.development.js:24870
-flushSyncWorkAcrossRoots_impl @ react-dom.development.js:7758
-flushSyncWorkOnAllRoots @ react-dom.development.js:7718
-commitRootImpl @ react-dom.development.js:26369
-commitRoot @ react-dom.development.js:26077
-commitRootWhenReady @ react-dom.development.js:24749
-finishConcurrentRender @ react-dom.development.js:24714
-performConcurrentWorkOnRoot @ react-dom.development.js:24559
-workLoop @ scheduler.development.js:256
-flushWork @ scheduler.development.js:225
-performWorkUntilDeadline @ scheduler.development.js:534Understand this warning
-Mahjong3D.tsx:48 WebGL: INVALID_OPERATION: texImage3D: FLIP_Y or PREMULTIPLY_ALPHA isn't allowed for uploading 3D textures
-createTexture @ three.module.js:9677
-WebGLState @ three.module.js:9695
-initGLContext @ three.module.js:15675
-WebGLRenderer @ three.module.js:15784
-init @ Mahjong3D.tsx:48
-eval @ Mahjong3D.tsx:529
-commitHookEffectListMount @ react-dom.development.js:21102
-invokePassiveEffectMountInDEV @ react-dom.development.js:23980
-invokeEffectsInDev @ react-dom.development.js:26852
-legacyCommitDoubleInvokeEffectsInDEV @ react-dom.development.js:26835
-commitDoubleInvokeEffectsInDEV @ react-dom.development.js:26816
-flushPassiveEffectsImpl @ react-dom.development.js:26514
-flushPassiveEffects @ react-dom.development.js:26438
-performSyncWorkOnRoot @ react-dom.development.js:24870
-flushSyncWorkAcrossRoots_impl @ react-dom.development.js:7758
-flushSyncWorkOnAllRoots @ react-dom.development.js:7718
-commitRootImpl @ react-dom.development.js:26369
-commitRoot @ react-dom.development.js:26077
-commitRootWhenReady @ react-dom.development.js:24749
-finishConcurrentRender @ react-dom.development.js:24714
-performConcurrentWorkOnRoot @ react-dom.development.js:24559
-workLoop @ scheduler.development.js:256
-flushWork @ scheduler.development.js:225
-performWorkUntilDeadline @ scheduler.development.js:534Understand this warning
-18[.WebGL-0x61c15fc6900] GL_INVALID_OPERATION: glTexStorage2D: Texture is immutable.Understand this warning
-mahjong-3d:1 [.WebGL-0x61c15fc6900] GL_INVALID_OPERATION: glTexStorage2D: Texture is immutable.Understand this warning
-mahjong-3d:1 [.WebGL-0x61c15fc6900] GL_INVALID_OPERATION: glTexStorage2D: Texture is immutable.Understand this warning
-mahjong-3d:1 [.WebGL-0x61c15fc6900] GL_INVALID_OPERATION: glTexStorage2D: Texture is immutable.Understand this warning
-mahjong-3d:1 [.WebGL-0x61c15fc6900] GL_INVALID_OPERATION: glTexStorage2D: Texture is immutable.Understand this warning
-mahjong-3d:1 [.WebGL-0x61c15fc6900] GL_INVALID_OPERATION: glTexStorage2D: Texture is immutable.Understand this warning
-mahjong-3d:1 [.WebGL-0x61c15fc6900] GL_INVALID_OPERATION: glTexStorage2D: Texture is immutable.Understand this warning
-mahjong-3d:1 [.WebGL-0x61c15fc6900] GL_INVALID_OPERATION: glTexStorage2D: Texture is immutable.Understand this warning
-mahjong-3d:1 [.WebGL-0x61c15fc6900] GL_INVALID_OPERATION: glTexStorage2D: Texture is immutable.Understand this warning
-mahjong-3d:1 [.WebGL-0x61c15fc6900] GL_INVALID_OPERATION: glTexStorage2D: Texture is immutable.Understand this warning
-mahjong-3d:1 [.WebGL-0x61c15fc6900] GL_INVALID_OPERATION: glTexStorage2D: Texture is immutable.Understand this warning
-mahjong-3d:1 [.WebGL-0x61c15fc6900] GL_INVALID_OPERATION: glTexStorage2D: Texture is immutable.Understand this warning
-mahjong-3d:1 [.WebGL-0x61c15fc6900] GL_INVALID_OPERATION: glTexStorage2D: Texture is immutable.Understand this warning
-mahjong-3d:1 [.WebGL-0x61c15fc6900] GL_INVALID_OPERATION: glTexStorage2D: Texture is immutable.Understand this warning
-mahjong-3d:1 [.WebGL-0x61c15fc6900] GL_INVALID_OPERATION: glTexStorage2D: Texture is immutable.Understand this warning
-mahjong-3d:1 [.WebGL-0x61c15fc6900] GL_INVALID_OPERATION: glTexStorage2D: Texture is immutable.Understand this warning
-mahjong-3d:1 [.WebGL-0x61c15fc6900] GL_INVALID_OPERATION: glTexStorage2D: Texture is immutable.Understand this warning
-mahjong-3d:1 [.WebGL-0x61c15fc6900] GL_INVALID_OPERATION: glTexStorage2D: Texture is immutable.Understand this warning
-mahjong-3d:1 [.WebGL-0x61c15fc6900] GL_INVALID_OPERATION: glTexStorage2D: Texture is immutable.Understand this warning
+Word formed (endDrag): "കോഴി" Length: 4
+F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:85 Debug: ALL_WORDS_DATA entry for ചീവീട്: "ചീവിട്" Length: 6
+F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:111 Comparing "കോഴി" (len: 4) with "കോണി" (len: 4) -> Result: false
+F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:111 Comparing "കോഴി" (len: 4) with "ആഴി" (len: 3) -> Result: false
+F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:111 Comparing "കോഴി" (len: 4) with "ചീവിട്" (len: 6) -> Result: false
+F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:111 Comparing "കോഴി" (len: 4) with "അരണ" (len: 3) -> Result: false
+F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:111 Comparing "കോഴി" (len: 4) with "മണി" (len: 3) -> Result: false
+F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:111 Comparing "കോഴി" (len: 4) with "കോഴി" (len: 4) -> Result: true
+F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:117 Feedback set to: correct
+F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:80 Word formed (endDrag): "" Length: 0
+F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:85 Debug: ALL_WORDS_DATA entry for ചീവീട്: "ചീവിട്" Length: 6
+F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:139 Feedback cleared.
+F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:92 Feedback cleared.
+F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:80 Word formed (endDrag): "ചീവീട്" Length: 6
+F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:85 Debug: ALL_WORDS_DATA entry for ചീവീട്: "ചീവിട്" Length: 6
+F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:111 Comparing "ചീവീട്" (len: 6) with "കോണി" (len: 4) -> Result: false
+F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:111 Comparing "ചീവീട്" (len: 6) with "ആഴി" (len: 3) -> Result: false
+F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:111 Comparing "ചീവീട്" (len: 6) with "ചീവിട്" (len: 6) -> Result: false
+F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:111 Comparing "ചീവീട്" (len: 6) with "അരണ" (len: 3) -> Result: false
+F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:111 Comparing "ചീവീട്" (len: 6) with "മണി" (len: 3) -> Result: false
+F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:111 Comparing "ചീവീട്" (len: 6) with "കോഴി" (len: 4) -> Result: false
+F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:111 Comparing "ചീവീട്" (len: 6) with "ആട്" (len: 3) -> Result: false
+F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:111 Comparing "ചീവീട്" (len: 6) with "വീണ" (len: 3) -> Result: false
+F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:111 Comparing "ചീവീട്" (len: 6) with "ചീര" (len: 3) -> Result: false
+F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:111 Comparing "ചീവീട്" (len: 6) with "അകം" (len: 3) -> Result: false
+F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:133 Feedback set to: incorrect
+F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:139 Feedback cleared.
+F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:80 Word formed (endDrag): "" Length: 0
+F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:85 Debug: ALL_WORDS_DATA entry for ചീവീട്: "ചീവിട്" Length: 6
+F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:92 Feedback cleared.
+F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:80 Word formed (endDrag): "ചീവീട്" Length: 6
+F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:85 Debug: ALL_WORDS_DATA entry for ചീവീട്: "ചീവിട്" Length: 6
+F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:111 Comparing "ചീവീട്" (len: 6) with "കോണി" (len: 4) -> Result: false
+F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:111 Comparing "ചീവീട്" (len: 6) with "ആഴി" (len: 3) -> Result: false
+F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:111 Comparing "ചീവീട്" (len: 6) with "ചീവിട്" (len: 6) -> Result: false
+F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:111 Comparing "ചീവീട്" (len: 6) with "അരണ" (len: 3) -> Result: false
+F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:111 Comparing "ചീവീട്" (len: 6) with "മണി" (len: 3) -> Result: false
+F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:111 Comparing "ചീവീട്" (len: 6) with "കോഴി" (len: 4) -> Result: false
+F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:111 Comparing "ചീവീട്" (len: 6) with "ആട്" (len: 3) -> Result: false
+F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:111 Comparing "ചീവീട്" (len: 6) with "വീണ" (len: 3) -> Result: false
+F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:111 Comparing "ചീവീട്" (len: 6) with "ചീര" (len: 3) -> Result: false
+F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:111 Comparing "ചീവീട്" (len: 6) with "അകം" (len: 3) -> Result: false
+F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:133 Feedback set to: incorrect
+F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:80 Word formed (endDrag): "" Length: 0
+F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:85 Debug: ALL_WORDS_DATA entry for ചീവീട്: "ചീവിട്" Length: 6
+F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:139 Feedback cleared.
+F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:92 Feedback cleared.
+F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:80 Word formed (endDrag): "ചീവീട്" Length: 6
+F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:85 Debug: ALL_WORDS_DATA entry for ചീവീട്: "ചീവിട്" Length: 6
+F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:111 Comparing "ചീവീട്" (len: 6) with "കോണി" (len: 4) -> Result: false
+F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:111 Comparing "ചീവീട്" (len: 6) with "ആഴി" (len: 3) -> Result: false
+F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:111 Comparing "ചീവീട്" (len: 6) with "ചീവിട്" (len: 6) -> Result: false
+F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:111 Comparing "ചീവീട്" (len: 6) with "അരണ" (len: 3) -> Result: false
+F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:111 Comparing "ചീവീട്" (len: 6) with "മണി" (len: 3) -> Result: false
+F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:111 Comparing "ചീവീട്" (len: 6) with "കോഴി" (len: 4) -> Result: false
+F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:111 Comparing "ചീവീട്" (len: 6) with "ആട്" (len: 3) -> Result: false
+F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:111 Comparing "ചീവീട്" (len: 6) with "വീണ" (len: 3) -> Result: false
+F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:111 Comparing "ചീവീട്" (len: 6) with "ചീര" (len: 3) -> Result: false
+F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:111 Comparing "ചീവീട്" (len: 6) with "അകം" (len: 3) -> Result: false
+F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:133 Feedback set to: incorrect
+F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:80 Word formed (endDrag): "" Length: 0
+F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:85 Debug: ALL_WORDS_DATA entry for ചീവീട്: "ചീവിട്" Length: 6
+F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:139 Feedback cleared.
+F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:92 Feedback cleared.
+F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:80 Word formed (endDrag): "" Length: 0
+F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:85 Debug: ALL_WORDS_DATA entry for ചീവീട്: "ചീവിട്" Length: 6
+F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:80 Word formed (endDrag): "" Length: 0
+F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:85 Debug: ALL_WORDS_DATA entry for ചീവീട്: "ചീവിട്" Length: 6
+2F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:92 Feedback cleared.

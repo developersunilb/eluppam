@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { useProgress } from '@/context/ProgressContext';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { festivals, seasons, cities, districts, malayalamDays, malayalamMonths } from '@/lib/data';
+import { festivals, seasons, cities, districts, malayalamDays, malayalamMonths, nakshatras, directions, positionalWords } from '@/lib/data';
 
 const MODULE_ID = 'common-words';
 
@@ -17,6 +17,9 @@ const sections = [
   { title: 'Districts', data: districts },
   { title: 'Days', data: malayalamDays },
   { title: 'Months', data: malayalamMonths },
+  { title: 'Nakshatras', data: nakshatras },
+  { title: 'Directions', data: directions },
+  { title: 'Positional Words', data: positionalWords },
 ];
 
 interface CommonWordItem {

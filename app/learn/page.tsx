@@ -61,9 +61,7 @@ export default function LearnPage() {
           
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {learningModules.map((module) => (
-              <Link
-                href={module.href}
-                key={module.title}>
+              <Link href={module.href} key={module.title} legacyBehavior>
                 <div className="block bg-white p-6 rounded-xl shadow-lg hover:shadow-2xl transition-shadow transform hover:-translate-y-1 border-t-4 border-marigold-500 min-h-60 overflow-hidden"> {/* Added min-h-60 and overflow-hidden */}
                   <div className="flex flex-col h-full">
                     <div className="flex-shrink-0">

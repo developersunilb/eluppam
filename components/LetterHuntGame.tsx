@@ -69,13 +69,13 @@ const gameLevels: LetterHuntGameLevel[] = [
       { word: 'പൂച്ച', containsTarget: true },
       { word: 'നായ', containsTarget: false },
       { word: 'പാമ്പ്', containsTarget: true },
-      { word: 'പക്ഷi', containsTarget: true },
+      { word: 'പക്ഷി', containsTarget: true },
       { word: 'മത്സ്യം', containsTarget: false },
       { word: 'പശു', containsTarget: true },
       { word: 'ആട്', containsTarget: false },
       { word: 'പന്നി', containsTarget: true },
       { word: 'കുതിര', containsTarget: false },
-      { word: 'പുലി', containsTarget: false },
+      { word: 'പുലി', containsTarget: true },
     ],
   },
   {
@@ -96,10 +96,10 @@ const gameLevels: LetterHuntGameLevel[] = [
 ];
 
 interface LetterHuntGameProps {
-  onGameComplete?: () => void;
+  onComplete?: (success: boolean) => void;
 }
 
-const LetterHuntGame: React.FC<LetterHuntGameProps> = ({ onGameComplete }) => {
+const LetterHuntGame: React.FC<LetterHuntGameProps> = ({ onComplete }) => {
   const [currentLevelIndex, setCurrentLevelIndex] = useState(0);
   const currentLevel = gameLevels[currentLevelIndex];
 
@@ -130,7 +130,7 @@ const LetterHuntGame: React.FC<LetterHuntGameProps> = ({ onGameComplete }) => {
       setFeedbackMessage('Find the words and give it a try! You can do it!');
     } else if (incorrectSelections.length === 0 && missedCorrect.length === 0) {
       setFeedbackMessage('Excellent! All correct!');
-      onGameComplete?.();
+      onComplete?.(true);
     } else if (incorrectSelections.length > 0) {
       setFeedbackMessage('Oops! Some incorrect selections. Try again!');
     } else if (missedCorrect.length > 0) {

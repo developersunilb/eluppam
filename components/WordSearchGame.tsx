@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import { useProgress } from '@/context/ProgressContext';
 
 const rounds = [
   {
@@ -40,9 +41,10 @@ const rounds = [
   }
 ];
 
-const highlightColors = ['bg-yellow-300/50', 'bg-green-300/50', 'bg-blue-300/50', 'bg-indigo-300/50', 'bg-purple-300/50', 'bg-pink-300/50', 'bg-red-300/50', 'bg-orange-300/50'];
+const highlightColors = ['bg-yellow-300', 'bg-green-300', 'bg-blue-300', 'bg-indigo-300', 'bg-purple-300', 'bg-pink-300', 'bg-red-300', 'bg-orange-300'];
 
 const WordSearchGame = () => {
+  const { updateLessonProgress } = useProgress();
   const [currentRound, setCurrentRound] = useState(0);
   const [selectedLetters, setSelectedLetters] = useState<{ row: number; col: number }[]>([]);
   const [foundWords, setFoundWords] = useState<Set<string>>(new Set());
@@ -78,12 +80,13 @@ const WordSearchGame = () => {
 
     for (const word of uniqueWords) {
       if ((word === selectedWord || word === reversedSelectedWord) && !foundWords.has(word)) {
+        const newColorIndex = foundWordPaths.length % highlightColors.length; // Use current length of paths
+                  const newPath = {
+                    path: [...selectedLetters],
+                    color: highlightColors[newColorIndex],
+                  };
         setFoundWords(prev => new Set(prev).add(word));
-        const newPath = {
-          path: selectedLetters,
-          color: highlightColors[foundWords.size % highlightColors.length],
-        };
-        setFoundWordPaths(prev => [...prev, newPath]);
+        setFoundWordPaths(prevPaths => [...prevPaths, newPath]);
         break;
       }
     }
@@ -117,11 +120,17 @@ const WordSearchGame = () => {
     }
   }, [foundWords, currentRound, uniqueWords.length]);
 
+  useEffect(() => {
+    if (gameComplete) {
+      updateLessonProgress('games', 'word-search', true, 1);
+    }
+  }, [gameComplete, updateLessonProgress]);
+
   if (gameComplete) {
     return (
       <div className="flex flex-col items-center justify-center h-full text-center">
         <h2 className="text-2xl font-bold text-marigold-500 mb-4">Congrats, you have completed the word search game and unlocked the next level</h2>
-        <Link href="/games" passHref>
+        <Link href="/games" passHref legacyBehavior>
           <Button className="mt-4 bg-marigold-500 hover:bg-marigold-600">Back to Games</Button>
         </Link>
       </div>
@@ -146,8 +155,7 @@ const WordSearchGame = () => {
               return (
                 <div
                   key={`${rowIndex}-${colIndex}`}
-                  className={`relative w-14 h-14 border border-gray-300 flex items-center justify-center cursor-pointer transition-colors duration-200 ${highlightClass} ${isSelected ? 'bg-yellow-300' : 'bg-white'}`}
-                  onMouseDown={() => handleMouseDown(rowIndex, colIndex)}
+                  className={`relative w-14 h-14 border border-gray-300 flex items-center justify-center cursor-pointer transition-colors duration-200 ${highlightClass} rounded-full`}                  onMouseDown={() => handleMouseDown(rowIndex, colIndex)}
                   onMouseEnter={() => handleMouseEnter(rowIndex, colIndex)}
                   onMouseUp={handleMouseUp}
                 >

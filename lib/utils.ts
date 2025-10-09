@@ -22,3 +22,10 @@ export const shuffle = <T>(array: T[]): T[] => {
 
   return array;
 };
+
+export const playAudio = (audioSrc: string) => {
+  if (audioSrc) {
+    const audio = new Audio(audioSrc);
+    audio.play();
+  }
+};

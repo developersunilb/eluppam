@@ -76,7 +76,7 @@ export default function CallToAction() {
                   Begin Learning Now
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
-                <Link href="/#learn" passHref>
+                <Link href="/#learn" passHref legacyBehavior>
                   <Button 
                     size="lg" 
                     variant="outline" 
@@ -103,5 +103,5 @@ export default function CallToAction() {
         </Card>
       </div>
     </section>
-  )
+  );
 }

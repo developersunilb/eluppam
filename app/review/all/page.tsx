@@ -5,7 +5,16 @@ import LearnLayout from '@/components/LearnLayout';
 // Import data from learning modules
 import { vowels, consonants, chillaksharangal, kootaksharamData, numbers, festivals, seasons, cities, districts, malayalamDays, malayalamMonths } from '@/lib/data';
 
-const ReviewItem = ({ letter, word, meaning, transliteration, combination, number }) => (
+interface ReviewItemProps {
+  letter?: string;
+  word?: string;
+  meaning?: string;
+  transliteration?: string;
+  combination?: string;
+  number?: string;
+}
+
+const ReviewItem: React.FC<ReviewItemProps> = ({ letter, word, meaning, transliteration, combination, number }) => (
   <div className="flex items-center justify-between p-3 border-b border-gray-200 last:border-b-0">
     <div className="flex-1">
       {letter && <p className="text-2xl font-bold text-kerala-green-800">{letter}</p>}
@@ -59,7 +68,7 @@ export default function AllReviewPage() {
           <h2 className="text-3xl font-bold text-marigold-600 mb-4">Kootaksharangal (Conjuncts)</h2>
           <div className="border border-gray-200 rounded-lg overflow-hidden">
             {kootaksharamData.map((item, index) => (
-              <ReviewItem key={index} letter={item.conjunct} combination={item.combination} word={item.word} meaning={item.meaning} transliteration={item.transliteration} />
+              <ReviewItem key={index} letter={item.conjunct} word={item.examples[0]?.word} meaning={item.examples[0]?.meaning} transliteration={item.transliteration} />
             ))}
           </div>
         </div>

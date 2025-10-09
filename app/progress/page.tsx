@@ -34,7 +34,7 @@ import { vowels } from '@/lib/data';
 import { practiceVowels, practiceConsonants, practiceChillaksharangal, practiceNumbers, practiceKootaksharangal, practiceFestivals, practiceSeasons, practiceCities } from '@/lib/practice-data';
 import { TOTAL_QUESTIONS as WhackAVowelTotalQuestions } from '@/components/WhackAVowelGame';
 import { TOTAL_QUESTIONS as EmojiWordMatchTotalQuestions } from '@/components/EmojiWordMatchGame';
-import { MALAYALAM_CONSONANTS } from '@/components/ConsonantGame';
+import { MALAYALAM_CONSONANTS } from '@/components/ConsonantSpaceRunnerGame';
 
 
 const ProgressPage = () => {

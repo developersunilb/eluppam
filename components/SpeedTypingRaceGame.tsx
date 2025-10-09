@@ -22,7 +22,7 @@ const GAME_DATA: WordImagePair[] = [
   { word: 'മരം', imageUrl: '🌳' },
 ];
 
-const ROUND_TIME_LIMIT = 10;
+const ROUND_TIME_LIMIT = 25;
 const MAX_ROUNDS = 5;
 
 interface SpeedTypingRaceGameProps {
@@ -113,10 +113,11 @@ const SpeedTypingRaceGame: React.FC<SpeedTypingRaceGameProps> = ({ onComplete })
   const handleKeyPress = useCallback((key: string) => {
     if (!gameActive || !currentPair || feedback) return;
 
-    const expectedLetter = currentPair.word[typedLetters.length];
+    const newTypedLetters = [...typedLetters, key];
+    const newTypedWord = newTypedLetters.join('');
 
-    if (key === expectedLetter) {
-      setTypedLetters(prev => [...prev, key]);
+    if (currentPair.word.startsWith(newTypedWord)) {
+      setTypedLetters(newTypedLetters);
     } else {
       setFeedback('incorrect');
       setGameActive(false);
@@ -125,16 +126,23 @@ const SpeedTypingRaceGame: React.FC<SpeedTypingRaceGameProps> = ({ onComplete })
     }
   }, [gameActive, currentPair, typedLetters, feedback, startRound]);
 
-  const displayWordProgress = currentPair?.word.split('').map((char, index) => (
-    <span
-      key={index}
-      className={`text-5xl font-bold mx-1
-        ${index < typedLetters.length ? 'text-green-600' : 'text-gray-400'}
-      `}
-    >
-      {char}
-    </span>
-  ));
+  const displayWordProgress = () => {
+    if (!currentPair) return null;
+    const segmenter = new Intl.Segmenter('ml', { granularity: 'grapheme' });
+    const graphemes = [...segmenter.segment(currentPair.word)].map(s => s.segment);
+    const typedGraphemes = [...segmenter.segment(typedLetters.join(''))].map(s => s.segment);
+
+    return graphemes.map((grapheme, index) => (
+      <span
+        key={index}
+        className={`text-5xl font-bold mx-1 ${
+          index < typedGraphemes.length ? 'text-green-600' : 'text-gray-400'
+        }`}
+      >
+        {grapheme}
+      </span>
+    ));
+  };
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-yellow-100 to-orange-100 p-4">
@@ -143,7 +151,7 @@ const SpeedTypingRaceGame: React.FC<SpeedTypingRaceGameProps> = ({ onComplete })
       {gameActive && currentPair && (
         <div className="bg-white p-8 rounded-lg shadow-xl mb-8 text-center w-full max-w-md">
           <div className="text-7xl mb-6">{currentPair.imageUrl}</div>
-          <div className="mb-6 flex justify-center">{displayWordProgress}</div>
+          <div className="mb-6 flex justify-center">{displayWordProgress()}</div>
           <p className="text-2xl font-semibold text-gray-700 mb-4">Time Left: {timeLeft}s</p>
 
           <button

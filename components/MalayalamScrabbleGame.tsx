@@ -28,8 +28,8 @@ const LEVEL_20 = {
 };
 
 const LETTER_SCORES: { [key: string]: number } = {
-  'ക': 1, 'ാ': 1, 'ല': 1, 'ദ': 2, 'ി': 1, 'യ': 2, 'വ': 1, 'ള': 3, 'ട': 1, 'മ': 1, 'റ': 1, 'അ': 1, 'ം': 2,
-  'പ': 2, 'ൂ': 1, 'ന': 1, 'ച': 2, 'ങ': 3, 'ട': 1, 'ണ': 2, 'ത': 1, 'ഫ': 3, 'ബ': 2, 'ഭ': 3, 'യ': 2, 'ര': 1, 'ല': 1, 'വ': 1, 'ശ': 3, 'ഷ': 3, 'സ': 1, 'ഹ': 3, 'ഴ': 4, 'റ': 2,
+  'ക': 1, 'ാ': 1, 'ല': 1, 'ദ': 2, 'ി': 1, 'വ': 1, 'ള': 3, 'മ': 1, 'അ': 1, 'ം': 2,
+  'പ': 2, 'ൂ': 1, 'ന': 1, 'ച': 2, 'ങ': 3, 'ട': 1, 'ണ': 2, 'ത': 1, 'ഫ': 3, 'ബ': 2, 'ഭ': 3, 'യ': 2, 'ര': 1, 'ശ': 3, 'ഷ': 3, 'സ': 1, 'ഹ': 3, 'ഴ': 4, 'റ': 2,
 };
 
 const BOARD_BONUSES = [
@@ -44,7 +44,7 @@ const BOARD_BONUSES = [
 
 
 // Helper: normalize Malayalam strings lightly (trim + NFKC if needed)
-const normalize = (s: string) => (s || '').trim();
+const normalize = (s: string) => (s || '').trim().normalize('NFC');
 
 
 export default function MalayalamScrabbleGame() {
@@ -62,7 +62,12 @@ export default function MalayalamScrabbleGame() {
   const [showHowToPlay, setShowHowToPlay] = useState(false);
   const [showLegends, setShowLegends] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [normalizedLevelWords, setNormalizedLevelWords] = useState<string[]>([]);
 
+
+  useEffect(() => {
+    setNormalizedLevelWords(LEVEL_20.words.map(word => normalize(word)));
+  }, []);
 
   useEffect(() => {
     // reset message after a few seconds
@@ -124,7 +129,7 @@ export default function MalayalamScrabbleGame() {
         copy[cellIndex] = null;
         setRack(prevRack => [...prevRack, letter]);
       }
-      return copy;
+      return copy; 
     });
   }
 
@@ -202,7 +207,7 @@ export default function MalayalamScrabbleGame() {
       .map(wordStr => potentialWords.find(pw => pw.word === wordStr)!);
 
     uniquePotentialWords.forEach(pw => {
-      if (LEVEL_20.words.includes(pw.word) && !foundWords.some(fw => fw.word === pw.word)) {
+      if (normalizedLevelWords.includes(pw.word) && !foundWords.some(fw => fw.word === pw.word)) {
         const wordScore = calculateWordScore(pw.letters);
         totalNewScore += wordScore;
         newlyFoundWords.push({ word: pw.word, score: wordScore });
@@ -363,7 +368,7 @@ export default function MalayalamScrabbleGame() {
             >
               {letter}
               <span className="absolute top-0.5 right-0.5 text-xs font-semibold opacity-75">
-                {LETTER_SCORES[letter] || 0}
+                {letter ? LETTER_SCORES[letter] : 0}
               </span>
             </div>
           );
@@ -392,7 +397,7 @@ export default function MalayalamScrabbleGame() {
             ) : (
               <ul className="list-disc list-inside">
                 {foundWords.map((word, index) => (
-                  <li key={index} className="text-foreground">
+                  <li key={index} className="text-green-600">
                     {word.word} ({word.score})
                   </li>
                 ))}

@@ -43,53 +43,88 @@ export class MathrebashaDexie extends Dexie {
       userProgress: 'userId', // Primary key is userId
       userSessions: 'id',     // Primary key is 'id' (e.g., 'activeUser')
     });
+
   }
 }
 
 export const db = new MathrebashaDexie();
 
+let dbInstance: MathrebashaDexie | undefined;
+
+export function getDb(): MathrebashaDexie {
+  if (typeof window === 'undefined') {
+    // Return a dummy object or throw an error for SSR
+    // For now, we'll throw an error to make sure we catch any accidental server-side usage
+    throw new Error('Dexie (IndexedDB) should only be accessed on the client-side.');
+  }
+  if (!dbInstance) {
+    dbInstance = new MathrebashaDexie();
+  }
+  return dbInstance;
+}
+
 // Helper function to add feedback
 export async function addFeedback(moduleId: string, feedback: string): Promise<void> {
-  await db.feedback.add({
-    moduleId,
-    feedback,
-    timestamp: Date.now(),
-  });
+  const db = getDb();
+  try {
+    await db.feedback.add({
+      moduleId,
+      feedback,
+      timestamp: Date.now(),
+    });
+  } catch (error) {
+    console.error('Dexie: Error adding feedback:', error);
+  }
 }
 
 // Helper function to get or create user progress
 export async function getOrCreateUserProgress(userId: string): Promise<UserProgress> {
-  let progress = await db.userProgress.get(userId);
-  if (!progress) {
-    progress = {
-      userId,
-      modules: [],
-      badges: [], // Initialize badges array
-      lastUpdated: Date.now(),
-    };
-    await db.userProgress.add(progress);
+  const db = getDb();
+  try {
+    let progress = await db.userProgress.get(userId);
+    if (!progress) {
+      progress = {
+        userId,
+        modules: [],
+        badges: [], // Initialize badges array
+        lastUpdated: Date.now(),
+      };
+      await db.userProgress.add(progress);
+    }
+    return progress;
+  } catch (error) {
+    console.error('Dexie: Error getting or creating user progress for userId:', userId, error);
+    throw error; // Re-throw to propagate the error
   }
-  return progress;
 }
 
 // Helper function to update user progress
 export async function updateUserProgress(progress: UserProgress): Promise<void> {
-  progress.lastUpdated = Date.now();
-  await db.userProgress.put(progress);
+  const db = getDb();
+  try {
+    progress.lastUpdated = Date.now();
+    await db.userProgress.put(progress);
+  } catch (error) {
+    console.error('Dexie: Error updating user progress for userId:', progress.userId, error);
+    throw error; // Re-throw to propagate the error
+  }
 }
 
 // Helper functions for active user session
 const ACTIVE_USER_KEY = 'activeUser';
 
 export async function saveActiveUser(userId: string, username: string, email?: string): Promise<void> {
+  const db = getDb();
   await db.userSessions.put({ id: ACTIVE_USER_KEY, userId, username, email });
 }
 
 export async function getActiveUser(): Promise<ActiveUserSession | null> {
+  const db = getDb();
   const session = await db.userSessions.get(ACTIVE_USER_KEY);
   return session || null;
 }
 
 export async function clearActiveUser(): Promise<void> {
+  const db = getDb();
   await db.userSessions.delete(ACTIVE_USER_KEY);
 }

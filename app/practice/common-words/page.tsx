@@ -22,7 +22,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { useRouter } from 'next/navigation';
 
-import { practiceFestivals, practiceSeasons, practiceCities } from '@/lib/practice-data';
+import { practiceFestivals, practiceSeasons, practiceCities, practiceNakshatras, practiceDirections, practicePositionalWords } from '@/lib/practice-data';
 import { shuffle } from '@/lib/utils';
 
 interface PracticeItem {
@@ -278,10 +278,13 @@ const PracticeSection = ({ items, moduleId, emailSubject }: PracticeSectionProps
 export default function CommonWordsPracticePage() {
   return (
     <Tabs defaultValue="festivals" className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="grid w-full grid-cols-6">
             <TabsTrigger value="festivals">Festivals</TabsTrigger>
             <TabsTrigger value="seasons">Seasons</TabsTrigger>
             <TabsTrigger value="cities">Cities</TabsTrigger>
+            <TabsTrigger value="nakshatras">Nakshatras</TabsTrigger>
+            <TabsTrigger value="directions">Directions</TabsTrigger>
+            <TabsTrigger value="positional">Positional</TabsTrigger>
         </TabsList>
         <TabsContent value="festivals">
             <PracticeSection items={practiceFestivals} moduleId="common-words-festivals-practice" emailSubject="Feedback on Festivals Practice" />
@@ -291,6 +294,15 @@ export default function CommonWordsPracticePage() {
         </TabsContent>
         <TabsContent value="cities">
             <PracticeSection items={practiceCities} moduleId="common-words-cities-practice" emailSubject="Feedback on Cities Practice" />
+        </TabsContent>
+        <TabsContent value="nakshatras">
+            <PracticeSection items={practiceNakshatras} moduleId="common-words-nakshatras-practice" emailSubject="Feedback on Nakshatras Practice" />
+        </TabsContent>
+        <TabsContent value="directions">
+            <PracticeSection items={practiceDirections} moduleId="common-words-directions-practice" emailSubject="Feedback on Directions Practice" />
+        </TabsContent>
+        <TabsContent value="positional">
+            <PracticeSection items={practicePositionalWords} moduleId="common-words-positional-practice" emailSubject="Feedback on Positional Words Practice" />
         </TabsContent>
     </Tabs>
   );

@@ -22,7 +22,20 @@ import { Textarea } from "@/components/ui/textarea";
 import { useRouter } from 'next/navigation';
 
 import { practiceNumbers } from '@/lib/practice-data';
-import { PracticeItem, IncorrectAnswerSummaryItem } from '@/lib/types';
+
+interface PracticeItem {
+  originalWord: string;
+  correctAnswer: string;
+  meaning: string;
+  transliteration: string;
+  blankedWord: string;
+}
+
+interface IncorrectAnswerSummaryItem {
+  question: string;
+  yourAnswer: string;
+  correctAnswer: string;
+}
 
 const MODULE_ID = 'numbers-practice';
 

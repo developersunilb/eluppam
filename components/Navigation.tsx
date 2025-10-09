@@ -38,7 +38,8 @@ export default function Navigation() {
           {/* Logo */}
           <Link
             href="/"
-            className="flex items-center space-x-3 cursor-pointer">
+            className="flex items-center space-x-3 cursor-pointer"
+            >
             <div className="bg-gradient-to-r from-marigold-500 to-marigold-600 p-2 rounded-xl">
               <BookOpen className="h-6 w-6 text-white" />
             </div>
@@ -88,7 +89,7 @@ export default function Navigation() {
               <NavigationMenuItem>
                 <Link href="/progress" legacyBehavior passHref>
                   <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                    Progress
+                    <span>Progress</span>
                   </NavigationMenuLink>
                 </Link>
               </NavigationMenuItem>
@@ -154,7 +155,7 @@ export default function Navigation() {
               href="/progress"
               className="block text-kerala-green-700 hover:text-marigold-600 transition-colors font-medium"
               legacyBehavior> {/* Simplified Link */}
-              Progress
+              <span>Progress</span>
             </Link>
             <div className="pt-4 space-y-3">
               {authLoading ? (

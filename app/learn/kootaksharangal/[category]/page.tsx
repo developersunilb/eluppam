@@ -45,7 +45,11 @@ export function generateStaticParams() {
 }
 
 
-export default function KootaksharamCategoryPage({ params }: { params: { category: string } }) {
+interface KootaksharamCategoryPageProps {
+  params: { category: string };
+}
+
+export default function KootaksharamCategoryPage({ params }: { params: any }) {
   const categoryMap: { [key: string]: string } = {
       ka: 'ക',
       ga: 'ഗ',
@@ -73,7 +77,8 @@ export default function KootaksharamCategoryPage({ params }: { params: { categor
       ra2: 'റ',
   };
 
-  const baseConsonant = categoryMap[params.category];
+  const { category } = params as KootaksharamCategoryPageProps['params'];
+  const baseConsonant = categoryMap[category];
   
   const filteredData = kootaksharamData.filter(item => item.base === baseConsonant);
 

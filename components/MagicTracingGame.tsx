@@ -2,29 +2,38 @@
 
 import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
-import { RotateCcw, Check, Lightbulb } from 'lucide-react';
+import { RotateCcw, Check, Lightbulb, CheckCircle, XCircle } from 'lucide-react';
+import { vowels, consonants } from '@/lib/data';
 import Image from 'next/image';
 
+const TRACING_CHARACTERS = ['അ', 'ആ', 'ഇ', 'ഈ', 'ഉ'];
+
 interface MagicTracingGameProps {
-  character: string;
   onComplete: (success: boolean) => void;
   clearTrigger: number;
 }
 
-const CHARACTER_GIF_MAP: { [key: string]: string } = {
-  'അ': 'a',
-  'ആ': 'aa',
-  'ഇ': 'i',
-  'ഈ': 'ee',
-  'ഉ': 'u',
-  // Add more as needed for other characters in TRACING_CHARACTERS
-};
-
-const MagicTracingGame: React.FC<MagicTracingGameProps> = ({ character, onComplete, clearTrigger }) => {
+const MagicTracingGame: React.FC<MagicTracingGameProps> = ({ onComplete, clearTrigger }) => {
+  const [currentCharIndex, setCurrentCharIndex] = useState(0);
+  const character = TRACING_CHARACTERS[currentCharIndex];
+  const [feedback, setFeedback] = useState<'correct' | 'incorrect' | null>(null);
+  const [gameStatus, setGameStatus] = useState<'playing' | 'level_complete'>('playing');
   const drawCanvasRef = useRef<HTMLCanvasElement>(null);
   const guideCanvasRef = useRef<HTMLCanvasElement>(null);
   const [isDrawing, setIsDrawing] = useState(false);
   const [showHintGif, setShowHintGif] = useState(false);
+
+  const getGifSrc = (char: string): string | undefined => {
+    const vowel = vowels.find(v => v.vowel === char);
+    if (vowel && vowel.gifSrc) {
+      return vowel.gifSrc;
+    }
+    const consonant = consonants.find(c => c.consonant === char);
+    if (consonant) {
+      return `/writing/consonants/${char}.gif`;
+    }
+    return undefined;
+  };
 
   const canvasWidth = 400;
   const canvasHeight = 400;
@@ -136,17 +145,52 @@ const MagicTracingGame: React.FC<MagicTracingGameProps> = ({ character, onComple
     const matchPercentage = guidePixelCount > 0 ? tracedPixelCount / guidePixelCount : 0;
 
     if (matchPercentage >= TRACE_THRESHOLD) {
-      onComplete(true);
+      setFeedback('correct');
+      if (currentCharIndex < TRACING_CHARACTERS.length - 1) {
+        setTimeout(() => {
+          setCurrentCharIndex(prev => prev + 1);
+          clearCanvas();
+          setFeedback(null);
+        }, 1000);
+      } else {
+        setGameStatus('level_complete');
+        onComplete(true);
+      }
     } else {
+      setFeedback('incorrect');
+      setTimeout(() => {
+        setFeedback(null);
+      }, 1500);
       onComplete(false);
     }
   };
+
+  if (gameStatus === 'level_complete') {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-cream-50 to-marigold-50 p-4 flex items-center justify-center">
+        <div className="text-center p-8 bg-white rounded-lg shadow-xl">
+          <h2 className="text-3xl font-bold text-kerala-green-700 mb-4">
+            Congratulations!
+          </h2>
+          <p className="text-xl text-gray-700 mb-6">
+            You've passed the Magic Tracing game!
+          </p>
+          <Button 
+            onClick={() => window.location.href = '/games?completed=magic-tracing'}
+            className="px-8 py-3 text-lg bg-marigold-500 hover:bg-marigold-600 text-white shadow-lg">
+            Go to Games Page
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
 
 
   return (
     <div className="flex flex-col items-center p-4 bg-cream-50 rounded-lg shadow-lg">
       <h1 className="text-2xl font-bold text-kerala-green-800 mb-4">Trace the letter: {character}</h1>
+      <p className="text-xl text-gray-600 mb-6">Character {currentCharIndex + 1} of {TRACING_CHARACTERS.length}</p>
       <div className="magic-tracing-canvas-container">
         <canvas
           ref={guideCanvasRef}
@@ -184,10 +228,18 @@ const MagicTracingGame: React.FC<MagicTracingGameProps> = ({ character, onComple
         </Button>
       </div>
 
+      {feedback && (
+        <div className={`mt-4 p-4 rounded-lg flex items-center text-2xl font-bold 
+          ${feedback === 'correct' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+          {feedback === 'correct' ? <CheckCircle className="mr-2" /> : <XCircle className="mr-2" />}
+          {feedback === 'correct' ? 'Perfect!' : 'Not quite, try again!'}
+        </div>
+      )}
+
       {showHintGif && (
         <div className="absolute inset-0 bg-black bg-opacity-70 flex items-center justify-center z-30"
              onClick={() => setShowHintGif(false)}>
-          <Image src={`/writing/${CHARACTER_GIF_MAP[character]}.gif`} alt={`Hint for ${character}`} width={canvasWidth} height={canvasHeight} className="max-w-full max-h-full" />
+          <Image src={getGifSrc(character) || ''} alt={`Hint for ${character}`} width={canvasWidth} height={canvasHeight} className="max-w-full max-h-full" />
         </div>
       )}
     </div>

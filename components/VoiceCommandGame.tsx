@@ -2,15 +2,11 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { Mic, MicOff, Play, RefreshCw, CheckCircle, XCircle } from 'lucide-react';
+import { SpeechRecognitionEvent, SpeechRecognitionErrorEvent } from '@/lib/types';
 
-declare global {
-  interface Window {
-    SpeechRecognition: any;
-    webkitSpeechRecognition: any;
-  }
-}
 
-const TARGET_WORD = 'ഓടൂ';
+
+const WORDS = ['ഓടൂ', 'നിൽക്കൂ', 'ചാടുക', 'ഇരിക്കുക', 'നടക്കുക']; // Sample words
 const LANGUAGE = 'ml-IN';
 
 interface VoiceCommandGameProps {
@@ -18,6 +14,7 @@ interface VoiceCommandGameProps {
 }
 
 const VoiceCommandGame: React.FC<VoiceCommandGameProps> = ({ onComplete }) => {
+  const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const [isListening, setIsListening] = useState(false);
   const [recognizedText, setRecognizedText] = useState('');
   const [feedback, setFeedback] = useState<'correct' | 'incorrect' | null>(null);
@@ -37,19 +34,28 @@ const VoiceCommandGame: React.FC<VoiceCommandGameProps> = ({ onComplete }) => {
     recognition.interimResults = false;
     recognition.lang = LANGUAGE;
 
-    recognition.onresult = (event: any) => {
+    recognition.onresult = (event: SpeechRecognitionEvent) => {
       const transcript = event.results[0][0].transcript;
       setRecognizedText(transcript);
 
-      if (transcript.toLowerCase().includes(TARGET_WORD.toLowerCase())) {
+      if (transcript.trim() === WORDS[currentWordIndex]) {
         setFeedback('correct');
+        setTimeout(() => {
+          if (currentWordIndex < WORDS.length - 1) {
+            setCurrentWordIndex(currentWordIndex + 1);
+            setFeedback(null);
+            setRecognizedText('');
+          } else {
+            onComplete(true);
+          }
+        }, 1500);
       } else {
         setFeedback('incorrect');
       }
       setIsListening(false);
     };
 
-    recognition.onerror = (event: any) => {
+    recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
       console.error('Speech recognition error:', event.error);
       setFeedback('incorrect');
       setIsListening(false);
@@ -68,16 +74,9 @@ const VoiceCommandGame: React.FC<VoiceCommandGameProps> = ({ onComplete }) => {
         recognitionRef.current.stop();
       }
     };
-  }, [isListening]);
+  }, [isListening, currentWordIndex, onComplete]);
 
-  useEffect(() => {
-    if (feedback === 'correct') {
-      onComplete(true);
-    } else if (feedback === 'incorrect') {
-      // In this game, we allow retries, so we don't call onComplete(false) immediately.
-      // The user can just try again.
-    }
-  }, [feedback, onComplete]);
+
 
   const startListening = () => {
     if (recognitionRef.current) {
@@ -101,7 +100,7 @@ const VoiceCommandGame: React.FC<VoiceCommandGameProps> = ({ onComplete }) => {
 
       <div className="bg-white p-8 rounded-lg shadow-xl mb-8 text-center w-full max-w-md">
         <p className="text-xl text-gray-700 mb-4">Say the word:</p>
-        <div className="text-6xl font-bold text-indigo-600 mb-6">{TARGET_WORD}</div>
+        <div className="text-6xl font-bold text-indigo-600 mb-6">{WORDS[currentWordIndex]}</div>
 
         <button
           onClick={isListening ? stopListening : startListening}
@@ -135,6 +134,7 @@ const VoiceCommandGame: React.FC<VoiceCommandGameProps> = ({ onComplete }) => {
           setRecognizedText('');
           setFeedback(null);
           setIsListening(false);
+          setCurrentWordIndex(0);
           if (recognitionRef.current) recognitionRef.current.stop();
         }}
         className="p-3 bg-gray-600 text-white rounded-lg text-lg font-semibold hover:bg-gray-700 transition-colors duration-200 flex items-center"

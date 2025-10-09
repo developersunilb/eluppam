@@ -97,24 +97,23 @@ const MalayalamKeyboard = ({ onKeyPress = () => {}, onBackspace = () => {} }: Ma
             return (
               <div key={rowIndex} className="flex justify-center gap-1 my-1 w-full">
                 {/* Far Left Chihnangal Column */}
-                <div className="flex flex-col justify-start gap-1 border border-gray-300 rounded-lg p-2">
+                <div className="flex flex-col justify-start gap-1 rounded-lg p-2">
                   {fiveColumnLayout.farLeftColumnContent.map(char => {
-                    let buttonClass = "text-sm font-bold p-1 flex-1 aspect-square flex items-center justify-center"; // Removed w-9 h-9, added flex-1 aspect-square
+                    let buttonClass = "text-xs font-bold p-1 flex-1 aspect-square flex items-center justify-center"; // Removed w-9 h-9, added flex-1 aspect-square
                     buttonClass += " bg-backwater-blue-200 hover:bg-backwater-blue-300 text-backwater-blue-900";
                     return (
                       <Button key={char} onClick={() => onKeyPress(char)} variant="outline" className={buttonClass}>
-                        {char}
+                        {`\u200B${char}`}
                       </Button>
                     );
                   })}
                 </div>
 
-                {/* Left Consonants Column */}
-                <div className="flex flex-col justify-start gap-1 border border-gray-300 rounded-lg p-2 flex-1">
+<div className="flex flex-col justify-start gap-1 rounded-lg p-2">
                   {/* New container for swaraksharangalRow1 */}
-                  <div className="flex justify-center gap-1 my-1 border border-gray-200 rounded-lg p-1">
+                  <div className="flex justify-center gap-1 my-1 rounded-lg p-1">
                     {fiveColumnLayout.topVowelsInLeftColumn.map(char => {
-                      let buttonClass = "text-sm font-bold p-1 flex-1 aspect-square flex items-center justify-center"; // Removed w-9 h-9, added flex-1 aspect-square
+                      let buttonClass = "text-xs font-bold p-1 flex-1 aspect-square flex items-center justify-center"; // Removed w-9 h-9, added flex-1 aspect-square
                       buttonClass += " bg-marigold-200 hover:bg-marigold-300 text-marigold-900";
                       return (
                         <Button key={char} onClick={() => onKeyPress(char)} variant="outline" className={buttonClass}>
@@ -126,7 +125,7 @@ const MalayalamKeyboard = ({ onKeyPress = () => {}, onBackspace = () => {} }: Ma
                   {fiveColumnLayout.leftColumnContent.map((colRow, colRowIndex) => (
                     <div key={colRowIndex} className="flex justify-start gap-1">
                       {colRow.map(char => {
-                        let buttonClass = "text-sm font-bold p-1 w-14 h-14 flex items-center justify-center"; // Changed w-9 h-9 to w-14 h-14
+                        let buttonClass = "text-xs font-bold p-1 w-14 h-14 flex items-center justify-center"; // Changed w-9 h-9 to w-14 h-14
                         buttonClass += " bg-kerala-green-200 hover:bg-kerala-green-300 text-kerala-green-900";
                         return (
                           <Button key={char} onClick={() => onKeyPress(char)} variant="outline" className={buttonClass}>
@@ -139,9 +138,9 @@ const MalayalamKeyboard = ({ onKeyPress = () => {}, onBackspace = () => {} }: Ma
                 </div>
 
                 {/* Middle Chillaksharangal Column */}
-                <div className="flex flex-col items-center justify-start border border-gray-300 rounded-lg p-2">
+                <div className="flex flex-col items-center justify-start rounded-lg p-2">
                   {fiveColumnLayout.middleColumnContent.map(char => {
-                    let buttonClass = "text-sm font-bold p-1 flex-1 aspect-square flex items-center justify-center"; // Removed w-9 h-9, added flex-1 aspect-square
+                    let buttonClass = "text-xs font-bold p-1 flex-1 aspect-square flex items-center justify-center"; // Removed w-9 h-9, added flex-1 aspect-square
                     if (char === 'ഋ') { // Check for ഋ and apply marigold color
                       buttonClass += " bg-marigold-200 hover:bg-marigold-300 text-marigold-900";
                     } else {
@@ -158,12 +157,11 @@ const MalayalamKeyboard = ({ onKeyPress = () => {}, onBackspace = () => {} }: Ma
                   })}
                 </div>
 
-                {/* Right Consonants Column */}
-                <div className="flex flex-col justify-start gap-1 border border-gray-300 rounded-lg p-2 flex-1">
+<div className="flex flex-col justify-start gap-1 rounded-lg p-2">
                   {/* New container for swaraksharangalRow2 */}
-                  <div className="flex justify-center gap-1 my-1 border border-gray-200 rounded-lg p-1">
+                  <div className="flex justify-center gap-1 my-1 rounded-lg p-1">
                     {fiveColumnLayout.topVowelsInRightColumn.map(char => {
-                      let buttonClass = "text-sm font-bold p-1 flex-1 aspect-square flex items-center justify-center"; // Removed w-9 h-9, added flex-1 aspect-square
+                      let buttonClass = "text-xs font-bold p-1 flex-1 aspect-square flex items-center justify-center"; // Removed w-9 h-9, added flex-1 aspect-square
                       buttonClass += " bg-marigold-200 hover:bg-marigold-300 text-marigold-900";
                       return (
                         <Button key={char} onClick={() => onKeyPress(char)} variant="outline" className={buttonClass}>
@@ -175,7 +173,7 @@ const MalayalamKeyboard = ({ onKeyPress = () => {}, onBackspace = () => {} }: Ma
                   {fiveColumnLayout.rightColumnContent.map((colRow, colRowIndex) => (
                     <div key={colRowIndex} className="flex justify-end gap-1">
                       {colRow.map(char => {
-                        let buttonClass = "text-sm font-bold p-1 flex-1 aspect-square flex items-center justify-center"; // Removed w-14 h-14, added flex-1 aspect-square
+                        let buttonClass = "text-xs font-bold p-1 w-14 h-14 flex items-center justify-center"; // Changed w-9 h-9 to w-14 h-14
                         buttonClass += " bg-kerala-green-200 hover:bg-kerala-green-300 text-kerala-green-900";
                         return (
                           <Button key={char} onClick={() => onKeyPress(char)} variant="outline" className={buttonClass}>
@@ -188,13 +186,13 @@ const MalayalamKeyboard = ({ onKeyPress = () => {}, onBackspace = () => {} }: Ma
                 </div>
 
                 {/* Far Right Chihnangal Column */}
-                <div className="flex flex-col justify-start gap-1 border border-gray-300 rounded-lg p-2">
+                <div className="flex flex-col justify-start gap-1 rounded-lg p-2">
                   {fiveColumnLayout.farRightColumnContent.map(char => {
-                    let buttonClass = "text-sm font-bold p-1 flex-1 aspect-square flex items-center justify-center"; // Removed w-9 h-9, added flex-1 aspect-square
+                    let buttonClass = "text-xs font-bold p-1 flex-1 aspect-square flex items-center justify-center"; // Removed w-9 h-9, added flex-1 aspect-square
                     buttonClass += " bg-backwater-blue-200 hover:bg-backwater-blue-300 text-backwater-blue-900";
                     return (
                       <Button key={char} onClick={() => onKeyPress(char)} variant="outline" className={buttonClass}>
-                        {char}
+                        {`\u200B${char}`}
                       </Button>
                     );
                   })}
@@ -206,7 +204,7 @@ const MalayalamKeyboard = ({ onKeyPress = () => {}, onBackspace = () => {} }: Ma
             return (
               <div key={rowIndex} className="flex justify-center gap-1 my-1">
                 {(row as string[]).map(char => {
-                  let buttonClass = "text-sm font-bold p-1 flex-1 aspect-square flex items-center justify-center"; // Removed w-9 h-9, added flex-1 aspect-square
+                  let buttonClass = "text-xs font-bold p-1 flex-1 aspect-square flex items-center justify-center"; // Removed w-9 h-9, added flex-1 aspect-square
                   if (char === '') {
                     buttonClass = "text-sm font-bold p-1 bg-kasavu-gold-200 hover:bg-kasavu-gold-300 text-kasavu-gold-900 w-18 h-9 flex items-center justify-center";
                   } else if (kootaksharangal.includes(char)) {

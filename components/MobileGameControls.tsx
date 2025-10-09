@@ -1,22 +1,22 @@
 import React from 'react';
-import { ArrowUp, ArrowDown, ChevronUp } from 'lucide-react';
+import { ArrowUp, ArrowLeft, ArrowRight } from 'lucide-react';
 
 interface MobileGameControlsProps {
   onUpPress: () => void;
   onUpRelease: () => void;
-  onDownPress: () => void;
-  onDownRelease: () => void;
-  onJumpPress: () => void;
-  onJumpRelease: () => void;
+  onLeftPress: () => void;
+  onLeftRelease: () => void;
+  onRightPress: () => void;
+  onRightRelease: () => void;
 }
 
 const MobileGameControls: React.FC<MobileGameControlsProps> = ({
   onUpPress,
   onUpRelease,
-  onDownPress,
-  onDownRelease,
-  onJumpPress,
-  onJumpRelease,
+  onLeftPress,
+  onLeftRelease,
+  onRightPress,
+  onRightRelease,
 }) => {
   const buttonClass = "bg-gray-700 text-white p-4 rounded-full shadow-lg active:bg-gray-600 touch-action-manipulation";
 
@@ -36,13 +36,13 @@ const MobileGameControls: React.FC<MobileGameControlsProps> = ({
         </button>
         <button
           className={buttonClass}
-          onTouchStart={onDownPress}
-          onTouchEnd={onDownRelease}
-          onMouseDown={onDownPress}
-          onMouseUp={onDownRelease}
-          onMouseLeave={onDownRelease}
+          onTouchStart={onLeftPress}
+          onTouchEnd={onLeftRelease}
+          onMouseDown={onLeftPress}
+          onMouseUp={onLeftRelease}
+          onMouseLeave={onLeftRelease} // In case mouse drags off button
         >
-          <ArrowDown size={24} />
+          <ArrowLeft size={24} />
         </button>
       </div>
 
@@ -50,13 +50,13 @@ const MobileGameControls: React.FC<MobileGameControlsProps> = ({
       <div>
         <button
           className={buttonClass}
-          onTouchStart={onJumpPress}
-          onTouchEnd={onJumpRelease}
-          onMouseDown={onJumpPress}
-          onMouseUp={onJumpRelease}
-          onMouseLeave={onJumpRelease}
+          onTouchStart={onRightPress}
+          onTouchEnd={onRightRelease}
+          onMouseDown={onRightPress}
+          onMouseUp={onRightRelease}
+          onMouseLeave={onRightRelease}
         >
-          <ChevronUp size={24} />
+          <ArrowRight size={24} />
         </button>
       </div>
     </div>

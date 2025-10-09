@@ -23,7 +23,20 @@ import { useRouter } from 'next/navigation';
 
 import { practiceKootaksharangal } from '@/lib/practice-data';
 import { shuffle } from '@/lib/utils';
-import { PracticeItem, IncorrectAnswerSummaryItem } from '@/lib/types';
+
+interface PracticeItem {
+  originalWord: string;
+  correctAnswer: string;
+  meaning: string;
+  transliteration: string;
+  blankedWord: string;
+}
+
+interface IncorrectAnswerSummaryItem {
+  question: string;
+  yourAnswer: string;
+  correctAnswer: string;
+}
 
 const MODULE_ID = 'kootaksharangal-practice';
 

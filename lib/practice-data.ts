@@ -27,8 +27,8 @@ export const practiceConsonants = [
     { originalWord: 'പശു', blankedWord: '_ശു', correctAnswer: 'പ', meaning: 'Cow', transliteration: 'pashu' },
     { originalWord: 'മരം', blankedWord: '_രം', correctAnswer: 'മ', meaning: 'Tree', transliteration: 'maram' },
     { originalWord: 'വല', blankedWord: '_ല', correctAnswer: 'വ', meaning: 'Net', transliteration: 'vala' },
-    { originalWord: 'സിംഹം', blankedWord: '_ംഹം', correctAnswer: 'സി', meaning: 'Lion', transliteration: 'simham' },
-    { originalWord: 'ഹംസം', blankedWord: '_ംസം', correctAnswer: 'ഹ', meaning: 'Swan', transliteration: 'hamsam' },
+    { originalWord: 'സിംഹം', blankedWord: 'സി_ഹം', correctAnswer: 'ം', meaning: 'Lion', transliteration: 'simham' },
+    { originalWord: 'ഹംസം', blankedWord: 'ഹ_സം', correctAnswer: 'ം', meaning: 'Swan', transliteration: 'hamsam' },
     { originalWord: 'പുഴ', blankedWord: '_ഴ', correctAnswer: 'പു', meaning: 'River', transliteration: 'puzha' },
     { originalWord: 'പറ', blankedWord: '_റ', correctAnswer: 'പ', meaning: 'Measuring Vessel', transliteration: 'para' },
 ];
@@ -82,7 +82,7 @@ export const practiceFestivals = [
     { originalWord: 'ഓണം', blankedWord: '_ണം', correctAnswer: 'ഓ', meaning: 'Onam', transliteration: 'Onam' },
     { originalWord: 'വിഷു', blankedWord: '_ഷു', correctAnswer: 'വി', meaning: 'Vishu', transliteration: 'Vishu' },
     { originalWord: 'ക്രിസ്മസ്', blankedWord: '_സ്മസ്', correctAnswer: 'ക്രി', meaning: 'Christmas', transliteration: 'Christmas' },
-    { originalWord: 'റംസാൻ', blankedWord: '_ംസാൻ', correctAnswer: 'റ', meaning: 'Ramzan', transliteration: 'Ramzan' },
+    { originalWord: 'റംസാൻ', blankedWord: 'റ_സാൻ', correctAnswer: 'ം', meaning: 'Ramzan', transliteration: 'Ramzan' },
     { originalWord: 'ദീപാവലി', blankedWord: '_പാവലി', correctAnswer: 'ദീ', meaning: 'Deepavali', transliteration: 'Deepavali' },
 ];
 
@@ -98,4 +98,54 @@ export const practiceCities = [
     { originalWord: 'കോഴിക്കോട്', blankedWord: '_ഴിക്കോട്', correctAnswer: 'കോ', meaning: 'Kozhikode', transliteration: 'Kozhikode' },
     { originalWord: 'തൃശ്ശൂർ', blankedWord: '_ശ്ശൂർ', correctAnswer: 'തൃ', meaning: 'Thrissur', transliteration: 'Thrissur' },
     { originalWord: 'കണ്ണൂർ', blankedWord: '_ണ്ണൂർ', correctAnswer: 'ക', meaning: 'Kannur', transliteration: 'Kannur' },
+];
+
+export const practiceNakshatras = [
+  { originalWord: 'അശ്വതി', blankedWord: '_ശ്വതി', correctAnswer: 'അ', meaning: 'Ashwathy', transliteration: 'Ashwathy' },
+  { originalWord: 'ഭരണി', blankedWord: '_രണി', correctAnswer: 'ഭ', meaning: 'Bharani', transliteration: 'Bharani' },
+  { originalWord: 'കാർത്തിക', blankedWord: '_ർത്തിക', correctAnswer: 'കാ', meaning: 'Karthika', transliteration: 'Karthika' },
+  { originalWord: 'രോഹിണി', blankedWord: '_ഹിണി', correctAnswer: 'രോ', meaning: 'Rohini', transliteration: 'Rohini' },
+  { originalWord: 'മകയിരം', blankedWord: '_കയിരം', correctAnswer: 'മ', meaning: 'Makayiram', transliteration: 'Makayiram' },
+  { originalWord: 'തിരുവാതിര', blankedWord: '_രുവാതിര', correctAnswer: 'തി', meaning: 'Thiruvathira', transliteration: 'Thiruvathira' },
+  { originalWord: 'പുണർതം', blankedWord: '_ണർതം', correctAnswer: 'പു', meaning: 'Punartham', transliteration: 'Punartham' },
+  { originalWord: 'പൂയം', blankedWord: '_യം', correctAnswer: 'പൂ', meaning: 'Pooyam', transliteration: 'Pooyam' },
+  { originalWord: 'ആയില്യം', blankedWord: '_യില്യം', correctAnswer: 'ആ', meaning: 'Aayilyam', transliteration: 'Aayilyam' },
+  { originalWord: 'മകം', blankedWord: '_കം', correctAnswer: 'മ', meaning: 'Makam', transliteration: 'Makam' },
+  { originalWord: 'പൂരം', blankedWord: '_രം', correctAnswer: 'പൂ', meaning: 'Pooram', transliteration: 'Pooram' },
+  { originalWord: 'ഉത്രം', blankedWord: '_ത്രം', correctAnswer: 'ഉ', meaning: 'Uthram', transliteration: 'Uthram' },
+  { originalWord: 'അത്തം', blankedWord: '_ത്തം', correctAnswer: 'അ', meaning: 'Atham', transliteration: 'Atham' },
+  { originalWord: 'ചിത്തിര', blankedWord: '_ത്തിര', correctAnswer: 'ചി', meaning: 'Chithira', transliteration: 'Chithira' },
+  { originalWord: 'ചോതി', blankedWord: '_തി', correctAnswer: 'ചോ', meaning: 'Chothi', transliteration: 'Chothi' },
+  { originalWord: 'വിശാഖം', blankedWord: '_ശാഖം', correctAnswer: 'വി', meaning: 'Vishakam', transliteration: 'Vishakam' },
+  { originalWord: 'അനിഴം', blankedWord: '_നിഴം', correctAnswer: 'അ', meaning: 'Anizham', transliteration: 'Anizham' },
+  { originalWord: 'തൃക്കേട്ട', blankedWord: '_ക്കേട്ട', correctAnswer: 'തൃ', meaning: 'Thriketta', transliteration: 'Thriketta' },
+  { originalWord: 'മൂലം', blankedWord: '_ലം', correctAnswer: 'മൂ', meaning: 'Moolam', transliteration: 'Moolam' },
+  { originalWord: 'പൂരാടം', blankedWord: '_രാടം', correctAnswer: 'പൂ', meaning: 'Pooradam', transliteration: 'Pooradam' },
+  { originalWord: 'ഉത്രാടം', blankedWord: '_ത്രാടം', correctAnswer: 'ഉ', meaning: 'Uthradam', transliteration: 'Uthradam' },
+  { originalWord: 'തിരുവോണം', blankedWord: '_രുവോണം', correctAnswer: 'തി', meaning: 'Thiruvonam', transliteration: 'Thiruvonam' },
+  { originalWord: 'അവിട്ടം', blankedWord: '_വിട്ടം', correctAnswer: 'അ', meaning: 'Avittam', transliteration: 'Avittam' },
+  { originalWord: 'ചതയം', blankedWord: '_തയം', correctAnswer: 'ച', meaning: 'Chathayam', transliteration: 'Chathayam' },
+  { originalWord: 'പൂരുരുട്ടാതി', blankedWord: '_രുരുട്ടാതി', correctAnswer: 'പൂ', meaning: 'Poororottathy', transliteration: 'Poororottathy' },
+  { originalWord: 'ഉത്രട്ടാതി', blankedWord: '_ത്രട്ടാതി', correctAnswer: 'ഉ', meaning: 'Uthratathy', transliteration: 'Uthratathy' },
+  { originalWord: 'രേവതി', blankedWord: '_വതി', correctAnswer: 'രേ', meaning: 'Revathi', transliteration: 'Revathi' },
+];
+
+export const practiceDirections = [
+  { originalWord: 'വടക്ക്', blankedWord: '_ടക്ക്', correctAnswer: 'വ', meaning: 'North', transliteration: 'Vadakke' },
+  { originalWord: 'കിഴക്ക്', blankedWord: '_ഴക്ക്', correctAnswer: 'കി', meaning: 'East', transliteration: 'Kizhakke' },
+  { originalWord: 'പടിഞ്ഞാറ്', blankedWord: '_ടിഞ്ഞാറ്', correctAnswer: 'പ', meaning: 'West', transliteration: 'Padinjaaru' },
+  { originalWord: 'തെക്ക്', blankedWord: '_ക്ക്', correctAnswer: 'തെ', meaning: 'South', transliteration: 'Thekku' },
+  { originalWord: 'വടക്കുകിഴക്ക്', blankedWord: '_ടക്കുകിഴക്ക്', correctAnswer: 'വ', meaning: 'Northeast', transliteration: 'Vadakkukizhakku' },
+  { originalWord: 'തെക്ക് കിഴക്ക്', blankedWord: '_ക്ക് കിഴക്ക്', correctAnswer: 'തെ', meaning: 'Southeast', transliteration: 'Thekkukizhakku' },
+  { originalWord: 'തെക്ക് പടിഞ്ഞാറ്', blankedWord: '_ക്ക് പടിഞ്ഞാറ്', correctAnswer: 'തെ', meaning: 'Southwest', transliteration: 'Thekkupadinjaaru' },
+  { originalWord: 'വടക്ക് പടിഞ്ഞാറ്', blankedWord: '_ടക്ക് പടിഞ്ഞാറ്', correctAnswer: 'വ', meaning: 'Northwest', transliteration: 'Vadakkupadinjaaru' },
+];
+
+export const practicePositionalWords = [
+    { originalWord: 'മുകളിലേക്ക്', blankedWord: '_ുകളിലേക്ക്', correctAnswer: 'മു', meaning: 'Up', transliteration: 'mukalilekku' },
+    { originalWord: 'താഴേക്ക്', blankedWord: '_ഴേക്ക്', correctAnswer: 'താ', meaning: 'Down', transliteration: 'thaazhekku' },
+    { originalWord: 'മുകളിൽ', blankedWord: '_ുകളിൽ', correctAnswer: 'മു', meaning: 'Top', transliteration: 'mukalil' },
+    { originalWord: 'താഴെ', blankedWord: '_ഴെ', correctAnswer: 'താ', meaning: 'Bottom', transliteration: 'thaazhe' },
+    { originalWord: 'വലത്', blankedWord: '_ലത്', correctAnswer: 'വ', meaning: 'Right', transliteration: 'valathu' },
+    { originalWord: 'ഇടത്', blankedWord: '_ടത്', correctAnswer: 'ഇ', meaning: 'Left', transliteration: 'edathu' },
 ];

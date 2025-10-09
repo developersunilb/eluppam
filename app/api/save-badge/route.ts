@@ -25,6 +25,10 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ message: 'Badge saved successfully', filePath: `/badges/${filename}` });
   } catch (error) {
     console.error('Error saving badge:', error);
-    return NextResponse.json({ message: 'Failed to save badge', error: error.message }, { status: 500 });
+    let errorMessage = 'An unknown error occurred';
+    if (error instanceof Error) {
+      errorMessage = error.message;
+    }
+    return NextResponse.json({ message: 'Failed to save badge', error: errorMessage }, { status: 500 });
   }
 }

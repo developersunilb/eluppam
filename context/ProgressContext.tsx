@@ -8,6 +8,7 @@ interface ProgressContextType {
   userProgress: UserProgress | null;
   loading: boolean;
   error: string | null;
+  loadUserProgress: () => Promise<void>; // Expose the loading function
   updateModuleProgress: (moduleId: string, moduleType: 'learn' | 'practice', newStatus: 'not-started' | 'in-progress' | 'completed', score?: number, lastAccessedLessonId?: string, practiceState?: { currentIndex: number; correctAnswersCount: number; }) => Promise<void>;
   updateLessonProgress: (moduleId: string, lessonId: string, completed: boolean, score?: number) => Promise<void>;
   resetModuleProgress: (moduleId: string) => Promise<void>;
@@ -22,7 +23,7 @@ interface ProgressProviderProps {
 }
 
 export const ProgressProvider: React.FC<ProgressProviderProps> = ({ children, userId }) => {
-  const [userProgress, setUserProgress] = useState<UserProgress | null>(null);
+  const [userProgress, setUserProgress] = useState<UserProgress>(() => ({ userId: '', modules: [], badges: [], lastUpdated: Date.now() }));
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -82,58 +83,69 @@ export const ProgressProvider: React.FC<ProgressProviderProps> = ({ children, us
     await saveProgress(newProgress);
   }, [userProgress, saveProgress]);
 
-  const updateModuleProgress = useCallback(async (moduleId: string, moduleType: 'learn' | 'practice', newStatus: 'not-started' | 'in-progress' | 'completed', score?: number, lastAccessedLessonId?: string, practiceState?: { currentIndex: number; correctAnswersCount: number; }) => {
-    const prevUserProgress = userProgress; 
+    const updateModuleProgress = useCallback(async (moduleId: string, moduleType: 'learn' | 'practice', newStatus: 'not-started' | 'in-progress' | 'completed', score?: number, lastAccessedLessonId?: string, practiceState?: { currentIndex: number; correctAnswersCount: number; }) => {
+      console.log(`updateModuleProgress called for moduleId: ${moduleId}, status: ${newStatus}, score: ${score}`);
+  
+      setUserProgress(prevUserProgress => {
+        if (!prevUserProgress) {
+          console.log('updateModuleProgress: prevUserProgress is null, returning.');
+          return prevUserProgress; // Return current state if null
+        }
 
-    if (!prevUserProgress) return;
+        const updatedModules = prevUserProgress.modules.map(module => {
+          if (module.moduleId === moduleId) {
+            const newAttempt: PracticeAttempt | undefined = moduleType === 'practice' && score !== undefined
+              ? { attemptId: Date.now().toString(), timestamp: Date.now(), score }
+              : undefined;
 
-    const updatedModules = prevUserProgress.modules.map(module => {
-      if (module.moduleId === moduleId) {
-        const newAttempt: PracticeAttempt | undefined = moduleType === 'practice' && score !== undefined
-          ? { attemptId: Date.now().toString(), timestamp: Date.now(), score }
-          : undefined;
+            const practiceAttempts = newAttempt 
+              ? [...(module.practiceAttempts || []), newAttempt] 
+              : module.practiceAttempts;
 
-        const practiceAttempts = newAttempt 
-          ? [...(module.practiceAttempts || []), newAttempt] 
-          : module.practiceAttempts;
+            return { 
+              ...module, 
+              moduleType, 
+              status: newStatus, 
+              score: score !== undefined ? score : module.score, 
+              lastAccessed: Date.now(), 
+              lastAccessedLessonId: lastAccessedLessonId !== undefined ? lastAccessedLessonId : module.lastAccessedLessonId, 
+              practiceState: practiceState !== undefined ? practiceState : module.practiceState,
+              practiceAttempts
+            };
+          }
+          return module;
+        });
 
-        return { 
-          ...module, 
-          moduleType, 
-          status: newStatus, 
-          score: score !== undefined ? score : module.score, 
-          lastAccessed: Date.now(), 
-          lastAccessedLessonId: lastAccessedLessonId !== undefined ? lastAccessedLessonId : module.lastAccessedLessonId, 
-          practiceState: practiceState !== undefined ? practiceState : module.practiceState,
-          practiceAttempts
-        };
-      }
-      return module;
-    });
+        // If module doesn't exist, add it
+        if (!updatedModules.some(module => module.moduleId === moduleId)) {
+          updatedModules.push({
+            moduleId,
+            moduleType,
+            status: newStatus,
+            score: score,
+            lastAccessed: Date.now(),
+            lessons: [],
+            practiceAttempts: [],
+            lastAccessedLessonId: lastAccessedLessonId,
+            practiceState: practiceState,
+          });
+        }
 
-    // If module doesn't exist, add it
-    if (!updatedModules.some(module => module.moduleId === moduleId)) {
-      updatedModules.push({
-        moduleId,
-        moduleType,
-        status: newStatus,
-        score: score,
-        lastAccessed: Date.now(),
-        lessons: [],
-        practiceAttempts: [],
-        lastAccessedLessonId: lastAccessedLessonId,
-        practiceState: practiceState,
+        const newProgress = { ...prevUserProgress, modules: updatedModules };
+        console.log('updateModuleProgress: newProgress object before DB update:', JSON.stringify(newProgress, null, 2));
+
+        // Await the DB update (this will run outside the synchronous state update)
+        updateUserProgress(newProgress).then(() => {
+          console.log('updateModuleProgress: DB updated successfully for moduleId:', moduleId);
+        }).catch(error => {
+          console.error('updateModuleProgress: Failed to save user progress to DB for moduleId:', moduleId, error);
+        });
+
+        // Return the new state immediately for local update
+        console.log('updateModuleProgress: Local state updated for moduleId:', moduleId);
+        return newProgress;
       });
-    }
-
-    const newProgress = { ...prevUserProgress, modules: updatedModules };
-
-    // Await the DB update
-    await updateUserProgress(newProgress);
-
-    // Then update local state
-    setUserProgress(newProgress);
-  }, [userProgress]); // userProgress is now a dependency again, but this is okay because we await the DB update
+    }, []); // Empty dependency array because we use functional update
 
   const updateLessonProgress = useCallback(async (moduleId: string, lessonId: string, completed: boolean, score?: number) => {
     const prevUserProgress = userProgress;
@@ -215,6 +227,7 @@ export const ProgressProvider: React.FC<ProgressProviderProps> = ({ children, us
     userProgress,
     loading,
     error,
+    loadUserProgress, // Add this to the context value
     updateModuleProgress,
     updateLessonProgress,
     resetModuleProgress,

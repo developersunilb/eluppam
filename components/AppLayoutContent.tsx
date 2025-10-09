@@ -12,7 +12,7 @@ export default function AppLayoutContent({ children }: { children: React.ReactNo
 
   if (authLoading) {
     // Optionally render a loading spinner or skeleton while auth is loading
-    return <div>Loading authentication...</div>; 
+    return null;
   }
 
   return (
