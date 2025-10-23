@@ -104,7 +104,7 @@ const WordFormationGame: React.FC<WordFormationGameProps> = ({ level, letters, v
         {canProceed && (
             <div className="mt-6 text-center p-4 border-2 border-dashed border-marigold-500 rounded-lg">
                 <p className="text-xl font-bold text-kerala-green-700 mb-4">
-                    You've found enough words to proceed!
+                    You have found enough words to proceed!
                 </p>
                 <div className="flex justify-center gap-4">
                     <Button

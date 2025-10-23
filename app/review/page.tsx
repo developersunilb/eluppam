@@ -23,8 +23,9 @@ export default function ReviewPage() {
               <Link
                 href={module.href}
                 key={module.title}
-                className="block bg-white p-6 rounded-xl shadow-lg hover:shadow-2xl transition-shadow transform hover:-translate-y-1 border-t-4 border-marigold-500"
-                legacyBehavior>
+                className="block bg-white p-6 rounded-xl shadow-lg hover:shadow-2xl transition-shadow transform hover:-translate-y-1 border-t-4 border-marigold-500">
+                {/* @next-codemod-error This Link previously used the now removed `legacyBehavior` prop, and has a child that might not be an anchor. The codemod bailed out of lifting the child props to the Link. Check that the child component does not render an anchor, and potentially move the props manually to Link. */
+                }
                 <div className="flex flex-col h-full">
                   <div className="flex-shrink-0">
                     <div className="inline-block bg-marigold-500 text-white p-3 rounded-lg">

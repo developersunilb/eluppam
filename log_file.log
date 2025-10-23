@@ -1,69 +1,104 @@
-Word formed (endDrag): "കോഴി" Length: 4
-F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:85 Debug: ALL_WORDS_DATA entry for ചീവീട്: "ചീവിട്" Length: 6
-F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:111 Comparing "കോഴി" (len: 4) with "കോണി" (len: 4) -> Result: false
-F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:111 Comparing "കോഴി" (len: 4) with "ആഴി" (len: 3) -> Result: false
-F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:111 Comparing "കോഴി" (len: 4) with "ചീവിട്" (len: 6) -> Result: false
-F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:111 Comparing "കോഴി" (len: 4) with "അരണ" (len: 3) -> Result: false
-F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:111 Comparing "കോഴി" (len: 4) with "മണി" (len: 3) -> Result: false
-F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:111 Comparing "കോഴി" (len: 4) with "കോഴി" (len: 4) -> Result: true
-F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:117 Feedback set to: correct
-F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:80 Word formed (endDrag): "" Length: 0
-F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:85 Debug: ALL_WORDS_DATA entry for ചീവീട്: "ചീവിട്" Length: 6
-F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:139 Feedback cleared.
-F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:92 Feedback cleared.
-F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:80 Word formed (endDrag): "ചീവീട്" Length: 6
-F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:85 Debug: ALL_WORDS_DATA entry for ചീവീട്: "ചീവിട്" Length: 6
-F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:111 Comparing "ചീവീട്" (len: 6) with "കോണി" (len: 4) -> Result: false
-F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:111 Comparing "ചീവീട്" (len: 6) with "ആഴി" (len: 3) -> Result: false
-F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:111 Comparing "ചീവീട്" (len: 6) with "ചീവിട്" (len: 6) -> Result: false
-F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:111 Comparing "ചീവീട്" (len: 6) with "അരണ" (len: 3) -> Result: false
-F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:111 Comparing "ചീവീട്" (len: 6) with "മണി" (len: 3) -> Result: false
-F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:111 Comparing "ചീവീട്" (len: 6) with "കോഴി" (len: 4) -> Result: false
-F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:111 Comparing "ചീവീട്" (len: 6) with "ആട്" (len: 3) -> Result: false
-F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:111 Comparing "ചീവീട്" (len: 6) with "വീണ" (len: 3) -> Result: false
-F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:111 Comparing "ചീവീട്" (len: 6) with "ചീര" (len: 3) -> Result: false
-F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:111 Comparing "ചീവീട്" (len: 6) with "അകം" (len: 3) -> Result: false
-F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:133 Feedback set to: incorrect
-F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:139 Feedback cleared.
-F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:80 Word formed (endDrag): "" Length: 0
-F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:85 Debug: ALL_WORDS_DATA entry for ചീവീട്: "ചീവിട്" Length: 6
-F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:92 Feedback cleared.
-F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:80 Word formed (endDrag): "ചീവീട്" Length: 6
-F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:85 Debug: ALL_WORDS_DATA entry for ചീവീട്: "ചീവിട്" Length: 6
-F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:111 Comparing "ചീവീട്" (len: 6) with "കോണി" (len: 4) -> Result: false
-F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:111 Comparing "ചീവീട്" (len: 6) with "ആഴി" (len: 3) -> Result: false
-F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:111 Comparing "ചീവീട്" (len: 6) with "ചീവിട്" (len: 6) -> Result: false
-F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:111 Comparing "ചീവീട്" (len: 6) with "അരണ" (len: 3) -> Result: false
-F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:111 Comparing "ചീവീട്" (len: 6) with "മണി" (len: 3) -> Result: false
-F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:111 Comparing "ചീവീട്" (len: 6) with "കോഴി" (len: 4) -> Result: false
-F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:111 Comparing "ചീവീട്" (len: 6) with "ആട്" (len: 3) -> Result: false
-F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:111 Comparing "ചീവീട്" (len: 6) with "വീണ" (len: 3) -> Result: false
-F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:111 Comparing "ചീവീട്" (len: 6) with "ചീര" (len: 3) -> Result: false
-F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:111 Comparing "ചീവീട്" (len: 6) with "അകം" (len: 3) -> Result: false
-F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:133 Feedback set to: incorrect
-F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:80 Word formed (endDrag): "" Length: 0
-F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:85 Debug: ALL_WORDS_DATA entry for ചീവീട്: "ചീവിട്" Length: 6
-F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:139 Feedback cleared.
-F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:92 Feedback cleared.
-F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:80 Word formed (endDrag): "ചീവീട്" Length: 6
-F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:85 Debug: ALL_WORDS_DATA entry for ചീവീട്: "ചീവിട്" Length: 6
-F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:111 Comparing "ചീവീട്" (len: 6) with "കോണി" (len: 4) -> Result: false
-F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:111 Comparing "ചീവീട്" (len: 6) with "ആഴി" (len: 3) -> Result: false
-F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:111 Comparing "ചീവീട്" (len: 6) with "ചീവിട്" (len: 6) -> Result: false
-F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:111 Comparing "ചീവീട്" (len: 6) with "അരണ" (len: 3) -> Result: false
-F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:111 Comparing "ചീവീട്" (len: 6) with "മണി" (len: 3) -> Result: false
-F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:111 Comparing "ചീവീട്" (len: 6) with "കോഴി" (len: 4) -> Result: false
-F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:111 Comparing "ചീവീട്" (len: 6) with "ആട്" (len: 3) -> Result: false
-F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:111 Comparing "ചീവീട്" (len: 6) with "വീണ" (len: 3) -> Result: false
-F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:111 Comparing "ചീവീട്" (len: 6) with "ചീര" (len: 3) -> Result: false
-F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:111 Comparing "ചീവീട്" (len: 6) with "അകം" (len: 3) -> Result: false
-F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:133 Feedback set to: incorrect
-F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:80 Word formed (endDrag): "" Length: 0
-F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:85 Debug: ALL_WORDS_DATA entry for ചീവീട്: "ചീവിട്" Length: 6
-F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:139 Feedback cleared.
-F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:92 Feedback cleared.
-F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:80 Word formed (endDrag): "" Length: 0
-F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:85 Debug: ALL_WORDS_DATA entry for ചീവീട്: "ചീവിട്" Length: 6
-F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:80 Word formed (endDrag): "" Length: 0
-F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:85 Debug: ALL_WORDS_DATA entry for ചീവീട്: "ചീവിട്" Length: 6
-2F:\Startup Business\Solopreneur\eluppam\components\WordFindGame.tsx:92 Feedback cleared.
+1/2
+
+Next.js 16.0.0
+Turbopack
+Console Error
+
+`legacyBehavior` is deprecated and will be removed in a future release. A codemod is available to upgrade your components:
+
+npx @next/codemod@latest new-link .
+
+Learn more: https://nextjs.org/docs/app/building-your-application/upgrading/codemods#remove-a-tags-from-link-components
+app\layout.tsx (32:11) @ RootLayout
+
+
+  30 |       <body className={`${inter.className} font-malayalam text-kerala-green-700`}>
+  31 |         <AuthProvider>
+> 32 |           <AppLayoutContent>{children}</AppLayoutContent>
+     |           ^
+  33 |         </AuthProvider>
+  34 |         <Toaster />
+  35 |       </body>
+Call Stack
+20
+
+createConsoleError
+file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/node_modules_next_dist_4b2403f5._.js (2196:71)
+handleConsoleError
+file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/node_modules_next_dist_4b2403f5._.js (2977:54)
+console.error
+file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/node_modules_next_dist_4b2403f5._.js (3121:57)
+errorOnce
+file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/node_modules_8736ebb2._.js (7010:21)
+LinkComponent
+file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/node_modules_8736ebb2._.js (7389:38)
+Object.react_stack_bottom_frame
+file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js (14746:24)
+renderWithHooks
+file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js (4636:24)
+updateFunctionComponent
+file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js (6091:21)
+beginWork
+file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js (6672:24)
+runWithFiberInDEV
+file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js (959:74)
+performUnitOfWork
+file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js (9487:97)
+workLoopSync
+file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js (9381:40)
+renderRootSync
+file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js (9365:13)
+performWorkOnRoot
+file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js (8993:186)
+performWorkOnRootViaSchedulerTask
+file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js (10155:9)
+MessagePort.performWorkUntilDeadline
+file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/node_modules_next_dist_compiled_a0e4c7b4._.js (2647:64)
+Navigation
+file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/_cd498cf1._.js (572:227)
+AppLayoutContentWithProgress
+file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/_cd498cf1._.js (2008:215)
+AppLayoutContent
+file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/_cd498cf1._.js (2055:221)
+RootLayout
+app\layout.tsx (32:11)
+
+2/2
+
+Next.js 16.0.0
+Turbopack
+Runtime ReferenceError
+
+
+spinning is not defined
+Call Stack
+14
+
+SpinAWheelGame
+file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/_a1d66382._.js (275:69)
+Object.react_stack_bottom_frame
+file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js (14746:24)
+renderWithHooks
+file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js (4636:24)
+updateFunctionComponent
+file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js (6091:21)
+beginWork
+file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js (6672:24)
+runWithFiberInDEV
+file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js (959:74)
+performUnitOfWork
+file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js (9487:97)
+workLoopSync
+file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js (9381:40)
+renderRootSync
+file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js (9365:13)
+performWorkOnRoot
+file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js (9030:47)
+performWorkOnRootViaSchedulerTask
+file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js (10155:9)
+MessagePort.performWorkUntilDeadline
+file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/node_modules_next_dist_compiled_a0e4c7b4._.js (2647:64)
+SpinAWheelPage
+file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/_a1d66382._.js (412:219)
+ClientPageRoot
+file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/node_modules_next_dist_094231d7._.js (2202:50)

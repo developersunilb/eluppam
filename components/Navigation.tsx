@@ -1,7 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation';
 import { Menu, X, BookOpen, User } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
@@ -16,19 +17,54 @@ import { useAuth } from '@/context/AuthContext'; // Import useAuth
 export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false)
   const { user, isLoggedIn, login, logout, loading: authLoading } = useAuth(); // Use useAuth hook
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [adminUsername, setAdminUsername] = useState('');
+  const [currentImageSrc, setCurrentImageSrc] = useState('/game/parrotmascot0.gif');
+  const router = useRouter();
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const checkAdmin = () => {
+        const adminStatus = sessionStorage.getItem('isAdmin');
+        setIsAdmin(adminStatus === 'true');
+        if (adminStatus === 'true') {
+          setAdminUsername(sessionStorage.getItem('adminUsername') || '');
+        }
+      };
+
+      checkAdmin();
+
+      window.addEventListener('adminLogin', checkAdmin);
+
+      return () => {
+        window.removeEventListener('adminLogin', checkAdmin);
+      };
+    }
+  }, []);
 
   const handleLogin = async () => {
-    const inputUserId = prompt("Enter your User ID (e.g., user123):");
-    if (!inputUserId) return;
-    const inputUsername = prompt("Enter your preferred username:");
+    const inputUsername = prompt("Enter your username:");
     if (!inputUsername) return;
-    const inputEmail = prompt("Enter your email (optional):");
 
-    await login(inputUserId, inputUsername, inputEmail || undefined);
+    const ADMIN_USERNAMES = ['SunilB', 'AshlyS'];
+
+    if (ADMIN_USERNAMES.includes(inputUsername)) {
+      router.push('/admin/login');
+    } else {
+      // Regular user login flow
+      const inputUserId = inputUsername; // Use username as userId for regular users
+      const inputEmail = prompt("Enter your email:");
+      if (!inputEmail) return;
+      await login(inputUserId, inputUsername, inputEmail);
+    }
   };
 
   const handleLogout = async () => {
     await logout();
+    // Clear admin status on logout
+    sessionStorage.removeItem('isAdmin');
+    sessionStorage.removeItem('adminUsername');
+    window.dispatchEvent(new Event('adminLogin')); // Notify navigation
   };
 
   return (
@@ -38,67 +74,109 @@ export default function Navigation() {
           {/* Logo */}
           <Link
             href="/"
-            className="flex items-center space-x-3 cursor-pointer"
-            >
+            className="flex items-center space-x-3 cursor-pointer">
+
             <div className="bg-gradient-to-r from-marigold-500 to-marigold-600 p-2 rounded-xl">
               <BookOpen className="h-6 w-6 text-white" />
             </div>
             <span className="text-xl font-bold bg-gradient-to-r from-kerala-green-700 to-backwater-blue-600 bg-clip-text text-transparent">
               Eluppam എളുപ്പം
             </span>
+            <img
+              src={currentImageSrc}
+              alt="Parrot Mascot"
+              className="hidden md:block h-20 w-20 lg:h-32 lg:w-32 fixed top-2 left-4 z-50"
+              onMouseEnter={() => {
+                setCurrentImageSrc('/game/parrotmascot1.png');
+                const audio = new Audio('/audio/eluppampadikkaam.mp3');
+                audio.play();
+              }}
+              onMouseLeave={() => setCurrentImageSrc('/game/parrotmascot0.gif')}
+            />
+
           </Link>
 
           {/* Desktop Navigation */}
           <NavigationMenu className="hidden md:flex">
             <NavigationMenuList>
               <NavigationMenuItem>
-                <Link href="/learn" legacyBehavior passHref>
+                <Link href="/learn">
+                  {/* @next-codemod-error This Link previously used the now removed `legacyBehavior` prop, and has a child that might not be an anchor. The codemod bailed out of lifting the child props to the Link. Check that the child component does not render an anchor, and potentially move the props manually to Link. */
+                  }
                   <NavigationMenuLink className={navigationMenuTriggerStyle()}>
                     Learn
                   </NavigationMenuLink>
                 </Link>
               </NavigationMenuItem>
               <NavigationMenuItem>
-                <Link href="/practice" legacyBehavior passHref>
+                <Link href="/practice">
+                  {/* @next-codemod-error This Link previously used the now removed `legacyBehavior` prop, and has a child that might not be an anchor. The codemod bailed out of lifting the child props to the Link. Check that the child component does not render an anchor, and potentially move the props manually to Link. */
+                  }
                   <NavigationMenuLink className={navigationMenuTriggerStyle()}>
                     Practice
                   </NavigationMenuLink>
                 </Link>
               </NavigationMenuItem>
               <NavigationMenuItem>
-                <Link href="/review" legacyBehavior passHref>
+                <Link href="/review">
+                  {/* @next-codemod-error This Link previously used the now removed `legacyBehavior` prop, and has a child that might not be an anchor. The codemod bailed out of lifting the child props to the Link. Check that the child component does not render an anchor, and potentially move the props manually to Link. */
+                  }
                   <NavigationMenuLink className={navigationMenuTriggerStyle()}>
                     Review
                   </NavigationMenuLink>
                 </Link>
               </NavigationMenuItem>
               <NavigationMenuItem>
-                <Link href="/games" legacyBehavior passHref>
+                <Link href="/games">
+                  {/* @next-codemod-error This Link previously used the now removed `legacyBehavior` prop, and has a child that might not be an anchor. The codemod bailed out of lifting the child props to the Link. Check that the child component does not render an anchor, and potentially move the props manually to Link. */
+                  }
                   <NavigationMenuLink className={navigationMenuTriggerStyle()}>
                     Games
                   </NavigationMenuLink>
                 </Link>
               </NavigationMenuItem>
               <NavigationMenuItem>
-                <Link href="/culture" legacyBehavior passHref>
+                <Link href="/culture">
+                  {/* @next-codemod-error This Link previously used the now removed `legacyBehavior` prop, and has a child that might not be an anchor. The codemod bailed out of lifting the child props to the Link. Check that the child component does not render an anchor, and potentially move the props manually to Link. */
+                  }
                   <NavigationMenuLink className={navigationMenuTriggerStyle()}>
                     Culture
                   </NavigationMenuLink>
                 </Link>
               </NavigationMenuItem>
               <NavigationMenuItem>
-                <Link href="/progress" legacyBehavior passHref>
+                <Link href="/progress">
+                  {/* @next-codemod-error This Link previously used the now removed `legacyBehavior` prop, and has a child that might not be an anchor. The codemod bailed out of lifting the child props to the Link. Check that the child component does not render an anchor, and potentially move the props manually to Link. */
+                  }
                   <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                    <span>Progress</span>
+                    Progress
                   </NavigationMenuLink>
                 </Link>
               </NavigationMenuItem>
+              {isAdmin && (
+                <NavigationMenuItem>
+                  <Link href="/admin">
+                    {/* @next-codemod-error This Link previously used the now removed `legacyBehavior` prop, and has a child that might not be an anchor. The codemod bailed out of lifting the child props to the Link. Check that the child component does not render an anchor, and potentially move the props manually to Link. */
+                    }
+                    <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                      Admin
+                    </NavigationMenuLink>
+                  </Link>
+                </NavigationMenuItem>
+              )}
             </NavigationMenuList>
           </NavigationMenu>
 
           {/* Auth Buttons */}
           <div className="hidden md:flex items-center space-x-4">
-            {authLoading ? (
+            {isAdmin ? (
+              <>
+                <span className="text-kerala-green-700 text-sm">Hello, {adminUsername} (Admin)</span>
+                <Button onClick={handleLogout} variant="ghost" className="text-kerala-green-700 hover:bg-marigold-50">
+                  Logout
+                </Button>
+              </>
+            ) : authLoading ? (
               <span>Loading...</span>
             ) : isLoggedIn ? (
               <>
@@ -112,7 +190,9 @@ export default function Navigation() {
                 Sign In
               </Button>
             )}
-            <Link href="/learn" legacyBehavior>
+            <Link href="/learn">
+              {/* @next-codemod-error This Link previously used the now removed `legacyBehavior` prop, and has a child that might not be an anchor. The codemod bailed out of lifting the child props to the Link. Check that the child component does not render an anchor, and potentially move the props manually to Link. */
+              }
               <Button className="bg-gradient-to-r from-marigold-500 to-marigold-600 hover:from-marigold-600 hover:to-marigold-700 text-white shadow-lg hover:shadow-xl transition-all">
                 Start Learning
               </Button>
@@ -151,14 +231,21 @@ export default function Navigation() {
             <Link href="/culture" className="block text-kerala-green-700 hover:text-marigold-600 transition-colors font-medium">
               Culture
             </Link>
-            <Link
-              href="/progress"
-              className="block text-kerala-green-700 hover:text-marigold-600 transition-colors font-medium"
-              legacyBehavior> {/* Simplified Link */}
-              <span>Progress</span>
-            </Link>
-            <div className="pt-4 space-y-3">
-              {authLoading ? (
+                          <Link
+                            href="/progress"
+                            className="block text-kerala-green-700 hover:text-marigold-600 transition-colors font-medium">
+                            {/* @next-codemod-error This Link previously used the now removed `legacyBehavior` prop, and has a child that might not be an anchor. The codemod bailed out of lifting the child props to the Link. Check that the child component does not render an anchor, and potentially move the props manually to Link. */
+                            }
+                            <span>Progress</span>
+                          </Link>
+                        {isAdmin && (
+                          <Link href="/admin" className="block text-kerala-green-700 hover:text-marigold-600 transition-colors font-medium">
+                            Admin
+                          </Link>
+                        )}            <div className="pt-4 space-y-3">
+              {isAdmin ? (
+                <span className="block text-kerala-green-700 text-sm">Hello, {adminUsername} (Admin)</span>
+              ) : authLoading ? (
                 <span>Loading...</span>
               ) : isLoggedIn ? (
                 <>
@@ -172,7 +259,9 @@ export default function Navigation() {
                   Sign In
                 </Button>
               )}
-              <Link href="/learn" className="w-full" legacyBehavior>
+              <Link href="/learn" className="w-full">
+                {/* @next-codemod-error This Link previously used the now removed `legacyBehavior` prop, and has a child that might not be an anchor. The codemod bailed out of lifting the child props to the Link. Check that the child component does not render an anchor, and potentially move the props manually to Link. */
+                }
                 <Button className="w-full bg-gradient-to-r from-marigold-500 to-marigold-600 hover:from-marigold-600 hover:to-marigold-700 text-white">
                   Start Learning
                 </Button>

@@ -24,11 +24,15 @@ export default function GamesPage() {
                 <div key={level.id} className="flex flex-col items-center text-center">
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <Link href={level.href} className="relative w-24 h-24 mx-auto aspect-square rounded-lg flex items-center justify-center cursor-pointer overflow-hidden">
+                      <Link
+                        href={level.href}
+                        className="relative w-24 h-24 mx-auto aspect-square rounded-lg flex items-center justify-center cursor-pointer overflow-hidden">
+
                         <Image src="/lockicons/unlocked.png" alt={level.title} fill className="w-full h-full object-cover" />
                         <div className="absolute inset-0 flex items-center justify-center">
                           <Unlock className="h-12 w-12 text-white drop-shadow-md" />
                         </div>
+
                       </Link>
                     </TooltipTrigger>
                     <TooltipContent>

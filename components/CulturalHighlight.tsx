@@ -34,7 +34,7 @@ export default function CulturalHighlight() {
           <Card className="border-0 shadow-xl overflow-hidden group hover:shadow-2xl transition-shadow duration-300">
             <div className="aspect-video bg-gradient-to-br from-marigold-500 via-marigold-400 to-kerala-green-400 relative overflow-hidden">
               <div className="absolute inset-0 bg-black/20" />
-              <div className="absolute inset-0 bg-[url(data:image/svg+xml,%3Csvg%20width='40'%20height='40'%20viewBox='0%200%2040%2040'%20xmlns='http://www.w3.org/2000/svg'%3E%3Cg%20fill='%23ffffff'%20fill-opacity='0.1'%3E%3Cpath%20d='M20%2020c0-5.5-4.5-10-10-10s-10%204.5-10%2010%204.5%2010%2010%2010%2010-4.5%2010-10zm10%200c0-5.5-4.5-10-10-10s-10%204.5-10%2010%204.5%2010%2010%2010%2010-4.5%2010-10z'/%3E%3C/g%3E%3C/svg%3E)] opacity-30" />
+              <div className="absolute inset-0 bg-[var(--bg-pattern-cultural-highlight)] opacity-30" />
               <div className="absolute bottom-4 left-4 right-4">
                 <Badge className="bg-white/20 text-white border-white/30 mb-2">
                   Festival Special

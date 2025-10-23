@@ -47,15 +47,13 @@ export class MathrebashaDexie extends Dexie {
   }
 }
 
-export const db = new MathrebashaDexie();
-
 let dbInstance: MathrebashaDexie | undefined;
 
-export function getDb(): MathrebashaDexie {
+function getDb(): MathrebashaDexie {
   if (typeof window === 'undefined') {
-    // Return a dummy object or throw an error for SSR
-    // For now, we'll throw an error to make sure we catch any accidental server-side usage
-    throw new Error('Dexie (IndexedDB) should only be accessed on the client-side.');
+    // This is a server-side rendering context, return a dummy or throw an error
+    // Throwing an error is better to catch misuse early.
+    throw new Error('Dexie (IndexedDB) cannot be accessed on the server-side.');
   }
   if (!dbInstance) {
     dbInstance = new MathrebashaDexie();
@@ -80,22 +78,24 @@ export async function addFeedback(moduleId: string, feedback: string): Promise<v
 // Helper function to get or create user progress
 export async function getOrCreateUserProgress(userId: string): Promise<UserProgress> {
   const db = getDb();
-  try {
-    let progress = await db.userProgress.get(userId);
-    if (!progress) {
-      progress = {
-        userId,
-        modules: [],
-        badges: [], // Initialize badges array
-        lastUpdated: Date.now(),
-      };
-      await db.userProgress.add(progress);
+  return db.transaction('rw', db.userProgress, async () => {
+    try {
+      let progress = await db.userProgress.get(userId);
+      if (!progress) {
+        progress = {
+          userId,
+          modules: [],
+          badges: [], // Initialize badges array
+          lastUpdated: Date.now(),
+        };
+        await db.userProgress.add(progress);
+      }
+      return progress;
+    } catch (error) {
+      console.error('Dexie: Error getting or creating user progress for userId:', userId, error);
+      throw error; // Re-throw to propagate the error
     }
-    return progress;
-  } catch (error) {
-    console.error('Dexie: Error getting or creating user progress for userId:', userId, error);
-    throw error; // Re-throw to propagate the error
-  }
+  });
 }
 
 // Helper function to update user progress

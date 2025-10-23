@@ -2,10 +2,13 @@
 
 import React, { useEffect, useRef } from 'react';
 import * as THREE from 'three';
+import { SRGBColorSpace } from 'three';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { useProgress } from '@/context/ProgressContext';
 import { useRouter } from 'next/navigation';
 
 const Mahjong3DGame: React.FC = () => {
+    console.log('Building Mahjong3DGame component');
     const { updateModuleProgress } = useProgress();
     const router = useRouter();
     const gameContainerRef = useRef<HTMLDivElement>(null);
@@ -43,11 +46,14 @@ const Mahjong3DGame: React.FC = () => {
 
         function init() {
             scene = new THREE.Scene();
-            scene.background = new THREE.Color(0x87CEEB);
-            scene.fog = new THREE.Fog(0x87CEEB, 30, 100);
+            const backgroundTextureLoader = new THREE.TextureLoader();
+            backgroundTextureLoader.load('/game/assets/image/keralanature.jpg', function(texture){
+                texture.colorSpace = THREE.SRGBColorSpace;
+                scene.background = texture;
+            });
 
             camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
-            camera.position.set(0, 30, 18);
+            camera.position.set(0, 35, 20);
             camera.lookAt(0, 0, 0);
 
             const canvas = gameCanvasRef.current!;
@@ -55,12 +61,14 @@ const Mahjong3DGame: React.FC = () => {
             renderer.setSize(window.innerWidth, window.innerHeight);
             renderer.shadowMap.enabled = true;
             renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            renderer.outputColorSpace = THREE.SRGBColorSpace;
 
             raycaster = new THREE.Raycaster();
             mouse = new THREE.Vector2();
 
             setupLighting();
             createEnvironment();
+            loadModels(); // Call to load GLB models
             createTiles();
             setupEventListeners();
             animate();
@@ -82,114 +90,78 @@ const Mahjong3DGame: React.FC = () => {
             scene.add(pointLight);
         }
 
+        function loadModels() {
+            const loader = new GLTFLoader();
+
+            const addCoconutTree = (id: number, x: number, y: number, z: number, scale: number, rotationY: number) => {
+                loader.load('/3Dmodels/purplecoco.glb', (gltf) => {
+                    const coconutTree = gltf.scene;
+                    coconutTree.scale.set(scale, scale, scale);
+                    coconutTree.position.set(x, y, z);
+                    coconutTree.rotation.y = rotationY;
+                    scene.add(coconutTree);
+
+                    /*
+                    // Create a text label for the tree
+                    const canvas = document.createElement('canvas');
+                    const context = canvas.getContext('2d');
+                    if (context) {
+                        canvas.width = 128;
+                        canvas.height = 64;
+                        context.font = 'Bold 40px Arial';
+                        context.fillStyle = 'red';
+                        context.textAlign = 'center';
+                        context.textBaseline = 'middle';
+                        context.fillText(id.toString(), 64, 32);
+
+                        const texture = new THREE.CanvasTexture(canvas);
+                        const spriteMaterial = new THREE.SpriteMaterial({ map: texture });
+                        const sprite = new THREE.Sprite(spriteMaterial);
+                        sprite.scale.set(5, 2.5, 1); // Adjust size of the label
+                        sprite.position.set(x, y + scale * 2, z); // Position above the tree
+                        scene.add(sprite);
+                    }
+                    */
+                }, undefined, (error) => {
+                    console.error('An error occurred loading the GLTF model:', error);
+                });
+            };
+
+            // Additional trees
+            // Group of trees near the lake, on the green land (adjusted to be outside the lake)
+            addCoconutTree(2, 12, -2, -5, 4.5 + Math.random(), Math.random() * Math.PI * 2); // Moved out of lake, closer to edge and further down and right
+            addCoconutTree(3, 10 + Math.random() * 2, -2, -8 + Math.random() * 2, 4 + Math.random(), Math.random() * Math.PI * 2); // Accompanying tree 1
+            addCoconutTree(4, 1 - Math.random() * 2, -2, -12 - Math.random() * 3, 4 + Math.random(), Math.random() * Math.PI * 2); // Accompanying tree 2 (shifted even further left)
+
+            // Other trees around the mahjong board, on the green land (adjusted for left overflow)
+            addCoconutTree(5, -10 + Math.random() * 5, -2, 10 + Math.random() * 5, 4 + Math.random(), Math.random() * Math.PI * 2); // Bottom-left area (shifted further left)
+            addCoconutTree(6, 5 + Math.random() * 10, -2, 8 + Math.random() * 5, 4 + Math.random(), Math.random() * Math.PI * 2);  // Bottom-right area (shifted further left and top)
+            addCoconutTree(7, -5 + Math.random() * 5, -2, -15 - Math.random() * 5, 4 + Math.random(), Math.random() * Math.PI * 2); // Top-left area (shifted right)
+            addCoconutTree(8, 10 + Math.random() * 10, -2, -19 - Math.random() * 5, 4 + Math.random(), Math.random() * Math.PI * 2);  // Top-right area (shifted further top)
+            addCoconutTree(9, -17 + Math.random() * 5, -2, 0 + Math.random() * 5, 4 + Math.random(), Math.random() * Math.PI * 2);   // Mid-left area (shifted further left)
+            addCoconutTree(10, 15 + Math.random() * 5, -2, 0 + Math.random() * 5, 4 + Math.random(), Math.random() * Math.PI * 2);    // Mid-right area
+        }
+
         function createEnvironment() {
             const groundGeometry = new THREE.PlaneGeometry(50, 50);
-            const groundMaterial = new THREE.MeshLambertMaterial({ color: 0x90EE90 });
+            const groundMaterial = new THREE.MeshLambertMaterial({ color: 0xc788b9 });
             const ground = new THREE.Mesh(groundGeometry, groundMaterial);
             ground.rotation.x = -Math.PI / 2;
             ground.position.y = -2;
             ground.receiveShadow = true;
             scene.add(ground);
 
-            function createCoconutTree(position: [number, number, number], scale: number) {
-                const treeGroup = new THREE.Group();
-                treeGroup.position.set(position[0], position[1], position[2]);
-                treeGroup.scale.set(scale, scale, scale);
-
-                // Trunk
-                const trunkMaterial = new THREE.MeshLambertMaterial({ color: 0xD2B48C }); // Tan, warmer brown
-                const trunkSegments = 5;
-                const trunkHeight = 10;
-                const trunkBaseRadius = 0.8; // Thicker base
-                const trunkTopRadius = 0.5; // Thicker top
-
-                for (let i = 0; i < trunkSegments; i++) {
-                    const segmentHeight = trunkHeight / trunkSegments;
-                    const segmentBottomRadius = trunkBaseRadius - (trunkBaseRadius - trunkTopRadius) * (i / trunkSegments);
-                    const segmentTopRadius = trunkBaseRadius - (trunkBaseRadius - trunkTopRadius) * ((i + 1) / trunkSegments);
-                    const trunkGeometry = new THREE.CylinderGeometry(segmentTopRadius, segmentBottomRadius, segmentHeight, 8);
-                    const trunkSegment = new THREE.Mesh(trunkGeometry, trunkMaterial);
-                    trunkSegment.position.y = i * segmentHeight + segmentHeight / 2;
-                    trunkSegment.castShadow = true;
-                    treeGroup.add(trunkSegment);
-                }
-
-                // Coconuts
-                const coconutGeometry = new THREE.SphereGeometry(0.3, 8, 8);
-                const coconutMaterial = new THREE.MeshLambertMaterial({ color: 0xCD853F }); // Peru, lighter brown
-                for (let i = 0; i < 4; i++) {
-                    const coconut = new THREE.Mesh(coconutGeometry, coconutMaterial);
-                    coconut.position.set(Math.cos(i * Math.PI / 2) * 0.2, trunkHeight - 0.5, Math.sin(i * Math.PI / 2) * 0.2); // Tighter cluster
-                    coconut.castShadow = true;
-                    treeGroup.add(coconut);
-                }
-
-                // Fronds
-                // New frond creation logic
-                const frondCount = 5;
-                const frondLength = 8;
-                const frondWidth = 3;
-
-                // Helper function to create a single paddle-like frond with a fold
-                function createPaddleFrond(length: number, width: number, color1: number, color2: number): THREE.Group {
-                    const frond = new THREE.Group();
-
-                    // Half 1 of the frond (left side)
-                    const half1Geometry = new THREE.PlaneGeometry(width / 2, length);
-                    const half1Material = new THREE.MeshLambertMaterial({ color: color1, side: THREE.DoubleSide });
-                    const half1 = new THREE.Mesh(half1Geometry, half1Material);
-                    half1.position.x = -width / 4; // Offset to the left
-                    half1.rotation.y = Math.PI / 16; // Slight angle for the fold
-                    half1.position.y = length / 2; // Center pivot
-                    frond.add(half1);
-
-                    // Half 2 of the frond (right side)
-                    const half2Geometry = new THREE.PlaneGeometry(width / 2, length);
-                    const half2Material = new THREE.MeshLambertMaterial({ color: color2, side: THREE.DoubleSide });
-                    const half2 = new THREE.Mesh(half2Geometry, half2Material);
-                    half2.position.x = width / 4; // Offset to the right
-                    half2.rotation.y = -Math.PI / 16; // Slight angle for the fold
-                    half2.position.y = length / 2; // Center pivot
-                    frond.add(half2);
-
-                    return frond;
-                }
-
-                for (let i = 0; i < frondCount; i++) {
-                    const frondGroup = new THREE.Group();
-                    const frondAngle = i * (Math.PI * 2 / frondCount);
-
-                    // Initial rotation to lay the frond flat on XZ plane (stem along local Z)
-                    frondGroup.rotation.x = Math.PI / 2;
-
-                    // Create the paddle frond
-                    const paddleFrond = createPaddleFrond(frondLength, frondWidth, 0x6B8E23, 0x9ACD32);
-                    frondGroup.add(paddleFrond);
-
-                    frondGroup.position.set(0, trunkHeight, 0); // Position at top of trunk
-                    frondGroup.rotation.y += frondAngle; // Add frondAngle to existing Y rotation
-                    frondGroup.rotation.x += -Math.PI / 2; // Exact 90-degree droop
-                    frondGroup.rotation.z = Math.random() * 0.2 - 0.1; // Slight random twist
-
-                    treeGroup.add(frondGroup);
-                }
-
-                scene.add(treeGroup);
-            }
-
-            // Debugging: Add a single tree on the left
-            createCoconutTree([-15, -2, 0], 1.0);
-
-            // const houseGroup = new THREE.Group();
-            // houseGroup.position.set(-20, -2, -10);
-            // const houseGeometry = new THREE.BoxGeometry(8, 4, 6);
-            // const houseMaterial = new THREE.MeshLambertMaterial({ color: 0xDEB887 });
-            // const house = new THREE.Mesh(houseGeometry, houseMaterial);
-            // house.position.y = 2;
-            // house.castShadow = true;
-            // houseGroup.add(house);
-            // scene.add(houseGroup);
-
+            // Add image to the top-left corner of the board
+            const textureLoader = new THREE.TextureLoader();
+            textureLoader.load('/game/assets/image/kathakalipookkalam.png', (texture) => {
+                texture.colorSpace = THREE.SRGBColorSpace;
+                const imageGeometry = new THREE.PlaneGeometry(10, 10);
+                const imageMaterial = new THREE.MeshBasicMaterial({ map: texture, transparent: true });
+                const imageMesh = new THREE.Mesh(imageGeometry, imageMaterial);
+                imageMesh.rotation.x = -Math.PI / 2;
+                imageMesh.position.set(-15, -1.9, -15); // Adjust position to be top-left
+                scene.add(imageMesh);
+            });
 
             const radiusX = 10; // Half-width of the oval
             const radiusY = 5;  // Half-height of the oval
@@ -204,7 +176,7 @@ const Mahjong3DGame: React.FC = () => {
 
             const waterShape = new THREE.Shape(ellipse.getPoints(50)); // Get 50 points to define the curve
             const waterGeometry = new THREE.ShapeGeometry(waterShape);
-            const waterMaterial = new THREE.MeshLambertMaterial({ color: 0x4169E1, transparent: true, opacity: 0.7 });
+            const waterMaterial = new THREE.MeshLambertMaterial({ color: 0xa36587, transparent: true, opacity: 0.7 });
             const water = new THREE.Mesh(waterGeometry, waterMaterial);
             water.rotation.x = -Math.PI / 2;
             water.position.set(10, -1.9, -15); // Moved further left
@@ -216,7 +188,7 @@ const Mahjong3DGame: React.FC = () => {
             for (let i = 0; i < 5; i++) {
                 const cloudGroup = new THREE.Group();
                 cloudGroup.position.set(i * 15 - 30, Math.sin(i) * 5, 0);
-                const cloudMaterial = new THREE.MeshLambertMaterial({ color: 0xffffff, transparent: true, opacity: 0.8 });
+                const cloudMaterial = new THREE.MeshLambertMaterial({ color: 0xffffff, transparent: true, opacity: 0.0 });
                 const mainCloud = new THREE.Mesh(new THREE.BoxGeometry(8, 3, 3), cloudMaterial);
                 cloudGroup.add(mainCloud);
                 cloudsGroup.add(cloudGroup);
@@ -256,7 +228,7 @@ const Mahjong3DGame: React.FC = () => {
             const tileGroup = new THREE.Group();
             
             const tileGeometry = new THREE.BoxGeometry(4, 0.8, 2.8);
-            const tileMaterial = new THREE.MeshLambertMaterial({ color: 0xFFF0B5 }); // Even lighter Marigold color
+            const tileMaterial = new THREE.MeshLambertMaterial({ color: 0x7c5f8e }); // Even lighter Marigold color
             const tileMesh = new THREE.Mesh(tileGeometry, tileMaterial);
             tileMesh.castShadow = true;
             tileMesh.receiveShadow = true;
@@ -265,7 +237,7 @@ const Mahjong3DGame: React.FC = () => {
             canvas.width = 128;
             canvas.height = 128;
             const context = canvas.getContext('2d')!;
-            context.fillStyle = '#228B22'; // Green font color
+            context.fillStyle = '#ffffff'; // Green font color 228B22 changed to 0xFFFFFF a purple kind of color
             context.font = 'bold 50px Arial';
             context.textAlign = 'center';
             context.textBaseline = 'middle';
@@ -735,6 +707,7 @@ const Mahjong3DGame: React.FC = () => {
                 <div className="ui-overlay">
                     <div className="ui-header">
                         <div className="game-stats">
+                            <img src="/game/assets/image/kathakalipookkalam.png" alt="Kathakali Pookkalam" style={{ height: '50px', marginRight: '1rem' }} />
                             <div className="stat">Score: <span id="scoreValue" ref={scoreValueRef}>0</span></div>
                             <div className="stat">Time: <span id="timeValue" ref={timeValueRef}>0:00</span></div>
                             <div className="stat">Matches: <span id="matchesValue" ref={matchesValueRef}>0</span></div>

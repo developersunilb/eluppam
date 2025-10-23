@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -106,12 +106,40 @@ const LetterHuntGame: React.FC<LetterHuntGameProps> = ({ onComplete }) => {
   const [selectedWords, setSelectedWords] = useState<string[]>([]);
   const [showResults, setShowResults] = useState(false);
   const [feedbackMessage, setFeedbackMessage] = useState('');
+  const [showProceedButton, setShowProceedButton] = useState(false);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
+
+  const resetGame = () => {
+    setSelectedWords([]);
+    setShowResults(false);
+    setFeedbackMessage('');
+    setShowProceedButton(false);
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+    }
+  };
+
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+      }
+    };
+  }, []);
 
   const handleWordClick = (word: string) => {
     if (showResults) return; // Prevent selection after results are shown
     setSelectedWords((prevSelected) =>
       prevSelected.includes(word) ? prevSelected.filter((w) => w !== word) : [...prevSelected, word]
     );
+  };
+
+  const proceedToNext = () => {
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+    }
+    onComplete?.(true);
+    resetGame();
   };
 
   const checkAnswers = () => {
@@ -126,23 +154,19 @@ const LetterHuntGame: React.FC<LetterHuntGameProps> = ({ onComplete }) => {
       (w) => w.containsTarget && !selectedWords.includes(w.word)
     );
 
-        if (selectedWords.length === 0) {
+    if (selectedWords.length === 0) {
       setFeedbackMessage('Find the words and give it a try! You can do it!');
     } else if (incorrectSelections.length === 0 && missedCorrect.length === 0) {
       setFeedbackMessage('Excellent! All correct!');
-      onComplete?.(true);
+      setShowProceedButton(true);
+      timerRef.current = setTimeout(() => {
+        proceedToNext();
+      }, 8000); // 8 seconds delay
     } else if (incorrectSelections.length > 0) {
       setFeedbackMessage('Oops! Some incorrect selections. Try again!');
     } else if (missedCorrect.length > 0) {
       setFeedbackMessage('Almost! You missed some correct words.');
     }
-  };
-
-  const resetGame = () => {
-    setSelectedWords([]);
-    setShowResults(false);
-    setFeedbackMessage('');
-    setCurrentLevelIndex((prevIndex) => (prevIndex + 1) % gameLevels.length);
   };
 
   const getWordButtonVariant = (word: string) => {
@@ -190,10 +214,10 @@ const LetterHuntGame: React.FC<LetterHuntGameProps> = ({ onComplete }) => {
     <Card className="w-full max-w-2xl mx-auto">
       <CardHeader>
       </CardHeader>
-      <CardContent className="space-y-6">
+      <CardContent className="space-y-6 relative">
         <div className="text-center">
           <p className="text-xl mb-2 text-kerala-green-700">Find the words containing the letter:</p>
-          <Badge className="text-6xl p-4 bg-marigold-500 text-white">{currentLevel.targetLetter}</Badge>
+          <Badge className="text-4xl p-4 bg-marigold-500 text-white">{currentLevel.targetLetter}</Badge>
         </div>
 
         <div className="grid grid-cols-2 gap-6 justify-center">
@@ -213,6 +237,9 @@ const LetterHuntGame: React.FC<LetterHuntGameProps> = ({ onComplete }) => {
         {showResults && ( // Display feedback only after checking answers
           (<div className="text-center mt-4">
             <p className="text-xl font-semibold text-kerala-green-700">{feedbackMessage}</p>
+            {feedbackMessage === 'Excellent! All correct!' && (
+              <img src="/game/parrotclap.gif" alt="Parrot Help" className="absolute bottom-4 right-4 h-20 w-20" />
+            )}
           </div>)
         )}
 
@@ -222,9 +249,17 @@ const LetterHuntGame: React.FC<LetterHuntGameProps> = ({ onComplete }) => {
               Check Answers
             </Button>
           ) : (
-            <Button onClick={resetGame} className="px-8 py-3 text-lg bg-gradient-to-r from-marigold-500 to-marigold-600 hover:from-marigold-600 hover:to-marigold-700 text-white shadow-lg hover:shadow-xl transition-all">
-              Play Again
-            </Button>
+            <>
+              {feedbackMessage === 'Excellent! All correct!' ? (
+                <Button onClick={proceedToNext} className="px-8 py-3 text-lg bg-gradient-to-r from-kerala-green-500 to-kerala-green-600 hover:from-kerala-green-600 hover:to-kerala-green-700 text-white shadow-lg hover:shadow-xl transition-all">
+                  Proceed to Next Game
+                </Button>
+              ) : (
+                <Button onClick={resetGame} className="px-8 py-3 text-lg bg-gradient-to-r from-marigold-500 to-marigold-600 hover:from-marigold-600 hover:to-marigold-700 text-white shadow-lg hover:shadow-xl transition-all">
+                  Play Again
+                </Button>
+              )}
+            </>
           )}
         </div>
       </CardContent>

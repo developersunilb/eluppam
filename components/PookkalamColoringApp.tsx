@@ -1,23 +1,26 @@
+'use client';
+
 import React, { useState, useEffect, useMemo } from 'react';
-import { useProgress } from '@/context/ProgressContext'; // New import
+import { useRouter } from 'next/navigation';
+import { useProgress } from '@/context/ProgressContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 
 interface SectionColors {
-  [key: string]: string; // Keys are section IDs, values are color hex codes
+  [key: string]: string;
 }
 
 interface ActivatedColors {
-  [key: string]: boolean; // Keys are color hex codes, values are booleans
+  [key: string]: boolean;
 }
 
-interface PookalamColoringAppProps {
-  onComplete: (success: boolean) => void;
-}
+const PookalamColoringApp: React.FC = () => {
+  const router = useRouter();
+  const { addBadge, updateModuleProgress } = useProgress();
+  const [gameCompleted, setGameCompleted] = useState(false);
+  const [wasSuccessful, setWasSuccessful] = useState(false);
+  const currentGameId = 'pookalam-color-sayaloud';
 
-const PookalamColoringApp: React.FC<PookalamColoringAppProps> = ({ onComplete }) => {
-  const { addBadge } = useProgress(); // New line
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const [sectionColors, setSectionColors] = useState<SectionColors>({});
   const [activatedColors, setActivatedColors] = useState<ActivatedColors>({});
@@ -26,6 +29,7 @@ const PookalamColoringApp: React.FC<PookalamColoringAppProps> = ({ onComplete })
   const [jumbledMalayalamWords, setJumbledMalayalamWords] = useState<string[]>([]);
   const [isPookalamComplete, setIsPookalamComplete] = useState(false);
   const [earnedBadgeImage, setEarnedBadgeImage] = useState<string | null>(null);
+  const [showInstructions, setShowInstructions] = useState(true);
 
   const colorPalette = useMemo(() => [
     { malayalam: 'കറുപ്പ്', english: 'Black', hex: '#000000', pronunciation: ['karuppu', 'karup', 'black'] },
@@ -40,7 +44,6 @@ const PookalamColoringApp: React.FC<PookalamColoringAppProps> = ({ onComplete })
   ], []);
 
   useEffect(() => {
-    // Shuffle Malayalam words for the buttons
     const allMalayalamWords = colorPalette.map(color => color.malayalam);
     const shuffledWords = [...allMalayalamWords].sort(() => Math.random() - 0.5);
     setJumbledMalayalamWords(shuffledWords);
@@ -51,102 +54,63 @@ const PookalamColoringApp: React.FC<PookalamColoringAppProps> = ({ onComplete })
       const svgString = new XMLSerializer().serializeToString(svgElement);
       const canvas = document.createElement('canvas');
       const ctx = canvas.getContext('2d');
-      // Set canvas dimensions to desired badge size
       const badgeSize = 232;
       canvas.width = badgeSize;
       canvas.height = badgeSize;
-
       const img = new Image();
       img.onload = () => {
-        // Draw the image, scaling it to fit the canvas dimensions
         ctx?.drawImage(img, 0, 0, canvas.width, canvas.height);
         resolve(canvas.toDataURL('image/png'));
       };
-      img.onerror = (error) => {
-        reject(error);
-      };
-      // It's important to set the SVG's intrinsic size for the Image object
-      // This helps the Image object render the SVG correctly before drawing to canvas
-      img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(
-        svgString.replace('<svg', `<svg width="${svgElement.viewBox.baseVal.width}" height="${svgElement.viewBox.baseVal.height}">`)
-      )));
+      img.onerror = (error) => reject(error);
+      img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgString.replace('<svg', `<svg width="${svgElement.viewBox.baseVal.width}" height="${svgElement.viewBox.baseVal.height}">`))));
     });
   };
 
   useEffect(() => {
-    const totalSections = 65; // Based on manual count of SVG sections
-    if (Object.keys(sectionColors).length === totalSections) {
+    const totalSections = 65;
+    if (Object.keys(sectionColors).length === totalSections && !gameCompleted) {
+      updateModuleProgress(currentGameId, 'practice', 'completed', 100);
+      setWasSuccessful(true);
+      setGameCompleted(true);
       setIsPookalamComplete(true);
       setFeedback('Congrats! You earned a Pookkalam badge!');
-      onComplete(true);
-
-      // Capture SVG as PNG
+      
       const svgElement = document.querySelector('#pookalam-svg') as SVGSVGElement;
       if (svgElement) {
         captureSvgAsPng(svgElement)
           .then(dataUrl => {
-            // Save badge image to server
-            const badgeId = 'pookalam-master'; // Use a consistent ID for the badge file
+            const badgeId = 'pookalam-master';
             fetch('/api/save-badge', {
               method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
+              headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ imageData: dataUrl, badgeId }),
             })
-              .then(response => response.json())
-              .then(data => {
-                if (data.filePath) {
-                  // Update badge with server-saved image path
-                  addBadge({
-                    id: badgeId,
-                    name: 'Pookalam Master',
-                    image: data.filePath, // Use the server-saved path
-                    dateEarned: Date.now(),
-                  });
-                  setEarnedBadgeImage(data.filePath); // Also update local state with new path
-                  console.log('Badge saved on server:', data.filePath);
-                } else {
-                  console.error('Failed to save badge on server:', data.message);
-                  // Fallback to dataUrl if server save fails
-                  addBadge({
-                    id: badgeId,
-                    name: 'Pookalam Master',
-                    image: dataUrl,
-                    dateEarned: Date.now(),
-                  });
-                  setEarnedBadgeImage(dataUrl);
-                }
-              })
-              .catch(error => {
-                console.error('Error calling save-badge API:', error);
-                // Fallback to dataUrl if API call fails
-                addBadge({
-                  id: badgeId,
-                  name: 'Pookalam Master',
-                  image: dataUrl,
-                  dateEarned: Date.now(),
-                });
-                setEarnedBadgeImage(dataUrl);
-              });
+            .then(response => response.json())
+            .then(data => {
+              const imagePath = data.filePath || dataUrl;
+              addBadge({ id: badgeId, name: 'Pookalam Master', image: imagePath, dateEarned: Date.now() });
+              setEarnedBadgeImage(imagePath);
+              if (!data.filePath) console.error('Failed to save badge on server:', data.message);
+            })
+            .catch(error => {
+              console.error('Error calling save-badge API:', error);
+              addBadge({ id: badgeId, name: 'Pookalam Master', image: dataUrl, dateEarned: Date.now() });
+              setEarnedBadgeImage(dataUrl);
+            });
           })
           .catch(error => console.error('Error capturing SVG:', error));
       }
-    } else {
-      setIsPookalamComplete(false);
-      setEarnedBadgeImage(null); // Clear badge if not complete
     }
-  }, [sectionColors, addBadge, onComplete]);
+  }, [sectionColors, gameCompleted, addBadge, updateModuleProgress, currentGameId]);
 
   const handleMalayalamWordSelection = (word: string) => {
     if (!pendingActivationColorHex) {
       setFeedback('Please select a color from the palette first!');
       return;
     }
-
     const selectedPaletteColor = colorPalette.find(c => c.hex === pendingActivationColorHex);
     if (!selectedPaletteColor) return;
-
     if (selectedPaletteColor.malayalam === word) {
       setActivatedColors(prev => ({ ...prev, [pendingActivationColorHex]: true }));
       setSelectedColor(pendingActivationColorHex);
@@ -161,10 +125,10 @@ const PookalamColoringApp: React.FC<PookalamColoringAppProps> = ({ onComplete })
     if (activatedColors[color.hex]) {
       setSelectedColor(color.hex);
       setFeedback(`Using ${color.malayalam} (${color.english})`);
-      setPendingActivationColorHex(null); // Clear pending activation if already activated
+      setPendingActivationColorHex(null);
     } else {
       setPendingActivationColorHex(color.hex);
-      setSelectedColor(null); // Deselect current color until activated
+      setSelectedColor(null);
       setFeedback('Please choose the correct Malayalam word to activate this color.');
     }
   };
@@ -175,10 +139,7 @@ const PookalamColoringApp: React.FC<PookalamColoringAppProps> = ({ onComplete })
       return;
     }
     if (selectedColor && activatedColors[selectedColor]) {
-      setSectionColors(prev => ({
-        ...prev,
-        [sectionId]: selectedColor
-      }));
+      setSectionColors(prev => ({ ...prev, [sectionId]: selectedColor }));
     } else {
       setFeedback('Please select and activate a color first!');
     }
@@ -192,16 +153,17 @@ const PookalamColoringApp: React.FC<PookalamColoringAppProps> = ({ onComplete })
   const resetActivations = () => {
     setActivatedColors({});
     setSelectedColor(null);
-    setPendingActivationColorHex(null); // Clear pending activation
+    setPendingActivationColorHex(null);
     setFeedback('All color activations reset. Match Malayalam words to activate them!');
-    // Reshuffle words
     const allMalayalamWords = colorPalette.map(color => color.malayalam);
     const shuffledWords = [...allMalayalamWords].sort(() => Math.random() - 0.5);
     setJumbledMalayalamWords(shuffledWords);
   };
 
+
+
   return (
-    <Card className="w-full max-w-6xl mx-auto my-8 bg-marigold-100">
+    <Card className="w-full max-w-6xl mx-auto mt-4 bg-marigold-100 flex-grow">
       <CardHeader className="text-center">
         <CardTitle className="text-4xl font-bold text-gray-800">
           മലയാളം നിറങ്ങൾ പഠിക്കാം
@@ -210,16 +172,14 @@ const PookalamColoringApp: React.FC<PookalamColoringAppProps> = ({ onComplete })
           Learn Malayalam Colors - Pookkalam Coloring
         </p>
       </CardHeader>
-      <CardContent>
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Color Palette Section */}
+      <CardContent className="flex flex-col flex-grow">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 flex-grow">
           <div className="lg:col-span-1">
             <Card className="h-full">
               <CardHeader>
                 <CardTitle className="text-xl font-semibold text-gray-800">Color Palette</CardTitle>
               </CardHeader>
               <CardContent>
-                {/* Color Grid */}
                 <div className="grid grid-cols-3 gap-3 mb-6">
                   {colorPalette.map((color, index) => (
                                 <div key={index} className="text-center">
@@ -227,7 +187,7 @@ const PookalamColoringApp: React.FC<PookalamColoringAppProps> = ({ onComplete })
                                     className={`w-16 h-16 rounded-lg border-4 transition-all hover:scale-105 ${
                                       selectedColor === color.hex ? 'border-gray-800 scale-105' : 'border-gray-300'
                                     } ${
-                                      activatedColors[color.hex] ? 'shadow-lg' : 'opacity-50'
+                                      activatedColors[color.hex] ? 'shadow-lg' : ''
                                     }`}
                                     style={{
                                       backgroundColor: color.hex,
@@ -235,15 +195,14 @@ const PookalamColoringApp: React.FC<PookalamColoringAppProps> = ({ onComplete })
                                     }}
                                                           onClick={() => handleColorSelection(color)}
                                                         >                                    {activatedColors[color.hex] && (
-                                      <span className="text-white text-xs">✓</span>
+                                      <span className={`text-xs ${color.hex === '#FFFFFF' ? 'text-black' : 'text-white'}`}>✓</span>
                                     )}
                                   </button>
                                 </div>
                               ))}
                             </div>
               
-                {/* Malayalam Word Buttons Grid */}
-                <div className="mb-4 p-4 bg-gray-50 rounded-lg"> {/* Changed bg-blue-50 to bg-gray-50 for neutrality */}
+                <div className="mb-4 p-4 bg-gray-50 rounded-lg">
                   <h4 className="text-lg font-bold text-center mb-3 text-gray-800">Choose the Malayalam word:</h4>
                   <div className="grid grid-cols-3 gap-2">
                     {jumbledMalayalamWords.map((word, index) => (
@@ -267,20 +226,23 @@ const PookalamColoringApp: React.FC<PookalamColoringAppProps> = ({ onComplete })
                   </div>
                 </div>
 
-
-              {/* Feedback Display */}
               {feedback && (
                 <p className={`text-center text-xl font-semibold mt-4 ${
-                  feedback.includes('Very good') ? 'text-green-700' : // Correct activation
-                  feedback.includes('Incorrect') ? 'text-red-700' : // Incorrect attempt
-                  'text-gray-700' // General feedback
+                  feedback.includes('Very good') ? 'text-green-700' : 
+                  feedback.includes('Incorrect') ? 'text-red-700' : 
+                  'text-gray-700'
                 }`}>
                   {feedback}
                 </p>
               )}
 
-              {/* Control Buttons */}
-              <div className="space-y-2 mt-6"> {/* Added mt-6 for spacing */}
+              <div className="space-y-2 mt-6">
+                <Button
+                  onClick={() => setShowInstructions(true)}
+                  className="w-full py-2 text-lg bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-lg hover:shadow-xl transition-all"
+                >
+                  How to Play
+                </Button>
                 <Button
                   onClick={clearColors}
                   className="w-full py-2 text-lg bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white shadow-lg hover:shadow-xl transition-all"
@@ -295,25 +257,29 @@ const PookalamColoringApp: React.FC<PookalamColoringAppProps> = ({ onComplete })
                 </Button>
               </div>
 
-              {/* Instructions */}
-              <Card className="mt-6">
-                <CardHeader>
-                  <CardTitle className="text-lg font-semibold text-gray-800">How to Play:</CardTitle>
-                </CardHeader>
-                <CardContent className="text-sm text-gray-600">
-                  <ol className="list-decimal list-inside space-y-1">
-                    <li>Click on a color from the palette to select it.</li>
-                    <li>Then, click on the correct Malayalam word below to activate the color.</li>
-                    <li>Once activated, click on Pookkalam sections to color them.</li>
-                    <li>Learn all nine Malayalam color names!</li>
-                  </ol>
-                </CardContent>
-              </Card>
+              {showInstructions && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                  <Card className="mt-6 max-w-lg w-full">
+                    <CardHeader>
+                      <CardTitle className="text-lg font-semibold text-gray-800">How to Play:</CardTitle>
+                    </CardHeader>
+                    <CardContent className="text-sm text-gray-600">
+                      <ol className="list-decimal list-inside space-y-1">
+                        <li>Click on a color from the palette to select it.</li>
+                        <li>Then, click on the correct Malayalam word below to activate the color.</li>
+                        <li>Once activated, click on Pookkalam sections to color them.</li>
+                        <li>Learn all nine Malayalam color names!</li>
+                      </ol>
+                      <Button onClick={() => setShowInstructions(false)} className="w-full mt-4">Close</Button>
+                    </CardContent>
+                  </Card>
+                </div>
+              )}
+
               </CardContent>
             </Card>
           </div>
 
-          {/* Mandala Section */}
           <div className="lg:col-span-2">
             <Card className="h-full">
               <CardHeader className="text-center">
@@ -325,12 +291,9 @@ const PookalamColoringApp: React.FC<PookalamColoringAppProps> = ({ onComplete })
                 <div className="flex justify-center">
                   <svg
                     id="pookalam-svg"
-                    width="500"
-                    height="500"
                     viewBox="0 0 500 500"
-                    className="border-2 border-gray-300 rounded-lg shadow-sm bg-marigold-100"
+                    className="border-2 border-gray-300 rounded-lg shadow-sm bg-marigold-100 w-full h-auto max-w-[500px] mx-auto"
                   >
-                    {/* Outermost circle - drawn first so it appears behind other elements */}
                     <circle
                       cx="250"
                       cy="250"
@@ -342,7 +305,6 @@ const PookalamColoringApp: React.FC<PookalamColoringAppProps> = ({ onComplete })
                       onClick={() => handleSectionClick('circle-outermost')}
                     />
 
-                    {/* Large scalloped petals */}
                     <g transform="translate(250,250)">
                       {Array.from({ length: 16 }, (_, i) => {
                         const angle = (i * 360) / 16;
@@ -368,7 +330,6 @@ const PookalamColoringApp: React.FC<PookalamColoringAppProps> = ({ onComplete })
                       })}
                     </g>
 
-                    {/* Outer circle */}
                     <circle
                       cx="250"
                       cy="250"
@@ -380,7 +341,6 @@ const PookalamColoringApp: React.FC<PookalamColoringAppProps> = ({ onComplete })
                       onClick={() => handleSectionClick('circle-outer')}
                     />
                     
-                    {/* Middle circle */}
                     <circle
                       cx="250"
                       cy="250"
@@ -392,7 +352,6 @@ const PookalamColoringApp: React.FC<PookalamColoringAppProps> = ({ onComplete })
                       onClick={() => handleSectionClick('circle-mid')}
                     />
 
-                    {/* Decorative wavy ring */}
                     <g transform="translate(250,250)">
                       {Array.from({ length: 24 }, (_, i) => {
                         const angle = (i * 360) / 24;
@@ -418,7 +377,6 @@ const PookalamColoringApp: React.FC<PookalamColoringAppProps> = ({ onComplete })
                       })}
                     </g>
 
-                    {/* Inner star sections */}
                     <g transform="translate(250,250)">
                       {Array.from({ length: 12 }, (_, i) => {
                         const angle = (i * 360) / 12;
@@ -447,7 +405,6 @@ const PookalamColoringApp: React.FC<PookalamColoringAppProps> = ({ onComplete })
                       })}
                     </g>
 
-                    {/* Inner circle */}
                     <circle
                       cx="250"
                       cy="250"
@@ -459,7 +416,6 @@ const PookalamColoringApp: React.FC<PookalamColoringAppProps> = ({ onComplete })
                       onClick={() => handleSectionClick('inner-circle')}
                     />
 
-                    {/* Center flower petals */}
                     <g transform="translate(250,250)">
                       {Array.from({ length: 8 }, (_, i) => {
                         const angle = (i * 360) / 8;
@@ -483,7 +439,6 @@ const PookalamColoringApp: React.FC<PookalamColoringAppProps> = ({ onComplete })
                         );
                       })}
                       
-                      {/* Center dot */}
                       <circle
                         cx="0"
                         cy="0"
@@ -501,6 +456,32 @@ const PookalamColoringApp: React.FC<PookalamColoringAppProps> = ({ onComplete })
                 <div className="mt-4 text-center text-gray-600 text-sm">
                   <p>🎯 Select a color, click its Malayalam name, then click on pookkalam sections to color them!</p>
                 </div>
+
+                {gameCompleted && (
+                  <div className="mt-8 text-center">
+                    <h3 className="text-2xl font-bold text-emerald-400 mb-4">
+                      {wasSuccessful ? 'Congratulations!' : 'Game Over'}
+                    </h3>
+                    {earnedBadgeImage && (
+                      <div className="mb-6">
+                        <p className="text-lg text-gray-300 mb-2">You earned a badge!</p>
+                        <img src={earnedBadgeImage} alt="Pookalam Master Badge" className="mx-auto w-32 h-32" />
+                      </div>
+                    )}
+                    <div className="flex justify-center space-x-4">
+                      <Button 
+                        onClick={() => router.push(`/games?completed=${currentGameId}`)}
+                        className="px-8 py-3 text-lg bg-emerald-500 hover:bg-emerald-600 text-white shadow-lg">
+                        Go to Games Page
+                      </Button>
+                      <Button 
+                        onClick={() => router.push(`/progress`)} // Assuming /progress is the page for badges
+                        className="px-8 py-3 text-lg bg-blue-500 hover:bg-blue-600 text-white shadow-lg">
+                        View Badge
+                      </Button>
+                    </div>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </div>

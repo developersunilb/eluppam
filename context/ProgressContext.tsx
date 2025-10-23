@@ -23,7 +23,7 @@ interface ProgressProviderProps {
 }
 
 export const ProgressProvider: React.FC<ProgressProviderProps> = ({ children, userId }) => {
-  const [userProgress, setUserProgress] = useState<UserProgress>(() => ({ userId: '', modules: [], badges: [], lastUpdated: Date.now() }));
+  const [userProgress, setUserProgress] = useState<UserProgress>(() => ({ userId: '', modules: [], badges: [], lastUpdated: 0 }));
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -51,7 +51,7 @@ export const ProgressProvider: React.FC<ProgressProviderProps> = ({ children, us
   }, [userId]);
 
   useEffect(() => {
-    if (userId) {
+    if (userId && typeof window !== 'undefined') {
       loadUserProgress();
     }
   }, [userId, loadUserProgress]);

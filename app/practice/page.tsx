@@ -56,7 +56,9 @@ export default function PracticePage() {
           
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {practiceModules.map((module) => (
-              <Link href={module.href} key={module.title} legacyBehavior>
+              <Link href={module.href} key={module.title}>
+                {/* @next-codemod-error This Link previously used the now removed `legacyBehavior` prop, and has a child that might not be an anchor. The codemod bailed out of lifting the child props to the Link. Check that the child component does not render an anchor, and potentially move the props manually to Link. */
+                }
                 <div className="block bg-white p-6 rounded-xl shadow-lg hover:shadow-2xl transition-shadow transform hover:-translate-y-1 border-t-4 border-marigold-500">
                   <div className="flex flex-col h-full">
                     <div className="flex-shrink-0">

@@ -91,11 +91,11 @@ export default function KootaksharamCategoryPage({ params }: { params: any }) {
       <div className="mb-8">
           <Link
             href="/learn/kootaksharangal"
-            className="inline-flex items-center text-sm font-medium text-kerala-green-700 hover:text-kerala-green-900"
-            legacyBehavior>
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Kootaksharangal Menu
-          </Link>
+            className="inline-flex items-center text-sm font-medium text-kerala-green-700 hover:text-kerala-green-900">
+            {/* @next-codemod-error This Link previously used the now removed `legacyBehavior` prop, and has a child that might not be an anchor. The codemod bailed out of lifting the child props to the Link. Check that the child component does not render an anchor, and potentially move the props manually to Link. */
+            }
+            <ArrowLeft className="w-4 h-4 mr-2" />Back to Kootaksharangal Menu
+                      </Link>
       </div>
       <KootaksharamClient data={filteredData} moduleId={`kootaksharangal-${params.category}`} />
     </LearnLayout>

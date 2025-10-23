@@ -21,9 +21,9 @@ const LEVEL_20 = {
   // sample allowed words for level 20 (this is the "dictionary" for validation)
   // NOTE: extend this list with a proper Malayalam lexicon later
   words: [
-    'കട', 'കടല', 'മാല', 'കടമ', 'കര', 'കല', 'മടി', 'അടി', 'അടിമ',
+    'കട', 'കടല', 'കവല','മാല', 'കടമ', 'കര', 'കല', 'മടി', 'അടി', 'അട','അടിമ',
     'കായൽ', 'കാള', 'ദയ', 'വയൽ', 'വള', 'കായ', 'കാൽ', 'കാവൽ',
-    'കല്യം', 'കടവി', 'മറ', 'മറ്റു', 'ടമല', 'കലശം', 'വിനയം', 'അന്ത', 'തല'
+    'കല്യം', 'കടവി', 'മറ', 'മട', 'മറ്റു', 'ടമല', 'കലശം', 'വിനയം', 'അന്ത', 'മല','തല'
   ],
 };
 
@@ -45,6 +45,19 @@ const BOARD_BONUSES = [
 
 // Helper: normalize Malayalam strings lightly (trim + NFKC if needed)
 const normalize = (s: string) => (s || '').trim().normalize('NFC');
+
+const isCombiningMark = (char: string) => {
+  // This list can be expanded based on observed behavior
+  const combiningMarks = ['ാ', 'ി', 'ീ', 'ു', 'ൂ', 'ൃ', 'െ', 'േ', 'ൈ', 'ൊ', 'ോ', 'ൗ', '്', 'ം', 'ഃ'];
+  return combiningMarks.includes(char);
+};
+
+const renderDisplayChar = (char: string) => {
+  if (isCombiningMark(char)) {
+    return <>{'\u200C'}{char}</>; // Prepend with ZWNJ
+  }
+  return <>{char}</>;
+};
 
 
 export default function MalayalamScrabbleGame() {
@@ -328,7 +341,7 @@ export default function MalayalamScrabbleGame() {
               onDrop={(e) => onDrop(e, index)}
               onDragOver={(e) => e.preventDefault()}
             >
-              {letter}
+              {letter && renderDisplayChar(letter)}
               {bonus && !letter && (
                 <span className="absolute bottom-0.5 right-0.5 text-xs font-semibold opacity-75">
                   {bonus}
@@ -366,7 +379,7 @@ export default function MalayalamScrabbleGame() {
               onDrop={(e) => onDrop(e, index)}
               onDragOver={(e) => e.preventDefault()}
             >
-              {letter}
+              {letter && renderDisplayChar(letter)}
               <span className="absolute top-0.5 right-0.5 text-xs font-semibold opacity-75">
                 {letter ? LETTER_SCORES[letter] : 0}
               </span>
@@ -381,15 +394,13 @@ export default function MalayalamScrabbleGame() {
     <div className="container mx-auto p-4">
 
 
-      <div className="absolute top-4 left-4 p-2 bg-card border border-border rounded shadow-lg">
-        <p className="text-lg font-semibold">Score: {score}</p>
-      </div>
+
 
       <div className="flex flex-col lg:flex-row justify-between gap-4 p-4 bg-card rounded-lg shadow-md">
         {/* Left Column: Found Words */}
-        <div className="w-full lg:w-1/4 order-1 lg:order-1">
+        <div className="w-full lg:w-1/4 order-1 lg:order-1 pt-16">
           <div className="mt-4">
-            <h3 className="text-xl font-semibold mb-2 text-secondary">
+            <h3 className="text-xl font-semibold mb-2 text-black">
               Found Words:
             </h3>
             {foundWords.length === 0 ? (
@@ -408,6 +419,9 @@ export default function MalayalamScrabbleGame() {
 
         {/* Center Column: Main Game */}
         <div className="w-full lg:w-2/4 order-2 lg:order-2 flex flex-col items-center">
+          <div className="text-center mb-4">
+            <p className="text-2xl font-bold text-kerala-green-700">Score: {score}</p>
+          </div>
           <div className="flex justify-center space-x-4 mb-6">
             <Button onClick={() => setShowHowToPlay(!showHowToPlay)}>
               {showHowToPlay ? "Hide Instructions" : "How to Play"}
@@ -456,25 +470,25 @@ export default function MalayalamScrabbleGame() {
               </h2>
               <ul className="list-disc list-inside text-backwater-blue-700 space-y-2">
                 <li>
-                  **Objective:** Form Malayalam words using letters from your hand on the board.
+                  Objective: Form Malayalam words using letters from your hand on the board.
                 </li>
                 <li>
-                  **Board:** 7x7 grid with special bonus squares (DL, TL, DW, TW).
+                  Board: 7x7 grid with special bonus squares (DL, TL, DW, TW).
                 </li>
                 <li>
-                  **Tiles:** Each Malayalam letter has a point value. Start with 7 tiles.
+                  Tiles: Each Malayalam letter has a point value. Start with 7 tiles.
                 </li>
                 <li>
-                  **Forming Words:** Words must be horizontal or vertical, connected, and valid. The first word covers the center star. Subsequent words connect to existing letters.
+                  Forming Words: Words must be horizontal or vertical, connected, and valid. The first word covers the center star. Subsequent words connect to existing letters.
                 </li>
                 <li>
-                  **Playing a Turn:** Select a tile, place it on an empty board square, form a word, then click "Submit Word". New tiles are drawn.
+                  Playing a Turn: Select a tile, place it on an empty board square, form a word, then click "Submit Word". New tiles are drawn.
                 </li>
                 <li>
-                  **Scoring:** Letter values are multiplied by letter/word bonuses. Using all 7 tiles in one turn gives a 50-point bonus.
+                  Scoring: Letter values are multiplied by letter/word bonuses. Using all 7 tiles in one turn gives a 50-point bonus.
                 </li>
                 <li>
-                  **Winning:** Highest score wins when all tiles are used or no more moves are possible.
+                  Winning: Highest score wins when all tiles are used or no more moves are possible.
                 </li>
               </ul>
             </div>

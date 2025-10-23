@@ -158,8 +158,9 @@ export default function KootaksharangalMenu() {
           <Link
             href={category.href}
             key={category.name}
-            className="block hover:no-underline"
-            legacyBehavior>
+            className="block hover:no-underline">
+            {/* @next-codemod-error This Link previously used the now removed `legacyBehavior` prop, and has a child that might not be an anchor. The codemod bailed out of lifting the child props to the Link. Check that the child component does not render an anchor, and potentially move the props manually to Link. */
+            }
             <Card className="h-full flex flex-col justify-between transition-all duration-300 hover:shadow-lg hover:border-kerala-green-500/50">
               <CardHeader>
                 <div className="flex items-center justify-between">

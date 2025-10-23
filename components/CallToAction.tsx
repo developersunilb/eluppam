@@ -76,7 +76,9 @@ export default function CallToAction() {
                   Begin Learning Now
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
-                <Link href="/#learn" passHref legacyBehavior>
+                <Link href="/#learn">
+                  {/* @next-codemod-error This Link previously used the now removed `legacyBehavior` prop, and has a child that might not be an anchor. The codemod bailed out of lifting the child props to the Link. Check that the child component does not render an anchor, and potentially move the props manually to Link. */
+                  }
                   <Button 
                     size="lg" 
                     variant="outline" 

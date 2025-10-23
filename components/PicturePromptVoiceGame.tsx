@@ -1,10 +1,10 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Mic, MicOff, RefreshCw, CheckCircle, XCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import Image from 'next/image';
+import { useProgress } from '@/context/ProgressContext';
 
 declare global {
   interface Window {
@@ -14,60 +14,49 @@ declare global {
 }
 
 const LANGUAGE = 'ml-IN';
-const VALID_WORDS = ['മരം', 'പൂവ്', 'പൂമ്പാറ്റ', 'ചിത്രശലഭം', 'മാല', 'വെള്ളം', 'ജലം', 'പുഴ', 'വഴി', 'ചെടി', 'സൂര്യൻ', 'പുല്ല്', 'കുട്ടികൾ', 'പട്ടി', 'കൊമ്പ്', 'ചില്ല', 'മരച്ചില്ല', 'കിളി', 'പക്ഷി', 'മഞ്ഞ്', 'പറവ', 'വെളിച്ചം', 'വെട്ടം', 'മേഘം', 'ശാഖ', 'മരക്കൊമ്പ്', 'കൊമ്പ്', 'കുട്ടി', 'കാട്'];
-const IMAGE_URL = '/image/scenery.jpg';
 
-interface PicturePromptVoiceGameProps {
-  onComplete: (success: boolean) => void;
-}
+// This component is now standalone as requested by the user.
+const PicturePromptVoiceGame: React.FC = () => {
+  // Data is now hardcoded inside the component.
+  const validWords = ['മരം', 'പൂവ്', 'പൂമ്പാറ്റ', 'ചിത്രശലഭം', 'മാല', 'വെള്ളം', 'ജലം', 'പുഴ', 'വഴി', 'ചെടി', 'സൂര്യൻ', 'പുല്ല്', 'കുട്ടികൾ', 'പട്ടി', 'കൊമ്പ്', 'ചില്ല', 'മരച്ചില്ല', 'കിളി', 'പക്ഷി', 'മഞ്ഞ്', 'പറവ', 'വെളിച്ചം', 'വെട്ടം', 'മേഘം', 'ശാഖ', 'മരക്കൊമ്പ്', 'കൊമ്പ്', 'കുട്ടി', 'കാട്'];
+  const imageUrl = '/image/scenery.jpg';
+  const currentGameId = 'picture-prompt-voice';
 
-const PicturePromptVoiceGame: React.FC<PicturePromptVoiceGameProps> = ({ onComplete }) => {
+  const { updateModuleProgress } = useProgress();
   const [isListening, setIsListening] = useState(false);
   const [recognizedText, setRecognizedText] = useState('');
   const [feedback, setFeedback] = useState<'correct' | 'incorrect' | 'already_found' | null>(null);
   const [foundWords, setFoundWords] = useState<string[]>([]);
   const [canProceedToNextLevel, setCanProceedToNextLevel] = useState(false);
+  const [isApiSupported, setIsApiSupported] = useState(true);
+  const [isCompleted, setIsCompleted] = useState(false);
   const recognitionRef = useRef<any>(null);
 
-  const resetGame = () => {
+  const resetGame = useCallback(() => {
     setRecognizedText('');
     setFeedback(null);
     setFoundWords([]);
     setCanProceedToNextLevel(false);
-    if (recognitionRef.current) {
+    if (recognitionRef.current && isListening) {
       recognitionRef.current.stop();
     }
     setIsListening(false);
-  };
+  }, [isListening]);
 
   useEffect(() => {
-    if (!('SpeechRecognition' in window) && !('webkitSpeechRecognition' in window)) {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
       console.error('Web Speech API not supported by this browser.');
-      alert('Your browser does not support the Web Speech API. Please try Google Chrome.');
+      setIsApiSupported(false);
       return;
     }
 
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     const recognition = new SpeechRecognition();
-
     recognition.continuous = false;
     recognition.interimResults = false;
     recognition.lang = LANGUAGE;
 
-    recognition.onresult = (event: any) => {
-      const transcript = event.results[0][0].transcript.trim();
-      setRecognizedText(transcript);
-
-      if (VALID_WORDS.includes(transcript)) {
-        if (!foundWords.includes(transcript)) {
-          setFeedback('correct');
-          setFoundWords(prev => [...prev, transcript]);
-        } else {
-          setFeedback('already_found');
-        }
-      } else {
-        setFeedback('incorrect');
-      }
+    recognition.onend = () => {
       setIsListening(false);
     };
 
@@ -77,12 +66,6 @@ const PicturePromptVoiceGame: React.FC<PicturePromptVoiceGameProps> = ({ onCompl
       setIsListening(false);
     };
 
-    recognition.onend = () => {
-      if (isListening) {
-        setIsListening(false);
-      }
-    };
-
     recognitionRef.current = recognition;
 
     return () => {
@@ -90,20 +73,42 @@ const PicturePromptVoiceGame: React.FC<PicturePromptVoiceGameProps> = ({ onCompl
         recognitionRef.current.stop();
       }
     };
-  }, [isListening, foundWords]);
+  }, []);
 
   useEffect(() => {
-    const completionThreshold = Math.floor(VALID_WORDS.length * 0.66);
-    if (foundWords.length >= completionThreshold && foundWords.length < VALID_WORDS.length) {
+    if (recognitionRef.current) {
+      recognitionRef.current.onresult = (event: any) => {
+        const transcript = event.results[0][0].transcript.trim();
+        setRecognizedText(transcript);
+
+        if (validWords.includes(transcript)) {
+          if (!foundWords.includes(transcript)) {
+            setFeedback('correct');
+            setFoundWords(prev => [...prev, transcript]);
+          } else {
+            setFeedback('already_found');
+          }
+        } else {
+          setFeedback('incorrect');
+        }
+        setIsListening(false);
+      };
+    }
+  }, [foundWords, validWords]);
+
+  useEffect(() => {
+    const completionThreshold = Math.floor(validWords.length * 0.66);
+    if (foundWords.length >= completionThreshold && foundWords.length < validWords.length) {
       setCanProceedToNextLevel(true);
     } else {
       setCanProceedToNextLevel(false);
     }
 
-    if (foundWords.length === VALID_WORDS.length) {
-      onComplete(true);
+    if (foundWords.length === validWords.length && !isCompleted && currentGameId) {
+      updateModuleProgress(currentGameId, 'practice', 'completed', 100);
+      setIsCompleted(true);
     }
-  }, [foundWords, onComplete]);
+  }, [foundWords, validWords, currentGameId, updateModuleProgress, isCompleted]);
 
   const startListening = () => {
     if (recognitionRef.current) {
@@ -121,6 +126,15 @@ const PicturePromptVoiceGame: React.FC<PicturePromptVoiceGameProps> = ({ onCompl
     }
   };
 
+  if (!isApiSupported) {
+    return (
+      <div className="text-center text-red-500">
+        <p>Speech recognition is not supported by your browser.</p>
+        <p>Please try using Google Chrome.</p>
+      </div>
+    );
+  }
+
   return (
     <Card className="w-full max-w-4xl mx-auto bg-white shadow-xl rounded-lg">
       <CardHeader>
@@ -128,7 +142,7 @@ const PicturePromptVoiceGame: React.FC<PicturePromptVoiceGameProps> = ({ onCompl
       </CardHeader>
       <CardContent className="flex flex-col items-center p-6">
         <div className="w-full h-96 relative mb-6">
-          <Image src={IMAGE_URL} alt="Picture prompt for voice game" layout="fill" objectFit="contain" />
+          <img src={imageUrl} alt="Picture prompt for voice game" className="absolute top-0 left-0 w-full h-full object-contain" />
         </div>
         <div className="flex items-center space-x-4 mb-4">
           <Button
@@ -155,14 +169,14 @@ const PicturePromptVoiceGame: React.FC<PicturePromptVoiceGameProps> = ({ onCompl
           </div>
         )}
 
-        {canProceedToNextLevel && foundWords.length < VALID_WORDS.length && (
+        {canProceedToNextLevel && foundWords.length < validWords.length && (
           <div className="mt-6 text-center">
             <p className="text-xl font-bold text-kerala-green-700 mb-4">
               You've found enough words to proceed!
             </p>
             <div className="flex justify-center gap-4">
               <Button
-                onClick={() => onComplete(true)}
+                onClick={() => updateModuleProgress(currentGameId, 'practice', 'completed', 100)}
                 className="px-8 py-3 text-lg bg-marigold-500 hover:bg-marigold-600 text-white"
               >
                 Proceed to Next Level
@@ -178,7 +192,7 @@ const PicturePromptVoiceGame: React.FC<PicturePromptVoiceGameProps> = ({ onCompl
           </div>
         )}
         <div className="w-full mt-6">
-          <p className="text-lg text-gray-600 mb-2">Words found: {foundWords.length} / {VALID_WORDS.length}</p>
+          <p className="text-lg text-gray-600 mb-2">Words found: {foundWords.length} / {validWords.length}</p>
           <h3 className="text-xl font-bold text-kerala-green-700 mb-2">Found Words:</h3>
           <ul className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2 text-center">
             {foundWords.map((word, index) => (

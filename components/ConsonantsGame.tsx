@@ -8,11 +8,17 @@ import { toast } from '../hooks/use-toast';
 import { playAudio } from '@/lib/utils';
 import { useProgress } from '../context/ProgressContext';
 import { useAuth } from '../context/AuthContext';
-import MobileGameControls from './MobileGameControls';
+import { useRouter } from 'next/navigation';
 
-interface ConsonantsGameProps {
-  onComplete: (success: boolean) => void;
-}
+const MobileGameControls = ({ onUpPress, onUpRelease, onLeftPress, onLeftRelease, onRightPress, onRightRelease }) => (
+    <div className="fixed bottom-0 left-0 right-0 p-4 flex justify-between items-center bg-gray-800 bg-opacity-50 z-10">
+        <div className="flex">
+            <Button onTouchStart={onLeftPress} onTouchEnd={onLeftRelease} onMouseDown={onLeftPress} onMouseUp={onLeftRelease} className="px-8 py-4 text-lg mr-2">Left</Button>
+            <Button onTouchStart={onRightPress} onTouchEnd={onRightRelease} onMouseDown={onRightPress} onMouseUp={onRightRelease} className="px-8 py-4 text-lg">Right</Button>
+        </div>
+        <Button onTouchStart={onUpPress} onTouchEnd={onUpRelease} onMouseDown={onUpPress} onMouseUp={onUpRelease} className="px-8 py-6 text-lg">Jump</Button>
+    </div>
+);
 
 class GameScene extends Phaser.Scene {
     private player!: Phaser.GameObjects.Group;
@@ -20,7 +26,6 @@ class GameScene extends Phaser.Scene {
     private cursors!: Phaser.Types.Input.Keyboard.CursorKeys;
     private bgFar!: Phaser.GameObjects.TileSprite;
     private bgNear!: Phaser.GameObjects.TileSprite;
-    private externalInput: { moveLeft: boolean; moveRight: boolean; jump: boolean; } = { moveLeft: false, moveRight: false, jump: false };
     private worldWidth!: number;
     private levelData!: { x: number; y: number; letter: string; color: string; }[];
     private platformData!: { x: number; y: number; scale: number; }[];
@@ -34,7 +39,6 @@ class GameScene extends Phaser.Scene {
     }
 
     preload() {
-
         this.load.svg('letter_collectible', '/game/assets/image/letter_collectible.svg', { width: 32, height: 32 });
         this.load.svg('ground', '/game/assets/image/ground.svg', { width: 800, height: 64 });
         this.load.svg('hills-far', '/game/assets/image/hills-far.svg', { width: 800, height: 600 });
@@ -58,12 +62,11 @@ class GameScene extends Phaser.Scene {
             platforms.create(p.x, p.y, 'ground').setScale(p.scale, 1).refreshBody();
         });
 
-        // Create a placeholder crab
         this.player = this.add.group();
         const body = this.add.rectangle(0, 0, 64, 48, 0xff0000);
         this.player.add(body);
-        this.playerBody = body; // Store the body rectangle
-        this.physics.add.existing(this.playerBody); // Add physics to the body rectangle
+        this.playerBody = body;
+        this.physics.add.existing(this.playerBody);
         (this.playerBody.body as Phaser.Physics.Arcade.Body).setBounce(0.2).setCollideWorldBounds(true);
 
         const legs: Phaser.GameObjects.Rectangle[] = [];
@@ -72,6 +75,8 @@ class GameScene extends Phaser.Scene {
             this.player.add(leg);
             legs.push(leg);
         }
+
+        this.player.setXY(100, 450);
 
         const collectibles = this.physics.add.group();
         this.levelData.forEach(data => {
@@ -91,19 +96,15 @@ class GameScene extends Phaser.Scene {
         this.physics.add.collider(this.playerBody, platforms);
         this.physics.add.overlap(this.playerBody, collectibles, this.collectLetter, undefined, this);
 
-        // Get external input state from registry
-        this.registry.events.on('changedata-externalInput', (parent: any, key: string, data: any) => {
-            if (key === 'externalInput') {
-                this.externalInput = data;
-            }
-        });
+
     }
 
     update() {
-        // Combine keyboard input and external input
-        const moveLeft = this.cursors.left.isDown || this.externalInput.moveLeft;
-        const moveRight = this.cursors.right.isDown || this.externalInput.moveRight;
-        const jump = this.cursors.up.isDown || this.externalInput.jump;
+        const externalInput = this.registry.get('externalInput') || { left: false, right: false, up: false };
+
+        const moveLeft = this.cursors.left.isDown || externalInput.left;
+        const moveRight = this.cursors.right.isDown || externalInput.right;
+        const jump = this.cursors.up.isDown || externalInput.up;
 
         if (moveLeft) {
             (this.playerBody.body as Phaser.Physics.Arcade.Body).setVelocityX(-200);
@@ -117,7 +118,6 @@ class GameScene extends Phaser.Scene {
             (this.playerBody.body as Phaser.Physics.Arcade.Body).setVelocityY(-350);
         }
 
-        // Animate the legs
         const legs = this.player.getChildren().slice(1) as Phaser.GameObjects.Rectangle[];
         if (moveLeft || moveRight) {
             legs.forEach((leg, i) => {
@@ -139,17 +139,14 @@ class GameScene extends Phaser.Scene {
 
         collectible.disableBody(true, true);
 
-        // Play audio for the collected consonant
         playAudio(`/audio/malayalam/consonants/${letterToReveal}.wav`);
 
         const style = { fontSize: '48px', fill: colorToUse, fontStyle: 'bold', stroke: '#fff', strokeThickness: 5 };
         this.add.text(x, 50, letterToReveal, style).setOrigin(0.5, 0.5);
 
-        // Check if it's the last letter
         if (letterToReveal === 'റ') {
             const onGameComplete = this.registry.get('onGameComplete');
             if (onGameComplete) {
-                // Add a small delay for effect before calling complete
                 this.time.delayedCall(1000, () => {
                     onGameComplete(true);
                 });
@@ -158,26 +155,35 @@ class GameScene extends Phaser.Scene {
     }
 }
 
-const ConsonantsGame: React.FC<ConsonantsGameProps> = ({ onComplete }) => {
+const ConsonantsGame: React.FC = () => {
+    const router = useRouter();
+    const { updateModuleProgress } = useProgress();
+    const [gameCompleted, setGameCompleted] = useState(false);
+    const [wasSuccessful, setWasSuccessful] = useState(false);
+    const currentGameId = 'consonants-game';
+
     const gameContainer = useRef<HTMLDivElement>(null);
     const gameInstance = useRef<Phaser.Game | null>(null);
 
-    const [inputState, setInputState] = useState({
-        moveLeft: false,
-        moveRight: false,
-        jump: false,
-    });
+    const [inputState, setInputState] = useState({ left: false, right: false, up: false });
 
-    const handleLeftPress = useCallback(() => setInputState(prev => ({ ...prev, moveLeft: true })), []);
-    const handleLeftRelease = useCallback(() => setInputState(prev => ({ ...prev, moveLeft: false })), []);
-    const handleRightPress = useCallback(() => setInputState(prev => ({ ...prev, moveRight: true })), []);
-    const handleRightRelease = useCallback(() => setInputState(prev => ({ ...prev, moveRight: false })), []);
-    const handleUpPress = useCallback(() => setInputState(prev => ({ ...prev, jump: true })), []);
-    const handleUpRelease = useCallback(() => setInputState(prev => ({ ...prev, jump: false })), []);
+    const handleUpPress = () => setInputState(s => ({ ...s, up: true }));
+    const handleUpRelease = () => setInputState(s => ({ ...s, up: false }));
+    const handleLeftPress = () => setInputState(s => ({ ...s, left: true }));
+    const handleLeftRelease = () => setInputState(s => ({ ...s, left: false }));
+    const handleRightPress = () => setInputState(s => ({ ...s, right: true }));
+    const handleRightRelease = () => setInputState(s => ({ ...s, right: false }));
+
+    const handleGameComplete = useCallback((success: boolean) => {
+        if (success) {
+          updateModuleProgress(currentGameId, 'practice', 'completed', 100);
+          setWasSuccessful(true);
+        }
+        setGameCompleted(true);
+    }, [currentGameId, updateModuleProgress]);
 
     useEffect(() => {
         if (gameInstance.current) {
-            // Update registry with latest inputState
             gameInstance.current.registry.set('externalInput', inputState);
             return;
         }
@@ -236,17 +242,33 @@ const ConsonantsGame: React.FC<ConsonantsGameProps> = ({ onComplete }) => {
         };
         gameInstance.current = new Phaser.Game(config);
 
-        // Set the onComplete callback and input state in the game registry
-        gameInstance.current.registry.set('onGameComplete', onComplete);
+        gameInstance.current.registry.set('onGameComplete', handleGameComplete);
         gameInstance.current.registry.set('externalInput', inputState);
         gameInstance.current.scene.start('GameScene', { levelData, platformData, worldWidth });
-
 
         return () => {
             gameInstance.current?.destroy(true);
             gameInstance.current = null;
         };
-    }, [onComplete, inputState]);
+    }, [handleGameComplete, inputState]);
+
+    if (gameCompleted) {
+        return (
+            <div className="text-center p-8 bg-gray-800 rounded-lg shadow-xl">
+                <h2 className="text-3xl font-bold text-emerald-400 mb-4">
+                    {wasSuccessful ? 'Congratulations!' : 'Game Over'}
+                </h2>
+                <p className="text-xl text-gray-300 mb-6">
+                    {wasSuccessful ? "You've completed the Consonants Adventure!" : "Better luck next time!"}
+                </p>
+                <Button 
+                    onClick={() => router.push(`/games?completed=${currentGameId}`)}
+                    className="px-8 py-3 text-lg bg-emerald-500 hover:bg-emerald-600 text-white shadow-lg">
+                    Go to Games Page
+                </Button>
+            </div>
+        );
+    }
 
     return (
         <div ref={gameContainer} id="phaser-game-container">

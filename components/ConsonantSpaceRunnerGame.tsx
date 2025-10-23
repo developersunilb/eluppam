@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
-import { Play, Pause, RotateCcw, Volume2, VolumeX } from 'lucide-react';
+import { Play, Pause, RotateCcw, Volume2, VolumeX, BookOpen, ArrowUp, ArrowLeft, ArrowRight } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useProgress } from '@/context/ProgressContext';
-import MobileGameControls from './MobileGameControls';
 import Image from 'next/image';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 // --- Constants ---
 export const MALAYALAM_CONSONANTS = [
@@ -18,7 +18,7 @@ const NEON_CYAN = '#00ffff';
 const MAX_LIVES = 5;
 const BONUS_POINTS_PERFECT_RUN = 500;
 
-const ConsonantGame = () => {
+const ConsonantGame = ({ showHowToPlay, setShowHowToPlay }: { showHowToPlay: boolean, setShowHowToPlay: (show: boolean) => void }) => {
   // --- Refs ---
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const gameRef = useRef<any>(null);
@@ -48,7 +48,7 @@ const ConsonantGame = () => {
   const isPlayingRef = useRef(isPlaying);
   useEffect(() => { isPlayingRef.current = isPlaying; }, [isPlaying]);
   const gameOverRef = useRef(gameOver);
-  useEffect(() => { gameOverRef.current = gameOver; }, [gameOver]);
+useEffect(() => { gameOverRef.current = gameOver; }, [gameOver]);
 
   const resetGame = useCallback(() => {
     setGameOver(false);
@@ -169,8 +169,8 @@ const ConsonantGame = () => {
         for (let i = 0; i < canvas.height / gridSize + 1; i++) {
             const offsetY = (game.player.y * 0.1) % gridSize;
             ctx.beginPath();
-            ctx.moveTo(game.camera.x, i * gridSize - offsetY);
-            ctx.lineTo(game.camera.x + canvas.width, i * gridSize - offsetY);
+            ctx.moveTo(0, i * gridSize - offsetY);
+            ctx.lineTo(canvas.width, i * gridSize - offsetY);
             ctx.stroke();
         }
         ctx.restore();
@@ -352,16 +352,33 @@ const ConsonantGame = () => {
     return () => {
       if (animationFrameId.current) cancelAnimationFrame(animationFrameId.current);
     };
-  }, [isPlaying, gameOver, levelComplete, lives, resetGame, isUpPressed, isLeftPressed, isRightPressed]);
+  }, [isPlaying, gameOver, levelComplete, lives, isUpPressed, isLeftPressed, isRightPressed]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    canvas.width = 800;
-    canvas.height = 400;
+    const handleResize = () => {
+      const container = canvas.parentElement;
+      if (container) {
+        const width = container.clientWidth;
+        canvas.width = width;
+        canvas.height = width / 2;
+        resetGame();
+      }
+    };
 
-    resetGame();
+    handleResize();
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, [resetGame]);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
 
     const handleJump = () => {
         if (!gameRef.current || !isPlayingRef.current || gameOverRef.current) return;
@@ -430,105 +447,191 @@ const ConsonantGame = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center bg-gray-900 text-white p-4 pt-4">
-      <audio ref={bgmusicAudioRef} src="/audio/bgmusic.mp3" loop />
-      <audio ref={jumpAudioRef} src="/audio/springjump.mp3" />
-      <audio ref={collectAudioRef} src="/audio/collect.mp3" />
-      <audio ref={failAudioRef} src="/audio/fail.mp3" />
-      <audio ref={successAudioRef} src="/audio/successfinish.mp3" />
+    <div className="w-full bg-green-900 text-white p-4 md:p-8 min-h-[calc(56.25vh-3.375rem)]">
+      <h1 className="text-4xl font-bold text-emerald-400 mb-8 text-center">Consonant Runner</h1>
+      <div className="grid grid-cols-1 gap-8 w-full">
+        <div className="col-span-1">
+          <audio ref={bgmusicAudioRef} src="/audio/bgmusic.mp3" loop />
+          <audio ref={jumpAudioRef} src="/audio/springjump.mp3" />
+          <audio ref={collectAudioRef} src="/audio/collect.mp3" />
+          <audio ref={failAudioRef} src="/audio/fail.mp3" />
+          <audio ref={successAudioRef} src="/audio/successfinish.mp3" />
 
-      <div className="mb-4 text-center">
-        <h1 className="text-4xl font-bold text-emerald-400">Consonants വ്യഞ്ജനാക്ഷരങ്ങൾ Runner</h1>
-      </div>
 
-      <div className="flex gap-8 mb-4 text-lg font-mono justify-center">
-        <div>Score: <span className="text-emerald-400">{score}</span></div>
-        <div>Consonants: <span className="text-blue-400">{gameSummary.collected.length > 0 ? gameSummary.collected.length : (gameRef.current?.collectedConsonants.length || 0)} / {MALAYALAM_CONSONANTS.length}</span></div>
-      </div>
 
-      <div className="mb-4 border-4 border-gray-700 rounded-lg overflow-hidden shadow-lg w-full max-w-[800px]">
-        <canvas ref={canvasRef} className="w-full h-auto cursor-pointer" />
-        {(gameOver || levelComplete) && (
-          <div className="absolute inset-0 bg-black bg-opacity-80 flex items-center justify-center text-center p-4">
-            {gameOver && (
-              <div>
-                <h2 className="font-bold text-red-500 mb-4 [font-size:clamp(1.5rem,6vw,2.25rem)]">Game Over</h2>
-                <button onClick={startGame} className="px-6 py-3 bg-emerald-500 text-white font-bold rounded-lg [font-size:clamp(1rem,4vw,1.125rem)]">
-                  Try Again
-                </button>
-              </div>
-            )}
-            {levelComplete && (
-              <div className="bg-gray-800 p-1 sm:p-4 rounded-lg shadow-2xl max-w-lg w-full relative">
-                <h2 className="font-bold text-green-400 mb-1 [font-size:clamp(0.9rem,3.5vw,1.3rem)]">Great job!</h2>
-                {gameSummary.hasBadge ? (
-                    <p className="mb-2 [font-size:clamp(0.65rem,2vw,0.8rem)]">You&apos;ve earned the Consonants Badge for a perfect run!</p>
-                ) : (
-                    <p className="mb-2 [font-size:clamp(0.65rem,2vw,0.8rem)]">Try to get all of them next time and earn a consonants badge.</p>
+          <div className="flex gap-8 mb-4 text-lg font-mono justify-center">
+            <div>Score: <span className="text-emerald-400">{score}</span></div>
+            <div>Consonants: <span className="text-blue-400">{gameSummary.collected.length > 0 ? gameSummary.collected.length : (gameRef.current?.collectedConsonants.length || 0)} / {MALAYALAM_CONSONANTS.length}</span></div>
+          </div>
+
+          <div className="relative mb-4 border-4 border-gray-700 rounded-lg overflow-hidden shadow-lg w-full max-w-[75%] mx-auto">
+            <canvas ref={canvasRef} className="w-full h-auto cursor-pointer" />
+            {(gameOver || levelComplete) && (
+              <div className="absolute inset-0 bg-black bg-opacity-80 flex items-center justify-center text-center p-4">
+                {gameOver && (
+                  <div>
+                    <h2 className="font-bold text-red-500 mb-4 [font-size:clamp(1.5rem,6vw,2.25rem)]">Game Over</h2>
+                    <button onClick={startGame} className="px-6 py-3 bg-emerald-500 text-white font-bold rounded-lg [font-size:clamp(1rem,4vw,1.125rem)]">
+                      Try Again
+                    </button>
+                  </div>
                 )}
-                {gameSummary.hasBadge && (
-                    <div className="mb-2 p-1 bg-yellow-600 text-white rounded-lg [font-size:clamp(0.8rem,3vw,1rem)] font-bold">
-                        Consonants Badge Earned! (+{BONUS_POINTS_PERFECT_RUN} points)
-                    </div>
-                )}
-                <div className="text-left text-xs sm:text-sm">
-                    <h3 className="font-semibold mb-1 [font-size:clamp(0.8rem,3vw,0.95rem)] text-blue-300">Collected: {gameSummary.collected.length}</h3>
-                    <div className="flex flex-wrap gap-1 mb-2">
-                        {gameSummary.collected.map(c => <span key={c} className="p-0.5 sm:p-1 bg-green-600 rounded [font-size:clamp(0.65rem,3vw,1rem)]">{c}</span>)}
-                    </div>
-                    {gameSummary.missed.length > 0 && (<>
-                        <h3 className="font-semibold mb-1 [font-size:clamp(0.8rem,3vw,0.95rem)] text-red-400">Missed: {gameSummary.missed.length}</h3>
-                        <div className="flex flex-wrap gap-1">
-                            {gameSummary.missed.map(c => <span key={c} className="p-0.5 sm:p-1 bg-red-700 rounded [font-size:clamp(0.65rem,3vw,1rem)]">{c}</span>)}
+                {levelComplete && (
+                  <div className="bg-gray-800 p-1 sm:p-4 rounded-lg shadow-2xl max-w-lg w-full relative">
+                    <h2 className="font-bold text-green-400 mb-1 [font-size:clamp(0.9rem,3.5vw,1.3rem)]">Great job!</h2>
+                    {gameSummary.hasBadge ? (
+                        <p className="mb-2 [font-size:clamp(0.65rem,2vw,0.8rem)]">You&apos;ve earned the Consonants Badge for a perfect run!</p>
+                    ) : (
+                        <p className="mb-2 [font-size:clamp(0.65rem,2vw,0.8rem)]">Try to get all of them next time and earn a consonants badge.</p>
+                    )}
+                    {gameSummary.hasBadge && (
+                        <div className="mb-2 p-1 bg-yellow-600 text-white rounded-lg [font-size:clamp(0.8rem,3vw,1rem)] font-bold">
+                            Consonants Badge Earned! (+{BONUS_POINTS_PERFECT_RUN} points)
                         </div>
-                    </>)}
-                </div>
-                <button
-                    onClick={handleNextLevelUnlock}
-                    className="mt-2 sm:mt-4 px-4 py-2 bg-green-500 text-white font-bold rounded-lg [font-size:clamp(0.8rem,3vw,0.95rem)]"
-                >
-                    Congrats, Next Level Unlocked!
-                </button>
-                {gameSummary.hasBadge && (
-                    <div className="absolute bottom-2 right-2 w-16 h-16 sm:w-20 sm:h-20 z-0">
-                        <Image src="/badges/kaabadge.png" alt="Consonants Badge" fill className="absolute inset-0 w-full h-full" />
-                        <div className="absolute inset-0 flex items-center justify-center text-blue-700 font-bold text-2xl sm:text-3xl z-10 shadow-blue-500 shadow-lg">ക</div>
+                    )}
+                    <div className="text-left text-xs sm:text-sm">
+                        <h3 className="font-semibold mb-1 [font-size:clamp(0.8rem,3vw,0.95rem)] text-blue-300">Collected: {gameSummary.collected.length}</h3>
+                        <div className="flex flex-wrap gap-1 mb-2">
+                            {gameSummary.collected.map(c => <span key={c} className="p-0.5 sm:p-1 bg-green-600 rounded [font-size:clamp(0.65rem,3vw,1rem)]">{c}</span>)}
+                        </div>
+                        {gameSummary.missed.length > 0 && (<>
+                            <h3 className="font-semibold mb-1 [font-size:clamp(0.8rem,3vw,0.95rem)] text-red-400">Missed: {gameSummary.missed.length}</h3>
+                            <div className="flex flex-wrap gap-1">
+                                {gameSummary.missed.map(c => <span key={c} className="p-0.5 sm:p-1 bg-red-700 rounded [font-size:clamp(0.65rem,3vw,1rem)]">{c}</span>)}
+                            </div>
+                        </>)}
                     </div>
+                    <button
+                        onClick={handleNextLevelUnlock}
+                        className="mt-2 sm:mt-4 px-4 py-2 bg-green-500 text-white font-bold rounded-lg [font-size:clamp(0.8rem,3vw,0.95rem)]"
+                    >
+                        Congrats, Next Level Unlocked!
+                    </button>
+                    {gameSummary.hasBadge && (
+                        <div className="absolute bottom-2 right-2 w-16 h-16 sm:w-20 sm:h-20 z-0">
+                            <Image src="/badges/kaabadge.png" alt="Consonants Badge" fill className="absolute inset-0 w-full h-full" />
+                            <div className="absolute inset-0 flex items-center justify-center text-blue-700 font-bold text-2xl sm:text-3xl z-10 shadow-blue-500 shadow-lg">ക</div>
+                        </div>
+                    )}
+                  </div>
                 )}
               </div>
             )}
           </div>
-        )}
-      </div>
 
-      <div className="flex gap-4 items-center justify-center">
-        {!isPlaying && !gameOver && !levelComplete ? (
-          <button onClick={startGame} className="w-24 h-24 flex items-center justify-center bg-emerald-500 rounded-full text-white shadow-lg" title="Start Game">
-            <Play size={40} />
-          </button>
-        ) : null}
-        {isPlaying && (
-          <button onClick={pauseGame} className="w-24 h-24 flex items-center justify-center bg-yellow-500 rounded-full text-white shadow-lg" title="Pause Game">
-            <Pause size={40} />
-          </button>
-        )}
-        <button onClick={resetGame} className="w-16 h-16 flex items-center justify-center bg-gray-700 rounded-full text-white shadow-lg" title="Reset Game">
-            <RotateCcw size={28} />
-        </button>
-        <button onClick={toggleMute} className="w-16 h-16 flex items-center justify-center bg-blue-500 rounded-full text-white shadow-lg" title={isMuted ? 'Unmute' : 'Mute'}>
-          {isMuted ? <VolumeX size={28} /> : <Volume2 size={28} />}
-        </button>
-      </div>
+          <div className="hidden md:flex gap-4 items-center justify-center z-10">
+            {!isPlaying && !gameOver && !levelComplete ? (
+              <button onClick={startGame} className="w-20 h-20 flex items-center justify-center bg-emerald-500 rounded-full text-white shadow-lg" title="Start Game">
+                <Play size={32} />
+              </button>
+            ) : null}
+            {isPlaying && (
+              <button onClick={pauseGame} className="w-20 h-20 flex items-center justify-center bg-yellow-500 rounded-full text-white shadow-lg" title="Pause Game">
+                <Pause size={32} />
+              </button>
+            )}
+            <button onClick={resetGame} className="w-16 h-16 flex items-center justify-center bg-gray-700 rounded-full text-white shadow-lg" title="Reset Game">
+                <RotateCcw size={28} />
+            </button>
+            <button onClick={toggleMute} className="w-16 h-16 flex items-center justify-center bg-blue-500 rounded-full text-white shadow-lg" title={isMuted ? 'Unmute' : 'Mute'}>
+              {isMuted ? <VolumeX size={28} /> : <Volume2 size={28} />}
+            </button>
+          </div>
 
-      {/* Mobile Game Controls */}
-      <MobileGameControls
-        onUpPress={() => setIsUpPressed(true)}
-        onUpRelease={() => setIsUpPressed(false)}
-        onLeftPress={() => setIsLeftPressed(true)}
-        onLeftRelease={() => setIsLeftPressed(false)}
-        onRightPress={() => setIsRightPressed(true)}
-        onRightRelease={() => setIsRightPressed(false)}
-      />
+          <div className="absolute bottom-4 w-full px-4 flex justify-between items-center md:hidden">
+            <div className="flex gap-2">
+              {!isPlaying && !gameOver && !levelComplete ? (
+                <button onClick={startGame} className="w-12 h-12 flex items-center justify-center bg-emerald-500 rounded-full text-white shadow-lg" title="Start Game">
+                  <Play size={20} />
+                </button>
+              ) : null}
+              {isPlaying && (
+                <button onClick={pauseGame} className="w-12 h-12 flex items-center justify-center bg-yellow-500 rounded-full text-white shadow-lg" title="Pause Game">
+                  <Pause size={20} />
+                </button>
+              )}
+              <button onClick={resetGame} className="w-12 h-12 flex items-center justify-center bg-gray-700 rounded-full text-white shadow-lg" title="Reset Game">
+                  <RotateCcw size={20} />
+              </button>
+              <button onClick={toggleMute} className="w-12 h-12 flex items-center justify-center bg-blue-500 rounded-full text-white shadow-lg" title={isMuted ? 'Unmute' : 'Mute'}>
+                {isMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}
+              </button>
+            </div>
+            <div className="flex gap-2">
+              <button
+                className="bg-gray-700 text-white p-3 rounded-full shadow-lg active:bg-gray-600 touch-action-manipulation"
+                onTouchStart={() => setIsUpPressed(true)}
+                onTouchEnd={() => setIsUpPressed(false)}
+                onMouseDown={() => setIsUpPressed(true)}
+                onMouseUp={() => setIsUpPressed(false)}
+                onMouseLeave={() => setIsUpPressed(false)}
+              >
+                <ArrowUp size={20} />
+              </button>
+              <button
+                className="bg-gray-700 text-white p-3 rounded-full shadow-lg active:bg-gray-600 touch-action-manipulation"
+                onTouchStart={() => setIsLeftPressed(true)}
+                onTouchEnd={() => setIsLeftPressed(false)}
+                onMouseDown={() => setIsLeftPressed(true)}
+                onMouseUp={() => setIsLeftPressed(false)}
+                onMouseLeave={() => setIsLeftPressed(false)}
+              >
+                <ArrowLeft size={20} />
+              </button>
+              <button
+                className="bg-gray-700 text-white p-3 rounded-full shadow-lg active:bg-gray-600 touch-action-manipulation"
+                onTouchStart={() => setIsRightPressed(true)}
+                onTouchEnd={() => setIsRightPressed(false)}
+                onMouseDown={() => setIsRightPressed(true)}
+                onMouseUp={() => setIsRightPressed(false)}
+                onMouseLeave={() => setIsRightPressed(false)}
+              >
+                <ArrowRight size={20} />
+              </button>
+            </div>
+          </div>
+        </div>
+                      </div>
+
+      {showHowToPlay && (
+        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
+          <Card className="bg-gray-800 border-gray-800 max-w-lg w-full">
+            <CardHeader>
+              <CardTitle className="text-2xl font-bold text-emerald-400">How to Play</CardTitle>
+            </CardHeader>
+            <CardContent className="text-gray-300 space-y-4">
+              <div>
+                <h3 className="font-semibold text-lg text-emerald-300">Objective</h3>
+                <p>Collect all the Malayalam consonants (വ്യഞ്ജനാക്ഷരങ്ങൾ) while navigating through space.</p>
+              </div>
+              <div>
+                <h3 className="font-semibold text-lg text-emerald-300">Controls</h3>
+                <ul className="list-disc list-inside space-y-1">
+                  <li><span className="font-bold">Up Arrow:</span> Move up.</li>
+                  <li><span className="font-bold">Down Arrow:</span> Move down.</li>
+                  <li><span className="font-bold">Spacebar:</span> Jump.</li>
+                </ul>
+              </div>
+              <div>
+                <h3 className="font-semibold text-lg text-emerald-300">Gameplay</h3>
+                <ul className="list-disc list-inside space-y-1">
+                  <li>Fly through the colorful planets to collect consonants.</li>
+                  <li>Avoid the spinning <span className="font-bold text-orange-400">Black Holes</span>! Hitting one will cost you a life.</li>
+                  <li>You have 5 lives to complete your mission.</li>
+                </ul>
+              </div>
+              <div>
+                <h3 className="font-semibold text-lg text-emerald-300">Scoring</h3>
+                <ul className="list-disc list-inside space-y-1">
+                  <li>Your score increases as you travel through space.</li>
+                  <li>Collect all consonants without losing any lives for a perfect run and a special badge!</li>
+                </ul>
+              </div>
+              <button onClick={() => setShowHowToPlay(false)} className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg">Close</button>
+            </CardContent>
+          </Card>
+        </div>
+      )}
     </div>
   );
 };

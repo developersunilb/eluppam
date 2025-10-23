@@ -17,6 +17,7 @@ const CONSONANT_CHANCE = 0.3; // 30% chance for a consonant to appear
 export default function WhackAVowelGame({ onComplete }: WhackAVowelGameProps) {
   const [gameState, setGameState] = useState('idle'); // idle, playing, over
   const [score, setScore] = useState(0);
+  const [finalScore, setFinalScore] = useState<number | null>(null);
   const [questionCount, setQuestionCount] = useState(0);
   const [activeHole, setActiveHole] = useState<number | null>(null);
   const [activeChar, setActiveChar] = useState<string | null>(null);
@@ -26,6 +27,9 @@ export default function WhackAVowelGame({ onComplete }: WhackAVowelGameProps) {
 
   const showNextChar = useCallback(() => {
     if (questionCount >= TOTAL_QUESTIONS) {
+      if (finalScore === null) { // Only set finalScore if it hasn't been set yet
+        setFinalScore(score);
+      }
       setGameState('over');
       return;
     }
@@ -54,7 +58,7 @@ export default function WhackAVowelGame({ onComplete }: WhackAVowelGameProps) {
       showNextChar();
     }, randomTime);
 
-  }, [questionCount]);
+  }, [questionCount, score]);
 
   useEffect(() => {
     if (gameState === 'over') {
@@ -67,8 +71,8 @@ export default function WhackAVowelGame({ onComplete }: WhackAVowelGameProps) {
     // Change mouse cursor to a mallet image
     // IMPORTANT: Replace '/images/mallet-cursor.png' with the actual path to your mallet image.
     // Ensure the image is small and has a transparent background for best results.
-    const malletCursorUrl = 'url(\"/images/mallet-cursor.png\"), auto'; 
-    document.body.style.cursor = malletCursorUrl;
+    // const malletCursorUrl = 'url(\"/images/mallet-cursor.png\"), auto'; 
+    // document.body.style.cursor = malletCursorUrl;
 
     return () => {
       // Clean up: revert cursor to default when component unmounts
@@ -79,6 +83,7 @@ export default function WhackAVowelGame({ onComplete }: WhackAVowelGameProps) {
   const startGame = () => {
     setScore(0);
     setQuestionCount(0);
+    setFinalScore(null); // Reset finalScore to null
     setGameState('playing');
     showNextChar();
   };
@@ -124,7 +129,7 @@ export default function WhackAVowelGame({ onComplete }: WhackAVowelGameProps) {
         return (
           <div className="text-center">
             <h2 className="text-3xl font-bold text-kerala-green-700 mb-4">Game Over!</h2>
-            <p className="text-xl mb-4 text-kerala-green-700">Your final score: {score} / {TOTAL_QUESTIONS}</p>
+            <p className="text-xl mb-4 text-kerala-green-700">Your final score: {finalScore !== null ? finalScore : 0} / {TOTAL_QUESTIONS}</p>
             <Button onClick={startGame} className="px-8 py-3 text-lg bg-marigold-500 hover:bg-marigold-600 text-white">
               Play Again
             </Button>

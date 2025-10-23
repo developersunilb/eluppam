@@ -175,7 +175,9 @@ const ProgressPage = () => {
                 <span>{moduleProgressPercentage.toFixed(0)}%</span>
               </div>
               <Progress value={moduleProgressPercentage} className="w-full" />
-              <Link href={resumeLink} legacyBehavior>
+              <Link href={resumeLink}>
+                {/* @next-codemod-error This Link previously used the now removed `legacyBehavior` prop, and has a child that might not be an anchor. The codemod bailed out of lifting the child props to the Link. Check that the child component does not render an anchor, and potentially move the props manually to Link. */
+                }
                 <Button size="sm" className="mt-2 w-full bg-kerala-green-500 hover:bg-kerala-green-600 text-white">
                   <Play className="h-4 w-4 mr-2" /> Resume
                 </Button>
@@ -248,13 +250,17 @@ const ProgressPage = () => {
     <LearnLayout title="Your Progress">
       <div className="flex justify-end mb-4 space-x-2"> {/* Added space-x-2 for spacing */}
         {userProgress?.badges && userProgress.badges.length > 0 && (
-          <Link href="/badgesearned" legacyBehavior>
+          <Link href="/badgesearned">
+            {/* @next-codemod-error This Link previously used the now removed `legacyBehavior` prop, and has a child that might not be an anchor. The codemod bailed out of lifting the child props to the Link. Check that the child component does not render an anchor, and potentially move the props manually to Link. */
+            }
             <Button variant="outline">
               Badges
             </Button>
           </Link>
         )}
-        <Link href="/progress/faq" legacyBehavior>
+        <Link href="/progress/faq">
+          {/* @next-codemod-error This Link previously used the now removed `legacyBehavior` prop, and has a child that might not be an anchor. The codemod bailed out of lifting the child props to the Link. Check that the child component does not render an anchor, and potentially move the props manually to Link. */
+          }
           <Button variant="outline">
             <HelpCircle className="h-4 w-4 mr-2" />
             FAQ

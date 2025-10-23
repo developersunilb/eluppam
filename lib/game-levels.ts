@@ -81,7 +81,7 @@ export const GAME_LEVELS: GameLevel[] = [
     id: 'picture-prompt',
     title: 'Picture Prompt Game',
     description: 'Say the words that describe the picture.',
-    href: '/play?id=picture-prompt',
+    href: '/play?id=picture-prompt-voice',
     prerequisite: 'word-jigsaw',
   },
   {
@@ -89,7 +89,7 @@ export const GAME_LEVELS: GameLevel[] = [
     title: 'Pronunciation Challenge',
     description: 'Practice and perfect your Malayalam pronunciation.',
     href: '/play?id=pronunciation-challenge',
-    prerequisite: 'picture-prompt',
+    prerequisite: 'picture-prompt-voice',
   },
   {
     id: 'voice-command-game',
@@ -174,5 +174,12 @@ export const GAME_LEVELS: GameLevel[] = [
     description: 'Find Malayalam words in a 6x6 grid using a clock dial letter selection.',
     href: '/play?id=wordfind',
     prerequisite: 'malayalam-scrabble',
+  },
+  {
+    id: 'spin-a-wheel',
+    title: 'Spin a Wheel',
+    description: 'Test your luck and learn consonants with a spin of the wheel.',
+    href: '/games/spin-a-wheel',
+    prerequisite: 'wordfind',
   },
 ];

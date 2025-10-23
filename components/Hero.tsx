@@ -11,7 +11,7 @@ export default function Hero() {
     <section className="relative pt-16 pb-20 px-4 sm:px-6 lg:px-8">
       {/* Background Pattern */}
       <div className="absolute inset-0 bg-gradient-to-br from-cream-50 via-marigold-50 to-kerala-green-50 opacity-60" />
-      <div className="absolute inset-0 bg-[url(data:image/svg+xml,%3Csvg%20width='60'%20height='60'%20viewBox='0%200%2060%2060'%20xmlns='http://www.w3.org/2000/svg'%3E%3Cg%20fill='none'%20fill-rule='evenodd'%3E%3Cg%20fill='%23F59E0B'%20fill-opacity='0.1'%3E%3Ccircle%20cx='30'%20cy='30'%20r='4'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E)]" />
+<div className="absolute inset-0 bg-[var(--bg-pattern-hero)]" />
       
       <div className="relative max-w-7xl mx-auto">
         <div className="text-center">

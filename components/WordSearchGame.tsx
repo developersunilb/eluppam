@@ -130,7 +130,9 @@ const WordSearchGame = () => {
     return (
       <div className="flex flex-col items-center justify-center h-full text-center">
         <h2 className="text-2xl font-bold text-marigold-500 mb-4">Congrats, you have completed the word search game and unlocked the next level</h2>
-        <Link href="/games" passHref legacyBehavior>
+        <Link href="/games">
+          {/* @next-codemod-error This Link previously used the now removed `legacyBehavior` prop, and has a child that might not be an anchor. The codemod bailed out of lifting the child props to the Link. Check that the child component does not render an anchor, and potentially move the props manually to Link. */
+          }
           <Button className="mt-4 bg-marigold-500 hover:bg-marigold-600">Back to Games</Button>
         </Link>
       </div>
