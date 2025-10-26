@@ -189,3 +189,27 @@ function useToast() {
 }
 
 export { useToast, toast };
+
+export function useThrottle<T extends (...args: any[]) => any>(
+  callback: T,
+  delay: number
+): (...args: Parameters<T>) => void {
+  const lastCall = React.useRef(0);
+  const timeout = React.useRef<NodeJS.Timeout | null>(null);
+
+  return (...args: Parameters<T>) => {
+    const now = new Date().getTime();
+    if (now - lastCall.current < delay) {
+      if (timeout.current) {
+        clearTimeout(timeout.current);
+      }
+      timeout.current = setTimeout(() => {
+        lastCall.current = now;
+        callback(...args);
+      }, delay);
+    } else {
+      lastCall.current = now;
+      callback(...args);
+    }
+  };
+}

@@ -20,7 +20,8 @@ export async function POST(req: NextRequest) {
     // Ensure the directory exists
     await fs.mkdir(path.dirname(filePath), { recursive: true });
 
-    await fs.writeFile(filePath, buffer);
+    const uint8Array = new Uint8Array(buffer);
+    await fs.writeFile(filePath, uint8Array);
 
     return NextResponse.json({ message: 'Badge saved successfully', filePath: `/badges/${filename}` });
   } catch (error) {

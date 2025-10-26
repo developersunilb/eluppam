@@ -84,6 +84,7 @@ const GamePage: NextPage = () => {
       'crossword-puzzle': dynamic(() => import('@/components/CrosswordPuzzleGame'), { ssr: false }),
       'malayalam-scrabble': dynamic(() => import('@/components/MalayalamScrabbleGame'), { ssr: false }),
       'wordfind': WordFindGame,
+      'consonant-arrow-game': dynamic(() => import('@/components/ConsonantArrowGame'), { ssr: false }),
     };
     return componentMap[gameId] || null;
   }, [gameId]);

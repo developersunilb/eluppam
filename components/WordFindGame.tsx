@@ -3,10 +3,9 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useRouter } from 'next/navigation';
 
-interface WordFindGameProps {
-  onComplete: (success: boolean) => void;
-}
+interface WordFindGameProps {}
 
 const GRID_MAPPING: { [key: number]: string } = {
   6: 'മ', 11: 'കോ', 12: 'ണി', 16: 'ആ', 17: 'ഴി', 20: 'ചീ',
@@ -99,7 +98,8 @@ const REMOVED_SQUARES = [1, 2, 3, 4, 5, 7, 8, 9, 10, 13, 14, 15, 18, 19, 23, 24,
 
 const CLOCK_ORDER = [12, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
 
-export default function WordFindGame({ onComplete }: WordFindGameProps) {
+export default function WordFindGame({}: WordFindGameProps) {
+  const router = useRouter();
   const [grid, setGrid] = useState<string[]>(Array(TOTAL_SQUARES).fill(''));
   const [selectedGridLetters, setSelectedGridLetters] = useState<number[]>([]); // Renamed from selectedLetters for clarity
   const [feedback, setFeedback] = useState<'Correct' | 'Incorrect' | 'Already found' | 'Great job. Please proceed to quick fire challenge round' | null>(null);
@@ -405,11 +405,9 @@ export default function WordFindGame({ onComplete }: WordFindGameProps) {
                 </Button>
                 )}
                 {isGameComplete && (
-                  <a href="/games/wordfindmemorytestgame">
-                    <Button className="bg-marigold-500 hover:bg-marigold-600 text-white">
-                      Proceed to challenge
-                    </Button>
-                  </a>
+                  <Button onClick={() => router.push('/games/wordfind-memory-test')} className="bg-marigold-500 hover:bg-marigold-600 text-white">
+                    Proceed to challenge
+                  </Button>
                 )}
               </div>
             </div>

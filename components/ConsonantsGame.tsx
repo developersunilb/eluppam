@@ -4,13 +4,22 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import * as Phaser from 'phaser';
 import { consonants } from '@/lib/data';
 import { Button } from './ui/button';
-import { toast } from '../hooks/use-toast';
+import { toast } from '@/hooks';
 import { playAudio } from '@/lib/utils';
 import { useProgress } from '../context/ProgressContext';
 import { useAuth } from '../context/AuthContext';
 import { useRouter } from 'next/navigation';
 
-const MobileGameControls = ({ onUpPress, onUpRelease, onLeftPress, onLeftRelease, onRightPress, onRightRelease }) => (
+interface MobileGameControlsProps {
+  onUpPress: () => void;
+  onUpRelease: () => void;
+  onLeftPress: () => void;
+  onLeftRelease: () => void;
+  onRightPress: () => void;
+  onRightRelease: () => void;
+}
+
+const MobileGameControls: React.FC<MobileGameControlsProps> = ({ onUpPress, onUpRelease, onLeftPress, onLeftRelease, onRightPress, onRightRelease }) => (
     <div className="fixed bottom-0 left-0 right-0 p-4 flex justify-between items-center bg-gray-800 bg-opacity-50 z-10">
         <div className="flex">
             <Button onTouchStart={onLeftPress} onTouchEnd={onLeftRelease} onMouseDown={onLeftPress} onMouseUp={onLeftRelease} className="px-8 py-4 text-lg mr-2">Left</Button>

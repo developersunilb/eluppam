@@ -22,7 +22,8 @@ export async function POST(req: NextRequest) {
   const filePath = path.join(recordedAudioDir, `recorded_audio_${new Date().toISOString().replace(/:/g, '-')}.mp3`);
 
   try {
-    fs.writeFileSync(filePath, buffer);
+    const uint8Array = new Uint8Array(buffer);
+    fs.writeFileSync(filePath, uint8Array);
     return NextResponse.json({ success: true, filePath });
   } catch (error) {
     console.error('Error saving audio file:', error);

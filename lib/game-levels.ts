@@ -182,4 +182,11 @@ export const GAME_LEVELS: GameLevel[] = [
     href: '/games/spin-a-wheel',
     prerequisite: 'wordfind',
   },
+  {
+    id: 'consonant-arrow-game',
+    title: 'Consonant Arrow Game',
+    description: 'Aim and shoot consonants with a bow and arrow.',
+    href: '/play?id=consonant-arrow-game',
+    prerequisite: 'spin-a-wheel',
+  },
 ];

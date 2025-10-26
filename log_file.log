@@ -55,11 +55,11 @@ file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/node_m
 MessagePort.performWorkUntilDeadline
 file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/node_modules_next_dist_compiled_a0e4c7b4._.js (2647:64)
 Navigation
-file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/_cd498cf1._.js (572:227)
+file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/_a588d6ff._.js (624:253)
 AppLayoutContentWithProgress
-file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/_cd498cf1._.js (2008:215)
+file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/_a588d6ff._.js (1993:215)
 AppLayoutContent
-file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/_cd498cf1._.js (2055:221)
+file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/_a588d6ff._.js (2040:221)
 RootLayout
 app\layout.tsx (32:11)
 
@@ -70,12 +70,12 @@ Turbopack
 Runtime ReferenceError
 
 
-spinning is not defined
+Card is not defined
 Call Stack
-14
+20
 
-SpinAWheelGame
-file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/_a1d66382._.js (275:69)
+WordFindGame
+file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/_4c2b7eb5._.js (489:215)
 Object.react_stack_bottom_frame
 file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js (14746:24)
 renderWithHooks
@@ -94,11 +94,23 @@ renderRootSync
 file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js (9365:13)
 performWorkOnRoot
 file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js (9030:47)
+performSyncWorkOnRoot
+file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js (10163:9)
+flushSyncWorkAcrossRoots_impl
+file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js (10079:316)
+flushSpawnedWork
+file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js (9839:13)
+commitRoot
+file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js (9645:432)
+commitRootWhenReady
+file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js (9119:9)
+performWorkOnRoot
+file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js (9091:25)
 performWorkOnRootViaSchedulerTask
 file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js (10155:9)
 MessagePort.performWorkUntilDeadline
 file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/node_modules_next_dist_compiled_a0e4c7b4._.js (2647:64)
-SpinAWheelPage
-file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/_a1d66382._.js (412:219)
+GamePage
+file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/_4c2b7eb5._.js (1226:226)
 ClientPageRoot
 file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/node_modules_next_dist_094231d7._.js (2202:50)

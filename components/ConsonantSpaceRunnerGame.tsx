@@ -565,8 +565,11 @@ useEffect(() => { gameOverRef.current = gameOver; }, [gameOver]);
                 onMouseDown={() => setIsUpPressed(true)}
                 onMouseUp={() => setIsUpPressed(false)}
                 onMouseLeave={() => setIsUpPressed(false)}
+                aria-label="Move Up"
+                title="Move Up"
               >
                 <ArrowUp size={20} />
+                <span className="sr-only">Move Up</span>
               </button>
               <button
                 className="bg-gray-700 text-white p-3 rounded-full shadow-lg active:bg-gray-600 touch-action-manipulation"
@@ -575,8 +578,11 @@ useEffect(() => { gameOverRef.current = gameOver; }, [gameOver]);
                 onMouseDown={() => setIsLeftPressed(true)}
                 onMouseUp={() => setIsLeftPressed(false)}
                 onMouseLeave={() => setIsLeftPressed(false)}
+                aria-label="Move Left"
+                title="Move Left"
               >
                 <ArrowLeft size={20} />
+                <span className="sr-only">Move Left</span>
               </button>
               <button
                 className="bg-gray-700 text-white p-3 rounded-full shadow-lg active:bg-gray-600 touch-action-manipulation"
@@ -585,8 +591,11 @@ useEffect(() => { gameOverRef.current = gameOver; }, [gameOver]);
                 onMouseDown={() => setIsRightPressed(true)}
                 onMouseUp={() => setIsRightPressed(false)}
                 onMouseLeave={() => setIsRightPressed(false)}
+                aria-label="Jump"
+                title="Jump"
               >
                 <ArrowRight size={20} />
+                <span className="sr-only">Jump</span>
               </button>
             </div>
           </div>

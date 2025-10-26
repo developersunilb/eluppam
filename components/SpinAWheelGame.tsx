@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { useProgress } from '@/context/ProgressContext';
-import { toast } from '@/hooks/use-toast';
+import { toast } from '@/hooks';
 import { playAudio } from '@/lib/utils';
 
 // Define the 12 consonants for the wheel
@@ -17,14 +17,24 @@ const POINTS_PER_MATCH = 50;
 const FULL_SPINS = 2;
 
 const SpinAWheelGame: React.FC = () => {
+  const onamColors = ['#9ED110', '#50B517', '#179067', '#476EAF', '#9f49ac', '#CC42A2', '#FF3BA7', '#FF5800', '#FF8100', '#FEAC00', '#FFCC00', '#EDE604'];
+  const segmentAngle = 360 / onamColors.length;
+  const colorStops = onamColors.map((color, i) => {
+    const start = i * segmentAngle;
+    return `${color} ${start}deg ${(start + segmentAngle)}deg`;
+  }).join(', ');
+  const gradient = `conic-gradient(${colorStops})`;
+
   console.log('SpinAWheelGame component rendering.');
-  const { updateModuleProgress } = useProgress();
+  const { updateModuleProgress, addBadge } = useProgress();
   const [wheelConsonant, setWheelConsonant] = useState<string | null>(null);
   const [targetConsonant, setTargetConsonant] = useState<string | null>(null);
   const [attemptsLeft, setAttemptsLeft] = useState<number>(MAX_ATTEMPTS);
   const [message, setMessage] = useState<string>('');
   const [canSpin, setCanSpin] = useState<boolean>(true);
   const [lastPlayed, setLastPlayed] = useState<number>(0);
+  const [spinning, setSpinning] = useState<boolean>(false);
+  const [hasSpun, setHasSpun] = useState<boolean>(false);
 
   const gameId = 'spin-a-wheel';
 
@@ -66,7 +76,7 @@ const SpinAWheelGame: React.FC = () => {
 
 
   const [rotation, setRotation] = useState(0);
-  const [showHint, setShowHint] = useState(false);
+  
 
     const spinWheel = useCallback(() => {
       console.log('Spin button pressed. Current spinning:', spinning, 'attemptsLeft:', attemptsLeft, 'canSpin:', canSpin);
@@ -76,36 +86,39 @@ const SpinAWheelGame: React.FC = () => {
       }
   
       setSpinning(true);
+      setHasSpun(true);
       setAttemptsLeft(prev => prev - 1);
       setMessage('');
   
-      const landedIndex = Math.floor(Math.random() * WHEEL_CONSONANTS.length);
-      const landedConsonant = WHEEL_CONSONANTS[landedIndex];
-  
-      const segmentAngle = 360 / WHEEL_CONSONANTS.length;
-      const rotationNeeded = (90 - (landedIndex * segmentAngle) + 360) % 360;
-      const newRotation = rotation + (360 * FULL_SPINS) + rotationNeeded;
+      const randomAngle = Math.floor(Math.random() * 360);
+      const newRotation = rotation + (360 * FULL_SPINS) + randomAngle;
       console.log('Spin Debug:', {
-        landedIndex,
-        landedConsonant,
-        rotationNeeded,
+        randomAngle,
         currentRotation: rotation,
         FULL_SPINS,
         newRotation,
-        expectedFinalVisualAngle: (newRotation) % 360,
-        expectedFinalConsonantAngle: (landedIndex * segmentAngle),
       });
-      console.log('Calculating newRotation:', { currentRotation: rotation, FULL_SPINS, landedIndex, rotationNeeded, newRotation });
       setRotation(newRotation);
   
       setTimeout(() => {
-        console.log('Spin animation ended. Landed on:', landedConsonant);
+        const finalAngle = newRotation % 360;
+        const segmentAngle = 360 / WHEEL_CONSONANTS.length;
+        const shiftedAngle = (finalAngle + (segmentAngle / 2) + 360) % 360;
+        const landedIndex = Math.floor(shiftedAngle / segmentAngle);
+        const landedConsonant = WHEEL_CONSONANTS[landedIndex];
+
+        console.log('Spin animation ended. Final angle:', finalAngle, 'Landed on:', landedConsonant);
         setWheelConsonant(landedConsonant);
         playAudio(`/audio/malayalam/consonants/${landedConsonant}.wav`);
   
         if (landedConsonant === targetConsonant) {
           setMessage(`It's a match! You earned a badge for ${landedConsonant} and ${POINTS_PER_MATCH} points!`);
-          updateModuleProgress(gameId, 'badges', 'earned', POINTS_PER_MATCH);
+          addBadge({
+            id: `${gameId}-${landedConsonant}-${Date.now()}`,
+            name: `Spin & Match: ${landedConsonant}`,
+            image: `/badges/default.png`, // Placeholder image
+            dateEarned: Date.now(),
+          });
           toast({
             title: "Consonant Badge Earned!",
             description: `You matched ${landedConsonant}!`, 
@@ -115,8 +128,11 @@ const SpinAWheelGame: React.FC = () => {
         }
   
         setSpinning(false);
+        if (attemptsLeft > 0) { // Only re-enable if attempts are left
+          setCanSpin(true);
+        }
       }, 4000); // Corresponds to the transition duration
-    }, [canSpin, attemptsLeft, targetConsonant, updateModuleProgress, gameId, rotation]);
+    }, [canSpin, attemptsLeft, targetConsonant, addBadge, gameId, rotation]);
   const handleResetCooldown = useCallback(() => {
     localStorage.removeItem(`${gameId}-lastPlayed`);
     localStorage.setItem(`${gameId}-attemptsLeft`, MAX_ATTEMPTS.toString());
@@ -137,14 +153,11 @@ const SpinAWheelGame: React.FC = () => {
   const handleTryAgain = useCallback(() => {
     const newTargetConsonant = WHEEL_CONSONANTS[Math.floor(Math.random() * WHEEL_CONSONANTS.length)];
     setTargetConsonant(newTargetConsonant);
-    setAttemptsLeft(MAX_ATTEMPTS);
     setCanSpin(true);
     setMessage('');
     setWheelConsonant(null); // Clear previous landed consonant
-    localStorage.setItem(`${gameId}-attemptsLeft`, MAX_ATTEMPTS.toString());
-    localStorage.removeItem(`${gameId}-lastPlayed`); // Clear cooldown
     toast({
-      title: "New Round!",
+      title: "New Target!",
       description: `Find the consonant: ${newTargetConsonant}`,
     });
   }, [gameId]);
@@ -157,6 +170,26 @@ const SpinAWheelGame: React.FC = () => {
       </div>
 
       <div className="relative w-80 h-80 flex items-center justify-center mb-6">
+        <div className="absolute w-full h-full rounded-full border-4 border-gray-500"></div>
+        <div className="absolute w-full h-full rounded-full" style={{ backgroundImage: gradient, transform: 'rotate(-15deg)' }}></div>
+        {/* Radial lines for segments */}
+        {WHEEL_CONSONANTS.map((_, index) => {
+          const segmentAngle = 360 / WHEEL_CONSONANTS.length;
+          const lineAngle = (index - 0.5) * segmentAngle;
+          return (
+            <div
+              key={`line-${index}`}
+              className="absolute top-0 left-1/2 w-px h-1/2 bg-gray-400"
+              style={{
+                transform: `translateX(-50%) rotate(${lineAngle}deg)`,
+                transformOrigin: 'bottom',
+              }}
+            >
+              <div className="absolute -top-1 -left-1 w-2 h-2 bg-gray-400 rounded-full"></div>
+            </div>
+          );
+        })}
+
         {/* Stationary consonants around the wheel */}
         {WHEEL_CONSONANTS.map((consonant, index) => {
           const segmentAngle = 360 / WHEEL_CONSONANTS.length; // 30 degrees
@@ -170,7 +203,7 @@ const SpinAWheelGame: React.FC = () => {
           return (
             <span
               key={index}
-              className={`absolute text-2xl font-bold ${targetConsonant === consonant ? (showHint ? 'text-blue-500 text-4xl' : 'text-red-500') : 'text-white'}`}
+              className={`absolute text-2xl font-bold ${targetConsonant === consonant ? 'text-teal-500' : 'text-white'}`}
               style={{
                 left: '50%',
                 top: '50%',
@@ -186,32 +219,26 @@ const SpinAWheelGame: React.FC = () => {
         <Button
           onClick={spinWheel}
           disabled={!canSpin || attemptsLeft === 0 || spinning || targetConsonant === null}
-          className="absolute w-24 h-24 rounded-full bg-gray-900 hover:bg-gray-700 text-white text-lg font-bold flex items-center justify-center z-10"
+          className="absolute w-24 h-24 rounded-full bg-marigold-600 hover:bg-marigold-400 text-white text-lg font-bold flex items-center justify-center z-10"
           style={{ transform: `rotate(${rotation}deg)`, transition: 'transform 4000ms ease-out' }}
         >
           {/* Arrow inside the button, pointing right */}
-          <div className="absolute w-0 h-0 border-t-8 border-t-transparent border-b-8 border-b-transparent border-l-8 border-l-white -right-2"></div>
-          {spinning ? '...' : 'Spin'}
+          <div className="absolute bottom-1/2 left-1/2 w-1 bg-white" style={{ height: '60px', transform: 'translateX(-50%)' }}>
+            {/* Triangle tip at the top */}
+            <div className="absolute -top-2 left-1/2 w-0 h-0 border-l-4 border-l-transparent border-r-4 border-r-transparent border-b-4 border-b-white" style={{ transform: 'translateX(-50%)' }}></div>
+          </div>
+          {spinning ? '...' : (hasSpun ? 'Press Me' : 'Press Me')}
         </Button>
       </div>
 
-      {message && <p className="text-lg mt-8 text-center text-white">{message}</p>}
-
-      <Button
-        onClick={() => setShowHint(!showHint)}
-        className="mt-4 bg-yellow-600 hover:bg-yellow-700"
-      >
-        {showHint ? 'Hide Hint' : 'Show Hint'}
-      </Button>
-
-      {message && <p className="text-lg mt-8 text-center text-white">{message}</p>}
+      
 
 
 
       {!canSpin && attemptsLeft === 0 && lastPlayed > 0 && (
         <div>
           <p className="text-md mt-4 text-center text-red-400">
-            You've used all your attempts. Come back in {Math.ceil((lastPlayed + COOLDOWN_HOURS * 60 * 60 * 1000 - Date.now()) / (1000 * 60 * 60))} hours.
+            You have used all your attempts. Come back in {Math.ceil((lastPlayed + COOLDOWN_HOURS * 60 * 60 * 1000 - Date.now()) / (1000 * 60 * 60))} hours.
           </p>
           <Button onClick={handleResetCooldown} className="mt-4 bg-blue-600 hover:bg-blue-700">
             Reset Cooldown
@@ -219,11 +246,11 @@ const SpinAWheelGame: React.FC = () => {
         </div>
       )}
 
-      {(attemptsLeft === 0 || (wheelConsonant !== null && wheelConsonant === targetConsonant)) && targetConsonant !== null && (
-        <Button onClick={handleTryAgain} className="mt-4 bg-green-600 hover:bg-green-700">
+      <div className="flex gap-4 mt-4">
+        <Button onClick={handleTryAgain} className="bg-green-600 hover:bg-green-700">
           Try Again
         </Button>
-      )}
+      </div>
     </div>
   );
 };
