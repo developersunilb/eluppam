@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useRouter } from 'next/navigation';
+import { useProgress } from '@/context/ProgressContext'; // Import useProgress
 
 interface WordFindGameProps {}
 
@@ -100,6 +101,7 @@ const CLOCK_ORDER = [12, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
 
 export default function WordFindGame({}: WordFindGameProps) {
   const router = useRouter();
+  const { addGameProgress } = useProgress(); // Initialize useProgress
   const [grid, setGrid] = useState<string[]>(Array(TOTAL_SQUARES).fill(''));
   const [selectedGridLetters, setSelectedGridLetters] = useState<number[]>([]); // Renamed from selectedLetters for clarity
   const [feedback, setFeedback] = useState<'Correct' | 'Incorrect' | 'Already found' | 'Great job. Please proceed to quick fire challenge round' | null>(null);
@@ -251,6 +253,7 @@ export default function WordFindGame({}: WordFindGameProps) {
       if (allFoundWords.length + 1 + newlyFormedWords.length === ALL_WORDS_DATA.length) {
         setFeedback('Great job. Please proceed to quick fire challenge round');
         setIsGameComplete(true);
+        addGameProgress({ gameName: "Word Find Game", score: manuallyFoundWords.length + otherFoundWords.length, date: Date.now() }); // Record game completion
       }
     } else {
       setFeedback('Incorrect');

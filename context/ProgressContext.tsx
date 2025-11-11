@@ -1,8 +1,7 @@
-'use client';
-
 import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
-import { UserProgress, ModuleProgress, LessonProgress, PracticeAttempt, Badge } from '@/lib/types/progress';
-import { getOrCreateUserProgress, updateUserProgress } from '@/lib/db';
+import { UserProgress, ModuleProgress, LessonProgress, PracticeAttempt, Badge, GameProgress } from '@/lib/types/progress';
+
+import { getOrCreateUserProgress, saveUserProgressToDb } from '@/lib/db-utils';
 
 interface ProgressContextType {
   userProgress: UserProgress | null;
@@ -13,6 +12,7 @@ interface ProgressContextType {
   updateLessonProgress: (moduleId: string, lessonId: string, completed: boolean, score?: number) => Promise<void>;
   resetModuleProgress: (moduleId: string) => Promise<void>;
   addBadge: (badge: Badge) => Promise<void>; // New function
+  addGameProgress: (gameProgress: GameProgress) => Promise<void>;
 }
 
 const ProgressContext = createContext<ProgressContextType | undefined>(undefined);
@@ -23,7 +23,7 @@ interface ProgressProviderProps {
 }
 
 export const ProgressProvider: React.FC<ProgressProviderProps> = ({ children, userId }) => {
-  const [userProgress, setUserProgress] = useState<UserProgress>(() => ({ userId: '', modules: [], badges: [], lastUpdated: 0 }));
+  const [userProgress, setUserProgress] = useState<UserProgress>(() => ({ userId: '', modules: [], badges: [], games: [], lastUpdated: 0 }));
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -31,7 +31,7 @@ export const ProgressProvider: React.FC<ProgressProviderProps> = ({ children, us
     setLoading(true);
     setError(null);
     if (userId === 'guest') {
-      setUserProgress({ userId: 'guest', modules: [], badges: [], lastUpdated: Date.now() }); // Initialize badges for guest
+      setUserProgress({ userId: 'guest', modules: [], badges: [], games: [], lastUpdated: Date.now() }); // Initialize badges for guest
       setLoading(false);
       return;
     }
@@ -40,6 +40,9 @@ export const ProgressProvider: React.FC<ProgressProviderProps> = ({ children, us
       // Ensure badges array exists
       if (!progress.badges) {
         progress.badges = [];
+      }
+      if (!progress.games) {
+        progress.games = [];
       }
       setUserProgress(progress);
     } catch (err) {
@@ -62,11 +65,11 @@ export const ProgressProvider: React.FC<ProgressProviderProps> = ({ children, us
       return;
     }
     try {
-      await updateUserProgress(updatedProgress);
+      await saveUserProgressToDb(updatedProgress);
       setUserProgress(updatedProgress);
     } catch (err) {
       console.error("Failed to save user progress:", err);
-      setError("Failed to save user progress.");
+      setError(`Failed to save user progress: ${err instanceof Error ? err.message : String(err)}`);
     }
   }, []);
 
@@ -80,6 +83,15 @@ export const ProgressProvider: React.FC<ProgressProviderProps> = ({ children, us
     }
 
     const newProgress = { ...userProgress, badges: updatedBadges, lastUpdated: Date.now() };
+    await saveProgress(newProgress);
+  }, [userProgress, saveProgress]);
+
+  const addGameProgress = useCallback(async (gameProgress: GameProgress) => {
+    if (!userProgress) return;
+
+    const updatedGames = userProgress.games ? [...userProgress.games, gameProgress] : [gameProgress];
+
+    const newProgress = { ...userProgress, games: updatedGames, lastUpdated: Date.now() };
     await saveProgress(newProgress);
   }, [userProgress, saveProgress]);
 
@@ -135,7 +147,7 @@ export const ProgressProvider: React.FC<ProgressProviderProps> = ({ children, us
         console.log('updateModuleProgress: newProgress object before DB update:', JSON.stringify(newProgress, null, 2));
 
         // Await the DB update (this will run outside the synchronous state update)
-        updateUserProgress(newProgress).then(() => {
+        saveProgress(newProgress).then(() => {
           console.log('updateModuleProgress: DB updated successfully for moduleId:', moduleId);
         }).catch(error => {
           console.error('updateModuleProgress: Failed to save user progress to DB for moduleId:', moduleId, error);
@@ -193,7 +205,7 @@ export const ProgressProvider: React.FC<ProgressProviderProps> = ({ children, us
     }
 
     const newProgress = { ...prevUserProgress, modules: updatedModules };
-    await updateUserProgress(newProgress);
+    await saveProgress(newProgress);
     setUserProgress(newProgress);
   }, [userProgress]);
 
@@ -232,6 +244,7 @@ export const ProgressProvider: React.FC<ProgressProviderProps> = ({ children, us
     updateLessonProgress,
     resetModuleProgress,
     addBadge,
+    addGameProgress,
   };
 
   return (

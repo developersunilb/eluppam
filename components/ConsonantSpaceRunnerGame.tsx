@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { Play, Pause, RotateCcw, Volume2, VolumeX, BookOpen, ArrowUp, ArrowLeft, ArrowRight } from 'lucide-react';
 import { useRouter } from 'next/navigation';

@@ -19,8 +19,15 @@ const ConsonantArrowGame = () => {
   const [targetConsonant, setTargetConsonant] = useState('');
   const [feedback, setFeedback] = useState('');
   const [canvasSize, setCanvasSize] = useState({ width: 800, height: 600 });
+  const [parrotImage, setParrotImage] = useState<HTMLImageElement | null>(null);
   const gameContainerRef = useRef<HTMLDivElement>(null);
   const innerContainerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const img = new Image();
+    img.src = '/game/parrotarrow.png';
+    img.onload = () => setParrotImage(img);
+  }, []);
 
   const consonants = useMemo(() => ['ക', 'ഖ', 'ഗ', 'ഘ', 'ങ', 'ച', 'ഛ', 'ജ', 'ഝ', 'ഞ'], []);
   const parrotPos = useMemo(() => ({ x: 150, y: 500 }), []);
@@ -35,18 +42,19 @@ const ConsonantArrowGame = () => {
     hit: boolean;
   }
 
-  const selectNewTarget = useCallback(() => {
-    const availableConsonants = consonants.filter((c: string) => !hitConsonants.includes(c));
+
+
+  const selectNewTarget = (allConsonants: string[], currentHitConsonants: string[]) => {
+    const availableConsonants = allConsonants.filter((c: string) => !currentHitConsonants.includes(c));
 
     if (availableConsonants.length === 0) {
       setFeedback('🎉 Level Complete! All consonants hit!');
-      setGameState('level-complete');
     } else {
       const newTarget = availableConsonants[Math.floor(Math.random() * availableConsonants.length)];
-      setTargetConsonant(newTarget);
-      setFeedback(`Shoot the letter: ${newTarget}`);
+    setTargetConsonant(newTarget);
+    setFeedback(`Shoot the letter: ${newTarget}`);
     }
-  }, [consonants, hitConsonants]);
+  };
 
   const getConsonantPositions = useCallback((scaleX: number, scaleY: number) => {
     const positions: ConsonantPosition[] = [];
@@ -99,60 +107,65 @@ const ConsonantArrowGame = () => {
     const x = parrotPos.x * scaleX;
     const y = parrotPos.y * scaleY;
 
-    // Body
-    ctx.fillStyle = '#4CAF50';
-    ctx.beginPath();
-    ctx.ellipse(x, y, 30 * scaleX, 40 * scaleY, 0, 0, Math.PI * 2);
-    ctx.fill();
+    if (parrotImage) {
+      ctx.drawImage(parrotImage, x - 40 * scaleX, y - 50 * scaleY, 80 * scaleX, 100 * scaleY);
+    } else {
+      // Fallback to drawing the parrot if the image is not loaded
+      // Body
+      // ctx.fillStyle = '#4CAF50';
+      // ctx.beginPath();
+      // ctx.ellipse(x, y, 30 * scaleX, 40 * scaleY, 0, 0, Math.PI * 2);
+      // ctx.fill();
 
-    // Head
-    ctx.fillStyle = '#66BB6A';
-    ctx.beginPath();
-    ctx.arc(x, y - 35 * scaleY, 25 * scaleX, 0, Math.PI * 2);
-    ctx.fill();
+      // // Head
+      // ctx.fillStyle = '#66BB6A';
+      // ctx.beginPath();
+      // ctx.arc(x, y - 35 * scaleY, 25 * scaleX, 0, Math.PI * 2);
+      // ctx.fill();
 
-    // Beak
-    ctx.fillStyle = '#FFA726';
-    ctx.beginPath();
-    ctx.moveTo(x + 15 * scaleX, y - 35 * scaleY);
-    ctx.lineTo(x + 30 * scaleX, y - 35 * scaleY);
-    ctx.lineTo(x + 15 * scaleX, y - 25 * scaleY);
-    ctx.closePath();
-    ctx.fill();
+      // // Beak
+      // ctx.fillStyle = '#FFA726';
+      // ctx.beginPath();
+      // ctx.moveTo(x + 15 * scaleX, y - 35 * scaleY);
+      // ctx.lineTo(x + 30 * scaleX, y - 35 * scaleY);
+      // ctx.lineTo(x + 15 * scaleX, y - 25 * scaleY);
+      // ctx.closePath();
+      // ctx.fill();
 
-    // Eye
-    ctx.fillStyle = '#FFF';
-    ctx.beginPath();
-    ctx.arc(x + 5 * scaleX, y - 40 * scaleY, 6 * scaleX, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.fillStyle = '#000';
-    ctx.beginPath();
-    ctx.arc(x + 7 * scaleX, y - 40 * scaleY, 3 * scaleX, 0, Math.PI * 2);
-    ctx.fill();
+      // // Eye
+      // ctx.fillStyle = '#FFF';
+      // ctx.beginPath();
+      // ctx.arc(x + 5 * scaleX, y - 40 * scaleY, 6 * scaleX, 0, Math.PI * 2);
+      // ctx.fill();
+      // ctx.fillStyle = '#000';
+      // ctx.beginPath();
+      // ctx.arc(x + 7 * scaleX, y - 40 * scaleY, 3 * scaleX, 0, Math.PI * 2);
+      // ctx.fill();
 
-    // Wing
-    ctx.fillStyle = '#388E3C';
-    ctx.beginPath();
-    ctx.ellipse(x - 20 * scaleX, y, 15 * scaleX, 25 * scaleY, -0.3, 0, Math.PI * 2);
-    ctx.fill();
+      // // Wing
+      // ctx.fillStyle = '#388E3C';
+      // ctx.beginPath();
+      // ctx.ellipse(x - 20 * scaleX, y, 15 * scaleX, 25 * scaleY, -0.3, 0, Math.PI * 2);
+      // ctx.fill();
 
-    // Tail feathers
-    ctx.fillStyle = '#FF5722';
-    ctx.beginPath();
-    ctx.moveTo(x - 25 * scaleX, y + 30 * scaleY);
-    ctx.lineTo(x - 35 * scaleX, y + 50 * scaleY);
-    ctx.lineTo(x - 20 * scaleX, y + 35 * scaleY);
-    ctx.closePath();
-    ctx.fill();
+      // // Tail feathers
+      // ctx.fillStyle = '#FF5722';
+      // ctx.beginPath();
+      // ctx.moveTo(x - 25 * scaleX, y + 30 * scaleY);
+      // ctx.lineTo(x - 35 * scaleX, y + 50 * scaleY);
+      // ctx.lineTo(x - 20 * scaleX, y + 35 * scaleY);
+      // ctx.closePath();
+      // ctx.fill();
 
-    ctx.fillStyle = '#FF9800';
-    ctx.beginPath();
-    ctx.moveTo(x - 20 * scaleX, y + 35 * scaleY);
-    ctx.lineTo(x - 25 * scaleX, y + 55 * scaleY);
-    ctx.lineTo(x - 15 * scaleX, y + 38 * scaleY);
-    ctx.closePath();
-    ctx.fill();
-  }, [parrotPos]);
+      // ctx.fillStyle = '#FF9800';
+      // ctx.beginPath();
+      // ctx.moveTo(x - 20 * scaleX, y + 35 * scaleY);
+      // ctx.lineTo(x - 25 * scaleX, y + 55 * scaleY);
+      // ctx.lineTo(x - 15 * scaleX, y + 38 * scaleY);
+      // ctx.closePath();
+      // ctx.fill();
+    }
+  }, [parrotPos, parrotImage]);
 
   const drawArrow = useCallback((ctx: CanvasRenderingContext2D, x: number, y: number, angle: number, scaleX: number, scaleY: number) => {
     ctx.save();
@@ -290,12 +303,11 @@ const ConsonantArrowGame = () => {
     const positions = getConsonantPositions(scaleX, scaleY);
     positions.forEach((pos: ConsonantPosition) => {
       if (!pos.hit) {
-        const isTarget = pos.letter === targetConsonant;
-        ctx.fillStyle = isTarget ? '#FFD700' : '#FF6B6B';
+        ctx.fillStyle = '#FF6B6B';
         ctx.beginPath();
         ctx.arc(pos.x, pos.y, 20 * scaleX, 0, Math.PI * 2);
         ctx.fill();
-        ctx.strokeStyle = isTarget ? '#FFA500' : '#FF4444';
+        ctx.strokeStyle = '#FF4444';
         ctx.lineWidth = 3 * scaleX;
         ctx.stroke();
 
@@ -322,7 +334,7 @@ const ConsonantArrowGame = () => {
     if (arrow && gameState === 'shooting') {
       drawArrow(ctx, arrow.x, arrow.y, arrow.angle, scaleX, scaleY);
     }
-  }, [targetConsonant, gameState, dragStart, dragCurrent, arrow, drawCloud, getConsonantPositions, drawParrot, drawBow, drawTrajectory, drawArrow]);
+  }, [gameState, dragStart, dragCurrent, arrow, drawCloud, getConsonantPositions, drawParrot, drawBow, drawTrajectory, drawArrow]);
 
   const handleMouseDown = (e: React.MouseEvent) => {
     if (gameState !== 'ready') return;
@@ -406,25 +418,21 @@ const ConsonantArrowGame = () => {
         const dist = Math.sqrt((newX - pos.x) ** 2 + (newY - pos.y) ** 2);
         if (dist < 35 * scaleX) {
           if (pos.letter === targetConsonant) {
-            setHitConsonants((prevHits: string[]) => {
-              const newHitConsonants = [...prevHits, pos.letter];
-              setTimeout(() => {
-                const available = consonants.filter((c: string) => !newHitConsonants.includes(c));
-                if (available.length === 0) {
-                  setFeedback('🎉 Level Complete! All consonants hit!');
-                  setGameState('level-complete');
-                } else {
-                  const newTarget = available[Math.floor(Math.random() * available.length)];
-                  setTargetConsonant(newTarget);
-                  setFeedback(`Shoot the letter: ${newTarget}`);
-                  setGameState('ready');
-                }
-              }, 1000);
-              return newHitConsonants;
-            });
+            const newHitConsonants = [...hitConsonants, pos.letter];
+            setHitConsonants(newHitConsonants);
             setScore((prev: number) => prev + 10);
             setFeedback('🎯 Perfect hit!');
             setArrow(null);
+            setTimeout(() => {
+              const available = consonants.filter((c: string) => !newHitConsonants.includes(c));
+              if (available.length > 0) {
+                selectNewTarget(consonants, newHitConsonants);
+                setGameState('ready');
+              } else {
+                // Level is complete, let the useEffect handle setting gameState to 'level-complete'
+                // Do nothing here, just ensure the arrow is null and feedback is set
+              }
+            }, 1000);
           } else {
             setFeedback('❌ Wrong letter! Try again.');
             setArrow(null);
@@ -457,14 +465,21 @@ const ConsonantArrowGame = () => {
       angle: newAngle,
       time: newTime
     });
-  }, [arrow, getConsonantPositions, consonants, targetConsonant]);
+  }, [arrow, getConsonantPositions, consonants, targetConsonant, hitConsonants]);
+
+  useEffect(() => {
+    if (hitConsonants.length === consonants.length) {
+      setFeedback('🎉 Level Complete! All consonants hit!');
+      setGameState('level-complete');
+    }
+  }, [hitConsonants, consonants]);
 
   const handlePlayAgain = () => {
     setGameState('ready');
     setHitConsonants([]);
     setScore(0);
     setLevel((prev: number) => prev + 1);
-    selectNewTarget();
+    selectNewTarget(consonants, []);
   };
 
   const handleNextLevel = () => {
@@ -473,8 +488,11 @@ const ConsonantArrowGame = () => {
 
   useEffect(() => {
     console.log(consonants);
-    selectNewTarget();
-  }, [consonants, selectNewTarget]);
+  }, [consonants]);
+
+  useEffect(() => {
+    selectNewTarget(consonants, []);
+  }, [consonants]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -631,5 +649,3 @@ const ConsonantArrowGame = () => {
     
 
     export default ConsonantArrowGame;
-
-    

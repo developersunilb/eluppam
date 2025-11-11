@@ -65,7 +65,7 @@ const GamePage: NextPage = () => {
       'magic-tracing': dynamic(() => import('@/components/MagicTracingGame'), { ssr: false }),
       'memory-match': dynamic(() => import('@/components/MemoryMatchGame'), { ssr: false }),
       'whack-a-vowel': dynamic(() => import('@/components/WhackAVowelGame'), { ssr: false }),
-      'pookkalam-coloring': dynamic(() => import('@/components/PookkalamColoringApp'), { ssr: false }),
+      'pookkalam-coloring': dynamic(() => import('@/components/PookkalamColoringGame'), { ssr: false }),
       'mahjong-game': dynamic(() => import('@/components/Mahjong3DGame'), { ssr: false }),
       'flashcard-battle': dynamic(() => import('@/components/FlashcardBattleGame'), { ssr: false }),
       'word-formation': dynamic(() => import('@/components/WordFormationGame'), { ssr: false }),
@@ -85,6 +85,12 @@ const GamePage: NextPage = () => {
       'malayalam-scrabble': dynamic(() => import('@/components/MalayalamScrabbleGame'), { ssr: false }),
       'wordfind': WordFindGame,
       'consonant-arrow-game': dynamic(() => import('@/components/ConsonantArrowGame'), { ssr: false }),
+      'find-cat-mom': dynamic(() => import('@/components/FindCatMomGame'), { ssr: false }),
+      'consonant-christmas-tree': dynamic(() => import('@/components/ConsonantChristmasTreeGame'), { ssr: false }),      
+      'consonant-flower-bloom': dynamic(() => import('@/components/ConsonantFlowerBloomGame'), { ssr: false }),
+      'consonant-house': dynamic(() => import('@/components/ConsonantHouseGame'), { ssr: false }),
+      'consonant-hornbill': dynamic(() => import('@/components/ConsonantHornbillGame'), { ssr: false }),
+      'FruitCatch': dynamic(() => import('@/components/FruitCatchVocabularyGame'), { ssr: false }),
     };
     return componentMap[gameId] || null;
   }, [gameId]);

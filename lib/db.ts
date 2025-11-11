@@ -22,6 +22,15 @@ export class MathrebashaDexie extends Dexie {
 
   constructor() {
     super('MathrebashaDB');
+    this.version(4).stores({
+      userProgress: 'userId,modules,badges,games',
+    }).upgrade(tx => {
+      return tx.table('userProgress').toCollection().modify(progress => {
+        if (progress.games === undefined) {
+          progress.games = [];
+        }
+      });
+    });
     this.version(3).stores({
       userProgress: 'userId,modules,badges', // Add badges to schema
       userSessions: 'id',
@@ -86,6 +95,7 @@ export async function getOrCreateUserProgress(userId: string): Promise<UserProgr
           userId,
           modules: [],
           badges: [], // Initialize badges array
+          games: [], // Initialize games array
           lastUpdated: Date.now(),
         };
         await db.userProgress.add(progress);
@@ -99,13 +109,20 @@ export async function getOrCreateUserProgress(userId: string): Promise<UserProgr
 }
 
 // Helper function to update user progress
-export async function updateUserProgress(progress: UserProgress): Promise<void> {
+export async function saveUserProgressToDb(progress: UserProgress): Promise<void> {
   const db = getDb();
   try {
     progress.lastUpdated = Date.now();
     await db.userProgress.put(progress);
   } catch (error) {
-    console.error('Dexie: Error updating user progress for userId:', progress.userId, error);
+    console.error('Dexie: Error saving user progress to DB for userId:', progress.userId, error);
+    if (error instanceof Error) {
+      console.error('Dexie: Error name:', error.name);
+      console.error('Dexie: Error message:', error.message);
+      if (error.stack) {
+        console.error('Dexie: Error stack:', error.stack);
+      }
+    }
     throw error; // Re-throw to propagate the error
   }
 }

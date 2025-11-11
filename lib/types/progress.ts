@@ -32,6 +32,7 @@ export interface GameLevel {
   description: string;
   href: string;
   prerequisite?: string;
+  sublevels?: GameLevel[];
 }
 
 export interface Badge {
@@ -41,9 +42,16 @@ export interface Badge {
   dateEarned: number; // Timestamp
 }
 
+export interface GameProgress {
+  gameName: string;
+  score: number;
+  date: number;
+}
+
 export interface UserProgress {
   userId: string;
   modules: ModuleProgress[];
   badges: Badge[]; // New field
+  games: GameProgress[];
   lastUpdated: number;
 }

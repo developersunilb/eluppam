@@ -1,11 +1,11 @@
 import './globals.css';
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+// import { Inter } from 'next/font/google';
 import { AuthProvider } from '@/context/AuthContext';
 import AppLayoutContent from '@/components/AppLayoutContent'; // Import the new client component
 import { Toaster } from "@/components/ui/toaster"
 
-const inter = Inter({ subsets: ['latin'] });
+// const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: 'Eluppam  എളുപ്പം',
@@ -27,7 +27,7 @@ export default function RootLayout({
         {/* eslint-disable-next-line @next/next/no-page-custom-font */}
         <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Malayalam&display=swap" rel="stylesheet" />
       </head>
-      <body className={`${inter.className} font-malayalam text-kerala-green-700`}>
+      <body className={`font-malayalam text-kerala-green-700`} suppressHydrationWarning={true}>
         <AuthProvider>
           <AppLayoutContent>{children}</AppLayoutContent>
         </AuthProvider>

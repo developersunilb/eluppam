@@ -1,0 +1,13 @@
+{
+  "beach": [
+    {
+      "objectId": "crab",
+      "type": "rect",
+      "x": 40,
+      "y": 80,
+      "width": 10,
+      "height": 10
+    }
+  ],
+  "temple": []
+}

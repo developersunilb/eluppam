@@ -2,13 +2,11 @@
 
 import React, { useEffect, useRef } from 'react';
 import * as THREE from 'three';
-import { SRGBColorSpace } from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { useProgress } from '@/context/ProgressContext';
 import { useRouter } from 'next/navigation';
 
 const Mahjong3DGame: React.FC = () => {
-    console.log('Building Mahjong3DGame component');
     const { updateModuleProgress } = useProgress();
     const router = useRouter();
     const gameContainerRef = useRef<HTMLDivElement>(null);
@@ -46,11 +44,8 @@ const Mahjong3DGame: React.FC = () => {
 
         function init() {
             scene = new THREE.Scene();
-            const backgroundTextureLoader = new THREE.TextureLoader();
-            backgroundTextureLoader.load('/game/assets/image/keralanature.jpg', function(texture){
-                texture.colorSpace = THREE.SRGBColorSpace;
-                scene.background = texture;
-            });
+            scene.background = new THREE.Color(0x87CEEB);
+            scene.fog = new THREE.Fog(0x87CEEB, 30, 100);
 
             camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
             camera.position.set(0, 35, 20);
@@ -61,7 +56,6 @@ const Mahjong3DGame: React.FC = () => {
             renderer.setSize(window.innerWidth, window.innerHeight);
             renderer.shadowMap.enabled = true;
             renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-            renderer.outputColorSpace = THREE.SRGBColorSpace;
 
             raycaster = new THREE.Raycaster();
             mouse = new THREE.Vector2();
@@ -81,8 +75,8 @@ const Mahjong3DGame: React.FC = () => {
             const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
             directionalLight.position.set(10, 20, 5);
             directionalLight.castShadow = true;
-            directionalLight.shadow.mapSize.width = 2048;
-            directionalLight.shadow.mapSize.height = 2048;
+            directionalLight.shadow.mapSize.width = 1024;
+            directionalLight.shadow.mapSize.height = 1024;
             scene.add(directionalLight);
 
             const pointLight = new THREE.PointLight(0xFFF8DC, 0.5);
@@ -92,16 +86,16 @@ const Mahjong3DGame: React.FC = () => {
 
         function loadModels() {
             const loader = new GLTFLoader();
+            loader.load('/3Dmodels/base.glb', (gltf) => {
+                const coconutTreeModel = gltf.scene;
 
-            const addCoconutTree = (id: number, x: number, y: number, z: number, scale: number, rotationY: number) => {
-                loader.load('/3Dmodels/purplecoco.glb', (gltf) => {
-                    const coconutTree = gltf.scene;
+                const addCoconutTree = (id: number, x: number, y: number, z: number, scale: number, rotationY: number) => {
+                    const coconutTree = coconutTreeModel.clone();
                     coconutTree.scale.set(scale, scale, scale);
                     coconutTree.position.set(x, y, z);
                     coconutTree.rotation.y = rotationY;
                     scene.add(coconutTree);
 
-                    /*
                     // Create a text label for the tree
                     const canvas = document.createElement('canvas');
                     const context = canvas.getContext('2d');
@@ -121,47 +115,34 @@ const Mahjong3DGame: React.FC = () => {
                         sprite.position.set(x, y + scale * 2, z); // Position above the tree
                         scene.add(sprite);
                     }
-                    */
-                }, undefined, (error) => {
-                    console.error('An error occurred loading the GLTF model:', error);
-                });
-            };
+                };
 
-            // Additional trees
-            // Group of trees near the lake, on the green land (adjusted to be outside the lake)
-            addCoconutTree(2, 12, -2, -5, 4.5 + Math.random(), Math.random() * Math.PI * 2); // Moved out of lake, closer to edge and further down and right
-            addCoconutTree(3, 10 + Math.random() * 2, -2, -8 + Math.random() * 2, 4 + Math.random(), Math.random() * Math.PI * 2); // Accompanying tree 1
-            addCoconutTree(4, 1 - Math.random() * 2, -2, -12 - Math.random() * 3, 4 + Math.random(), Math.random() * Math.PI * 2); // Accompanying tree 2 (shifted even further left)
+                // Additional trees
+                // Group of trees near the lake, on the green land (adjusted to be outside the lake)
+                addCoconutTree(2, 12, -2, -5, 4.5 + Math.random(), Math.random() * Math.PI * 2); // Moved out of lake, closer to edge and further down and right
+                addCoconutTree(3, 10 + Math.random() * 2, -2, -8 + Math.random() * 2, 4 + Math.random(), Math.random() * Math.PI * 2); // Accompanying tree 1
+                addCoconutTree(4, 1 - Math.random() * 2, -2, -12 - Math.random() * 3, 4 + Math.random(), Math.random() * Math.PI * 2); // Accompanying tree 2 (shifted even further left)
 
-            // Other trees around the mahjong board, on the green land (adjusted for left overflow)
-            addCoconutTree(5, -10 + Math.random() * 5, -2, 10 + Math.random() * 5, 4 + Math.random(), Math.random() * Math.PI * 2); // Bottom-left area (shifted further left)
-            addCoconutTree(6, 5 + Math.random() * 10, -2, 8 + Math.random() * 5, 4 + Math.random(), Math.random() * Math.PI * 2);  // Bottom-right area (shifted further left and top)
-            addCoconutTree(7, -5 + Math.random() * 5, -2, -15 - Math.random() * 5, 4 + Math.random(), Math.random() * Math.PI * 2); // Top-left area (shifted right)
-            addCoconutTree(8, 10 + Math.random() * 10, -2, -19 - Math.random() * 5, 4 + Math.random(), Math.random() * Math.PI * 2);  // Top-right area (shifted further top)
-            addCoconutTree(9, -17 + Math.random() * 5, -2, 0 + Math.random() * 5, 4 + Math.random(), Math.random() * Math.PI * 2);   // Mid-left area (shifted further left)
-            addCoconutTree(10, 15 + Math.random() * 5, -2, 0 + Math.random() * 5, 4 + Math.random(), Math.random() * Math.PI * 2);    // Mid-right area
+                // Other trees around the mahjong board, on the green land (adjusted for left overflow)
+                addCoconutTree(5, -10 + Math.random() * 5, -2, 10 + Math.random() * 5, 4 + Math.random(), Math.random() * Math.PI * 2); // Bottom-left area (shifted further left)
+                addCoconutTree(6, 5 + Math.random() * 10, -2, 8 + Math.random() * 5, 4 + Math.random(), Math.random() * Math.PI * 2);  // Bottom-right area (shifted further left and top)
+                addCoconutTree(7, -5 + Math.random() * 5, -2, -15 - Math.random() * 5, 4 + Math.random(), Math.random() * Math.PI * 2); // Top-left area (shifted right)
+                addCoconutTree(8, 10 + Math.random() * 10, -2, -19 - Math.random() * 5, 4 + Math.random(), Math.random() * Math.PI * 2);  // Top-right area (shifted further top)
+                addCoconutTree(9, -17 + Math.random() * 5, -2, 0 + Math.random() * 5, 4 + Math.random(), Math.random() * Math.PI * 2);   // Mid-left area (shifted further left)
+                addCoconutTree(10, 15 + Math.random() * 5, -2, 0 + Math.random() * 5, 4 + Math.random(), Math.random() * Math.PI * 2);    // Mid-right area
+            }, undefined, (error) => {
+                console.error('An error occurred loading the GLTF model:', error);
+            });
         }
 
         function createEnvironment() {
             const groundGeometry = new THREE.PlaneGeometry(50, 50);
-            const groundMaterial = new THREE.MeshLambertMaterial({ color: 0xc788b9 });
+            const groundMaterial = new THREE.MeshLambertMaterial({ color: 0x90EE90 });
             const ground = new THREE.Mesh(groundGeometry, groundMaterial);
             ground.rotation.x = -Math.PI / 2;
             ground.position.y = -2;
             ground.receiveShadow = true;
             scene.add(ground);
-
-            // Add image to the top-left corner of the board
-            const textureLoader = new THREE.TextureLoader();
-            textureLoader.load('/game/assets/image/kathakalipookkalam.png', (texture) => {
-                texture.colorSpace = THREE.SRGBColorSpace;
-                const imageGeometry = new THREE.PlaneGeometry(10, 10);
-                const imageMaterial = new THREE.MeshBasicMaterial({ map: texture, transparent: true });
-                const imageMesh = new THREE.Mesh(imageGeometry, imageMaterial);
-                imageMesh.rotation.x = -Math.PI / 2;
-                imageMesh.position.set(-15, -1.9, -15); // Adjust position to be top-left
-                scene.add(imageMesh);
-            });
 
             const radiusX = 10; // Half-width of the oval
             const radiusY = 5;  // Half-height of the oval
@@ -176,7 +157,7 @@ const Mahjong3DGame: React.FC = () => {
 
             const waterShape = new THREE.Shape(ellipse.getPoints(50)); // Get 50 points to define the curve
             const waterGeometry = new THREE.ShapeGeometry(waterShape);
-            const waterMaterial = new THREE.MeshLambertMaterial({ color: 0xa36587, transparent: true, opacity: 0.7 });
+            const waterMaterial = new THREE.MeshLambertMaterial({ color: 0x4169E1, transparent: true, opacity: 0.7 });
             const water = new THREE.Mesh(waterGeometry, waterMaterial);
             water.rotation.x = -Math.PI / 2;
             water.position.set(10, -1.9, -15); // Moved further left
@@ -188,7 +169,7 @@ const Mahjong3DGame: React.FC = () => {
             for (let i = 0; i < 5; i++) {
                 const cloudGroup = new THREE.Group();
                 cloudGroup.position.set(i * 15 - 30, Math.sin(i) * 5, 0);
-                const cloudMaterial = new THREE.MeshLambertMaterial({ color: 0xffffff, transparent: true, opacity: 0.0 });
+                const cloudMaterial = new THREE.MeshLambertMaterial({ color: 0xffffff, transparent: true, opacity: 0.8 });
                 const mainCloud = new THREE.Mesh(new THREE.BoxGeometry(8, 3, 3), cloudMaterial);
                 cloudGroup.add(mainCloud);
                 cloudsGroup.add(cloudGroup);
@@ -224,12 +205,14 @@ const Mahjong3DGame: React.FC = () => {
             }
         }
 
+        const tileGeometry = new THREE.BoxGeometry(4, 0.8, 2.8);
+        const tileMaterial = new THREE.MeshLambertMaterial({ color: 0xFFF0B5 }); // Even lighter Marigold color
+        const textGeometry = new THREE.PlaneGeometry(3.6, 2.4);
+
         function createTile(id: string, character: string, position: [number, number, number], layer: number, row: number, col: number) {
             const tileGroup = new THREE.Group();
             
-            const tileGeometry = new THREE.BoxGeometry(4, 0.8, 2.8);
-            const tileMaterial = new THREE.MeshLambertMaterial({ color: 0x7c5f8e }); // Even lighter Marigold color
-            const tileMesh = new THREE.Mesh(tileGeometry, tileMaterial);
+            const tileMesh = new THREE.Mesh(tileGeometry, tileMaterial.clone());
             tileMesh.castShadow = true;
             tileMesh.receiveShadow = true;
             
@@ -237,7 +220,7 @@ const Mahjong3DGame: React.FC = () => {
             canvas.width = 128;
             canvas.height = 128;
             const context = canvas.getContext('2d')!;
-            context.fillStyle = '#ffffff'; // Green font color 228B22 changed to 0xFFFFFF a purple kind of color
+            context.fillStyle = '#228B22'; // Green font color
             context.font = 'bold 50px Arial';
             context.textAlign = 'center';
             context.textBaseline = 'middle';
@@ -246,7 +229,6 @@ const Mahjong3DGame: React.FC = () => {
             const texture = new THREE.CanvasTexture(canvas);
             const textMaterial = new THREE.MeshLambertMaterial({ map: texture, transparent: true });
             
-            const textGeometry = new THREE.PlaneGeometry(3.6, 2.4);
             const textMesh = new THREE.Mesh(textGeometry, textMaterial);
             textMesh.rotation.x = -Math.PI / 2;
             textMesh.position.y = 0.41;
@@ -693,7 +675,7 @@ const Mahjong3DGame: React.FC = () => {
                 
                 .tutorial {
                     position: absolute; bottom: 1rem; left: 1rem;
-                    background: rgba(0, 0, 0, 0.6); color: white;
+                    background: rgba(0, 0, 0, 0..6); color: white;
                     padding: 1rem; border-radius: 8px; max-width: 400px;
                 }
                 
@@ -707,7 +689,6 @@ const Mahjong3DGame: React.FC = () => {
                 <div className="ui-overlay">
                     <div className="ui-header">
                         <div className="game-stats">
-                            <img src="/game/assets/image/kathakalipookkalam.png" alt="Kathakali Pookkalam" style={{ height: '50px', marginRight: '1rem' }} />
                             <div className="stat">Score: <span id="scoreValue" ref={scoreValueRef}>0</span></div>
                             <div className="stat">Time: <span id="timeValue" ref={timeValueRef}>0:00</span></div>
                             <div className="stat">Matches: <span id="matchesValue" ref={matchesValueRef}>0</span></div>

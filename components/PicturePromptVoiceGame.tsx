@@ -18,9 +18,9 @@ const LANGUAGE = 'ml-IN';
 // This component is now standalone as requested by the user.
 const PicturePromptVoiceGame: React.FC = () => {
   // Data is now hardcoded inside the component.
-  const validWords = ['മരം', 'പൂവ്', 'പൂമ്പാറ്റ', 'ചിത്രശലഭം', 'മാല', 'വെള്ളം', 'ജലം', 'പുഴ', 'വഴി', 'ചെടി', 'സൂര്യൻ', 'പുല്ല്', 'കുട്ടികൾ', 'പട്ടി', 'കൊമ്പ്', 'ചില്ല', 'മരച്ചില്ല', 'കിളി', 'പക്ഷി', 'മഞ്ഞ്', 'പറവ', 'വെളിച്ചം', 'വെട്ടം', 'മേഘം', 'ശാഖ', 'മരക്കൊമ്പ്', 'കൊമ്പ്', 'കുട്ടി', 'കാട്'];
+  const validWords = ['മരം', 'പൂവ്', 'പൂമ്പാറ്റ', 'ചിത്രശലഭം', 'മാല', 'മല', 'വെള്ളം', 'മല', 'ഇല', 'പർവ്വതം', 'തടാകം', 'കായൽ', 'ചെരുപ്പ്', 'ആകാശം',                                                       'ജലം', 'പുഴ', 'വഴി', 'ചെടി', 'സൂര്യൻ', 'പുല്ല്', 'കുട്ടികൾ', 'പട്ടി', 'കൊമ്പ്', 'ചില്ല', 'മരച്ചില്ല', 'കിളി', 'പക്ഷി', 'മഞ്ഞ്', 'പറവ', 'വെളിച്ചം', 'വെട്ടം', 'മേഘം', 'ശാഖ', 'മരക്കൊമ്പ്', 'കൊമ്പ്', 'കുട്ടി', 'കാട്'];
   const imageUrl = '/image/scenery.jpg';
-  const currentGameId = 'picture-prompt-voice';
+  const currentGameId = 'picture-prompt-voice';                                                                                                    
 
   const { updateModuleProgress } = useProgress();
   const [isListening, setIsListening] = useState(false);

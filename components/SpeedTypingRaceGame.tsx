@@ -39,7 +39,7 @@ const SpeedTypingRaceGame: React.FC<SpeedTypingRaceGameProps> = ({ onComplete })
   const [gameOver, setGameOver] = useState(false);
   const [feedback, setFeedback] = useState<'correct' | 'incorrect' | 'timeout' | null>(null);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
-  const [showKeyboard, setShowKeyboard] = useState(true);
+  const [showKeyboard, setShowKeyboard] = useState(false);
 
   const startRound = useCallback(() => {
     if (round >= MAX_ROUNDS) {
@@ -149,7 +149,7 @@ const SpeedTypingRaceGame: React.FC<SpeedTypingRaceGameProps> = ({ onComplete })
       <h1 className="text-4xl font-bold text-gray-800 mb-8">Speed Typing Race</h1>
 
       {gameActive && currentPair && (
-        <div className="bg-white p-8 rounded-lg shadow-xl mb-8 text-center w-full max-w-md">
+        <div className={`bg-white p-8 rounded-lg shadow-xl mb-8 text-center w-full transition-all duration-300 ${showKeyboard ? 'max-w-4xl' : 'max-w-md'}`}>
           <div className="text-7xl mb-6">{currentPair.imageUrl}</div>
           <div className="mb-6 flex justify-center">{displayWordProgress()}</div>
           <p className="text-2xl font-semibold text-gray-700 mb-4">Time Left: {timeLeft}s</p>
@@ -162,7 +162,7 @@ const SpeedTypingRaceGame: React.FC<SpeedTypingRaceGameProps> = ({ onComplete })
           </button>
 
           {showKeyboard && (
-            <div className="mt-4 w-full">
+            <div className="mt-4 w-full border p-2 rounded-lg">
               <MalayalamKeyboard onKeyPress={handleKeyPress} />
             </div>
           )}

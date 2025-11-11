@@ -1,8 +1,9 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useAuth } from '@/context/AuthContext';
+import { useProgress } from '@/context/ProgressContext';
 import { Button } from '@/components/ui/button';
-
 
 // Next.js page / React component for a Malayalam Scrabble-like base (Level 20)
 // - TailwindCSS classes used for styling
@@ -17,26 +18,23 @@ const LEVEL_20 = {
   id: 20,
   name: 'Level 20',
   // initial rack letters for the player (unicode Malayalam letters + conjuncts)
-  rack: ['ക', 'ാ', 'ല', 'ദ', 'ി', 'യ', 'വ', 'ള', 'ട', 'മ', 'റ', 'അ', 'ം'],
+  rack: ['കാ', 'പാ', 'യ', 'വ', 'ള', 'ൽ', 'അ'],
   // sample allowed words for level 20 (this is the "dictionary" for validation)
   // NOTE: extend this list with a proper Malayalam lexicon later
   words: [
-    'കട', 'കടല', 'കവല','മാല', 'കടമ', 'കര', 'കല', 'മടി', 'അടി', 'അട','അടിമ',
-    'കായൽ', 'കാള', 'ദയ', 'വയൽ', 'വള', 'കായ', 'കാൽ', 'കാവൽ',
-    'കല്യം', 'കടവി', 'മറ', 'മട', 'മറ്റു', 'ടമല', 'കലശം', 'വിനയം', 'അന്ത', 'മല','തല'
+    'കായൽ', 'വള', 'വയൽ','അവൽ', 'പാവ', 'പായൽ', 'കാള', 'കാൽ', 'പാള', 'വളയൽ', 'കാവൽ','പാൽ', 'കായ', 'പാവൽ', 'പായ'
   ],
 };
 
 const LETTER_SCORES: { [key: string]: number } = {
-  'ക': 1, 'ാ': 1, 'ല': 1, 'ദ': 2, 'ി': 1, 'വ': 1, 'ള': 3, 'മ': 1, 'അ': 1, 'ം': 2,
-  'പ': 2, 'ൂ': 1, 'ന': 1, 'ച': 2, 'ങ': 3, 'ട': 1, 'ണ': 2, 'ത': 1, 'ഫ': 3, 'ബ': 2, 'ഭ': 3, 'യ': 2, 'ര': 1, 'ശ': 3, 'ഷ': 3, 'സ': 1, 'ഹ': 3, 'ഴ': 4, 'റ': 2,
+  'അ': 1, 'ൽ': 9, 'പാ': 5, 'വ': 2, 'കാ': 5, 'ള': 4, 'യ': 6,  
 };
 
 const BOARD_BONUSES = [
   ['TW', null, null, 'DL', null, null, 'TW'],
   [null, 'DW', null, null, null, 'DW', null],
   [null, null, 'DL', null, 'DL', null, null],
-  ['DL', null, null, 'DW', null, null, 'DL'],
+  ['DL', null, null, '⭐', null, null, 'DL'],
   [null, null, 'DL', null, 'DL', null, null],
   [null, 'DW', null, null, null, 'DW', null],
   ['TW', null, null, 'DL', null, null, 'TW'],
@@ -46,21 +44,23 @@ const BOARD_BONUSES = [
 // Helper: normalize Malayalam strings lightly (trim + NFKC if needed)
 const normalize = (s: string) => (s || '').trim().normalize('NFC');
 
-const isCombiningMark = (char: string) => {
-  // This list can be expanded based on observed behavior
-  const combiningMarks = ['ാ', 'ി', 'ീ', 'ു', 'ൂ', 'ൃ', 'െ', 'േ', 'ൈ', 'ൊ', 'ോ', 'ൗ', '്', 'ം', 'ഃ'];
-  return combiningMarks.includes(char);
-};
+// const isCombiningMark = (char: string) => {
+//   // This list can be expanded based on observed behavior
+//   // const combiningMarks = ['ാ', 'ി', 'ീ', 'ു', 'ൂ', 'ൃ', 'െ', 'േ', 'ൈ', 'ൊ', 'ോ', 'ൗ', '്', 'ം', 'ഃ'];
+//   return combiningMarks.includes(char);
+// };
 
-const renderDisplayChar = (char: string) => {
-  if (isCombiningMark(char)) {
-    return <>{'\u200C'}{char}</>; // Prepend with ZWNJ
-  }
-  return <>{char}</>;
-};
+// const renderDisplayChar = (char: string) => {
+//   if (isCombiningMark(char)) {
+//     return <>{'\u200C'}{char}</>; // Prepend with ZWNJ
+//   }
+//   return <>{char}</>;
+// };
 
 
 export default function MalayalamScrabbleGame() {
+  const { user, isLoggedIn } = useAuth();
+  const { addGameProgress } = useProgress();
   // 7x7 board for the base design (adjust size as needed)
   const BOARD_SIZE = 7;
   const emptyBoard = Array(BOARD_SIZE * BOARD_SIZE).fill(null);
@@ -76,6 +76,7 @@ export default function MalayalamScrabbleGame() {
   const [showLegends, setShowLegends] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [normalizedLevelWords, setNormalizedLevelWords] = useState<string[]>([]);
+  const [selectedTile, setSelectedTile] = useState<{ type: 'board' | 'hand'; index: number } | null>(null);
 
 
   useEffect(() => {
@@ -274,12 +275,32 @@ export default function MalayalamScrabbleGame() {
     setRack(prevRack => [...prevRack].sort(() => Math.random() - 0.5));
   };
 
+  const refillRack = () => {
+    const newRack = [...rack];
+    const letters = Object.keys(LETTER_SCORES);
+    while (newRack.length < 7) {
+      const randomIndex = Math.floor(Math.random() * letters.length);
+      newRack.push(letters[randomIndex]);
+    }
+    setRack(newRack);
+  };
+
   const handleBoardTileClick = (index: number) => {
     // Logic for selecting/deselecting a tile on the board
+    if (selectedTile && selectedTile.type === 'board' && selectedTile.index === index) {
+      setSelectedTile(null);
+    } else {
+      setSelectedTile({ type: 'board', index });
+    }
   };
 
   const handleHandTileClick = (index: number) => {
     // Logic for selecting/deselecting a tile in hand
+    if (selectedTile && selectedTile.type === 'hand' && selectedTile.index === index) {
+      setSelectedTile(null);
+    } else {
+      setSelectedTile({ type: 'hand', index });
+    }
   };
 
   const handleDropOnBoard = (e: React.DragEvent, cellIndex: number) => {
@@ -288,6 +309,23 @@ export default function MalayalamScrabbleGame() {
 
   const handleDropOnHand = (e: React.DragEvent, handIndex: number) => {
     // Logic for dropping a tile back into hand (e.g., from board)
+    const tileIndexStr = e.dataTransfer.getData('text/plain');
+    if (!tileIndexStr) return;
+    const tileIndex = parseInt(tileIndexStr, 10);
+
+    // If the tile is from the board, remove it from the board and add it to the hand
+    if (tileIndex === -1) {
+      const letter = e.dataTransfer.getData('letter');
+      if (letter) {
+        setBoard((prev) => {
+          const newBoard = [...prev];
+          const boardIndex = parseInt(e.dataTransfer.getData('boardIndex'), 10);
+          newBoard[boardIndex] = null;
+          return newBoard;
+        });
+        setRack((prev) => [...prev, letter]);
+      }
+    }
   };
 
   const handleReset = () => {
@@ -300,6 +338,15 @@ export default function MalayalamScrabbleGame() {
     setShowLegends(false);
     setError(null);
     setCurrentTurnPlacements([]);
+  };
+
+  const handleFinishGame = () => {
+    if (isLoggedIn) {
+      addGameProgress({ gameName: 'Malayalam Scrabble', score, date: Date.now() });
+      setMessage('Game finished and progress saved!');
+    } else {
+      setMessage('Please log in to save your progress.');
+    }
   };
 
   // ScrabbleBoard Component (Reconstructed)
@@ -341,9 +388,9 @@ export default function MalayalamScrabbleGame() {
               onDrop={(e) => onDrop(e, index)}
               onDragOver={(e) => e.preventDefault()}
             >
-              {letter && renderDisplayChar(letter)}
+              {letter}
               {bonus && !letter && (
-                <span className="absolute bottom-0.5 right-0.5 text-xs font-semibold opacity-75">
+                <span className="absolute inset-0 flex items-center justify-center text-xs font-semibold opacity-75">
                   {bonus}
                 </span>
               )}
@@ -379,7 +426,7 @@ export default function MalayalamScrabbleGame() {
               onDrop={(e) => onDrop(e, index)}
               onDragOver={(e) => e.preventDefault()}
             >
-              {letter && renderDisplayChar(letter)}
+              {letter}
               <span className="absolute top-0.5 right-0.5 text-xs font-semibold opacity-75">
                 {letter ? LETTER_SCORES[letter] : 0}
               </span>
@@ -458,6 +505,12 @@ export default function MalayalamScrabbleGame() {
             <Button onClick={shuffleHand} variant="secondary">
               Shuffle Hand
             </Button>
+            <Button onClick={refillRack} variant="secondary">
+              Refill Rack
+            </Button>
+            <Button onClick={handleFinishGame} variant="default">
+              Finish Game
+            </Button>
           </div>
         </div>
 
@@ -503,13 +556,12 @@ export default function MalayalamScrabbleGame() {
                 <div>
                   <h3 className="font-semibold text-lg mb-2">Letter Values:</h3>
                   <ul className="list-disc list-inside">
-                    <li>അ, ഇ, ഉ, എ, ഒ: 1</li>
-                    <li>ക, ച, ട, ത, പ: 2</li>
-                    <li>ഗ, ജ, ഡ, ദ, ബ: 3</li>
-                    <li>ങ, ഞ, ണ, ന, മ: 4</li>
-                    <li>യ, ര, ല, വ: 5</li>
-                    <li>ശ, ഷ, സ, ഹ, ള, ഴ, റ: 8</li>
-                    <li>ഌ, ൠ, ൡ: 10</li>
+                    <li>അ: This letter has a value of 1</li>                    
+                    <li>വ: This letter has a value of 2</li>
+                    <li>ള: This letter has a value of 4</li>
+                    <li>പാ, കാ: These letters have a value of 5</li>
+                    <li>യ: This letter has a value of 6</li>                    
+                    <li>ൽ: This letter has a value of 9</li>
                   </ul>
                 </div>
                 <div>

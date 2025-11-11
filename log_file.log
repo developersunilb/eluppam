@@ -1,116 +1,87 @@
-1/2
+PS F:\Startup Business\Solopreneur\eluppam> npm run build
 
-Next.js 16.0.0
-Turbopack
-Console Error
+> nextjs@0.1.0 build
+> next build
 
-`legacyBehavior` is deprecated and will be removed in a future release. A codemod is available to upgrade your components:
+   ▲ Next.js 16.0.1 (Turbopack)
 
-npx @next/codemod@latest new-link .
+   Creating an optimized production build ...
+ ✓ Compiled successfully in 21.0s
+ ✓ Finished TypeScript in 30.2s
+ ✓ Collecting page data in 5.7s    
+ ✓ Generating static pages (102/102) in 20.6s
+ ✓ Finalizing page optimization in 5.5s    
 
-Learn more: https://nextjs.org/docs/app/building-your-application/upgrading/codemods#remove-a-tags-from-link-components
-app\layout.tsx (32:11) @ RootLayout
-
-
-  30 |       <body className={`${inter.className} font-malayalam text-kerala-green-700`}>
-  31 |         <AuthProvider>
-> 32 |           <AppLayoutContent>{children}</AppLayoutContent>
-     |           ^
-  33 |         </AuthProvider>
-  34 |         <Toaster />
-  35 |       </body>
-Call Stack
-20
-
-createConsoleError
-file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/node_modules_next_dist_4b2403f5._.js (2196:71)
-handleConsoleError
-file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/node_modules_next_dist_4b2403f5._.js (2977:54)
-console.error
-file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/node_modules_next_dist_4b2403f5._.js (3121:57)
-errorOnce
-file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/node_modules_8736ebb2._.js (7010:21)
-LinkComponent
-file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/node_modules_8736ebb2._.js (7389:38)
-Object.react_stack_bottom_frame
-file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js (14746:24)
-renderWithHooks
-file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js (4636:24)
-updateFunctionComponent
-file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js (6091:21)
-beginWork
-file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js (6672:24)
-runWithFiberInDEV
-file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js (959:74)
-performUnitOfWork
-file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js (9487:97)
-workLoopSync
-file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js (9381:40)
-renderRootSync
-file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js (9365:13)
-performWorkOnRoot
-file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js (8993:186)
-performWorkOnRootViaSchedulerTask
-file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js (10155:9)
-MessagePort.performWorkUntilDeadline
-file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/node_modules_next_dist_compiled_a0e4c7b4._.js (2647:64)
-Navigation
-file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/_a588d6ff._.js (624:253)
-AppLayoutContentWithProgress
-file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/_a588d6ff._.js (1993:215)
-AppLayoutContent
-file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/_a588d6ff._.js (2040:221)
-RootLayout
-app\layout.tsx (32:11)
-
-2/2
-
-Next.js 16.0.0
-Turbopack
-Runtime ReferenceError
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ○ /admin
+├ ○ /admin/login
+├ ƒ /api/save-audio
+├ ƒ /api/save-badge
+├ ƒ /api/save-game-map
+├ ○ /badgesearned
+├ ○ /culture
+├ ○ /editor
+├ ○ /games
+├ ● /games/[slug]
+│ ├ /games/sound-match
+│ ├ /games/soundscape-explorer
+│ ├ /games/fruit-catch-vocabulary
+│ └ [+39 more paths]
+├ ○ /games/kootaksharam-builder
+├ ○ /learn
+├ ○ /learn/about-yourself
+├ ○ /learn/chillaksharangal
+├ ○ /learn/common-words
+├ ○ /learn/consonants
+├ ○ /learn/kootaksharangal
+├ ● /learn/kootaksharangal/[category]
+│ ├ /learn/kootaksharangal/ka
+│ ├ /learn/kootaksharangal/ga
+│ ├ /learn/kootaksharangal/nga
+│ └ [+21 more paths]
+├ ○ /learn/numbers
+├ ○ /learn/vowels
+├ ○ /learn/writing-practice
+├ ○ /play
+├ ○ /practice
+├ ○ /practice/about-yourself
+├ ○ /practice/chillaksharangal
+├ ○ /practice/common-words
+├ ○ /practice/consonants
+├ ○ /practice/handwriting
+├ ○ /practice/kootaksharangal
+├ ○ /practice/numbers
+├ ○ /practice/vowels
+├ ○ /progress
+├ ○ /progress/faq
+├ ○ /review
+└ ○ /review/all
 
 
-Card is not defined
-Call Stack
-20
+○  (Static)   prerendered as static content
+●  (SSG)      prerendered as static HTML (uses generateStaticParams)
+ƒ  (Dynamic)  server-rendered on demand
 
-WordFindGame
-file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/_4c2b7eb5._.js (489:215)
-Object.react_stack_bottom_frame
-file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js (14746:24)
-renderWithHooks
-file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js (4636:24)
-updateFunctionComponent
-file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js (6091:21)
-beginWork
-file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js (6672:24)
-runWithFiberInDEV
-file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js (959:74)
-performUnitOfWork
-file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js (9487:97)
-workLoopSync
-file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js (9381:40)
-renderRootSync
-file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js (9365:13)
-performWorkOnRoot
-file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js (9030:47)
-performSyncWorkOnRoot
-file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js (10163:9)
-flushSyncWorkAcrossRoots_impl
-file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js (10079:316)
-flushSpawnedWork
-file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js (9839:13)
-commitRoot
-file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js (9645:432)
-commitRootWhenReady
-file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js (9119:9)
-performWorkOnRoot
-file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js (9091:25)
-performWorkOnRootViaSchedulerTask
-file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js (10155:9)
-MessagePort.performWorkUntilDeadline
-file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/node_modules_next_dist_compiled_a0e4c7b4._.js (2647:64)
-GamePage
-file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/_4c2b7eb5._.js (1226:226)
-ClientPageRoot
-file:///F:/Startup%20Business/Solopreneur/eluppam/.next/dev/static/chunks/node_modules_next_dist_094231d7._.js (2202:50)
+
+> nextjs@0.1.0 postbuild
+> xcopy public\image out\image /E /I /Y
+
+public\image\apple.png
+public\image\crossword_sample.jpg
+public\image\elephant.png
+public\image\elephant1.png
+public\image\house.png
+public\image\pookalam_5.jpg
+public\image\pookalam_6.jpg
+public\image\pookalam_7.png
+public\image\scenery.jpg
+public\image\malayalam\aiease_1759323898390.jpg
+public\image\malayalam\cocotree.png
+public\image\malayalam\issue.png
+public\image\malayalam\puzzle-wordjigsaw\deer.png
+public\image\malayalam\puzzle-wordjigsaw\elephant.png
+public\image\malayalam\puzzle-wordjigsaw\monkey.png
+public\image\malayalam\puzzle-wordjigsaw\rabbit.png
+16 File(s) copied
