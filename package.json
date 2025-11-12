@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "postbuild": "mkdir -p out/image && cp -r public/image out/image",
+    "postbuild": "cp -r public/image out/image || true",
     "start": "next start",
     "lint": "next lint"
   },
