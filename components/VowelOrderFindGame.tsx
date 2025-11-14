@@ -219,9 +219,7 @@ const VowelOrderFindGame: React.FC = () => {
       setMessage(`Correct! You popped '${clickedBalloon.vowel.malayalam}'.`);
       setCorrectlyPopped(prev => [...prev, clickedBalloon.vowel]);
 
-      setPlayBalloons(prev => prev.map(b =>
-        b.id === clickedBalloon.id ? { ...b, popped: true } : b
-      ));
+      setPlayBalloons(prev => prev.filter(b => b.id !== clickedBalloon.id));
 
       const nextIndex = currentLearnVowelIndex + 1;
       if (nextIndex < MALAYALAM_VOWELS.length) {
@@ -237,7 +235,7 @@ const VowelOrderFindGame: React.FC = () => {
   }, [currentLearnVowelIndex, playModeStarted, playAudio, gameOver]);
 
   return (
-    <div className="relative flex flex-col items-center min-h-screen bg-marigold-400 p-4 overflow-hidden">
+    <div className="relative flex flex-col items-center h-full bg-marigold-400 p-4 overflow-hidden">
       <h1 className="text-5xl font-extrabold text-white mb-6 drop-shadow-lg">Vowel Order Find</h1>
       <p className="text-xl text-white mb-4">{message}</p>
 
@@ -307,7 +305,6 @@ const VowelOrderFindGame: React.FC = () => {
             <Cloud style={{ top: '75%', left: '10%' }} scale={1.5} />
             <Cloud style={{ top: '85%', left: '80%' }} scale={1} />
             {playBalloons.map(balloon => (
-              !balloon.popped &&
               <div key={balloon.id} className="absolute" style={{ left: balloon.x, top: balloon.y }}>
                 <div className="relative">
                   <button
