@@ -547,7 +547,7 @@ const ConsonantFlowerBloomGame = () => {
   }, [gameState, projectile, drawGame, updateProjectile]);
   
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-green-100 to-green-300 p-4">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-green-100 to-green-300 p-4 touch-none">
       <div className="bg-gradient-to-b from-yellow-100 to-green-200 rounded-lg shadow-2xl p-6 max-w-4xl w-full border-4 border-green-600">
         <div className="flex items-center justify-between mb-4">
           <h1 className="text-3xl font-bold text-green-800 drop-shadow-lg">🌸 Garden Bloom Game 🌸</h1>

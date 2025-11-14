@@ -536,7 +536,7 @@ const ConsonantArrowGame = () => {
 
       return (
 
-        <div ref={gameContainerRef} className="flex flex-col items-center justify-center bg-gradient-to-b from-blue-100 to-blue-200 p-4 min-h-[calc(40vh-3.375rem)] relative">
+        <div ref={gameContainerRef} className="flex flex-col items-center justify-center bg-gradient-to-b from-blue-100 to-blue-200 p-4 min-h-[calc(40vh-3.375rem)] relative touch-none">
 
           <div ref={innerContainerRef} className="bg-white rounded-lg shadow-2xl p-6 max-w-4xl w-full overflow-hidden">
 

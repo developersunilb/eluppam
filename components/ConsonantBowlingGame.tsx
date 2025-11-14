@@ -441,7 +441,7 @@ const ConsonantBowlingGame = () => {
   }, [gameState, dragCurrent, bowlingBall, hitConsonants, targetConsonant, canvasSize, drawGame, updateBowlingBall]);
 
   return (
-    <div ref={gameContainerRef} className="flex flex-col items-center justify-center bg-gradient-to-b from-marigold-200 to-marigold-400 p-4 min-h-[calc(40vh-3.375rem)] relative">
+    <div ref={gameContainerRef} className="flex flex-col items-center justify-center bg-gradient-to-b from-marigold-200 to-marigold-400 p-4 min-h-[calc(40vh-3.375rem)] relative touch-none">
       <div ref={innerContainerRef} className="bg-green-800 rounded-lg shadow-2xl p-6 max-w-4xl w-full overflow-hidden">
         <div className="flex items-center justify-between mb-4">
           <h1 className="text-3xl font-bold text-white">Consonant Bowling</h1>
