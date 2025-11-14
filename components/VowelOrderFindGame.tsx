@@ -157,12 +157,7 @@ const VowelOrderFindGame: React.FC = () => {
         const playAreaWidth = playAreaRef.current.offsetWidth;
         const playAreaHeight = playAreaRef.current.offsetHeight;
         
-        let balloonSize = 80;
-        if (window.innerWidth < 768) {
-            balloonSize = 60;
-        } else if (window.innerWidth < 1024) {
-            balloonSize = 70;
-        }
+        const balloonSize = Math.min(playAreaWidth / 10, playAreaHeight / 5);
 
         const balloons: Balloon[] = [];
 
@@ -265,10 +260,11 @@ const VowelOrderFindGame: React.FC = () => {
             <Cloud style={{ top: '60%', left: '90%' }} scale={0.9} />
             <div className="flex flex-wrap justify-center items-center gap-4 relative z-10">
                 {learnBalloons.map(balloon => (
+                    !balloon.popped &&
                     <div key={balloon.id} className="relative">
                         <button
                             className={`w-16 h-20 rounded-[50%] flex items-center justify-center text-white text-3xl font-bold shadow-lg transition-all duration-200
-                            ${balloon.popped ? 'opacity-0 scale-0' : balloon.disabled ? 'bg-gray-500 opacity-50 cursor-not-allowed' : `${balloon.color} hover:${balloon.color.replace('-500', '-600')}`}
+                            ${balloon.disabled ? 'bg-gray-500 opacity-50 cursor-not-allowed' : `${balloon.color} hover:${balloon.color.replace('-500', '-600')}`}
                             `}
                             onClick={() => handleLearnBalloonClick(balloon)}
                             disabled={balloon.disabled || balloon.popped}
@@ -276,7 +272,7 @@ const VowelOrderFindGame: React.FC = () => {
                             {balloon.vowel.malayalam}
                         </button>
                         <div
-                            className={`absolute left-1/2 -translate-x-1/2 bottom-[-4px] w-3 h-3 ${balloon.disabled ? 'bg-gray-500 opacity-50' : balloon.color} transform rotate-45 transition-all duration-200 ${balloon.popped ? 'opacity-0 scale-0' : ''}`}
+                            className={`absolute left-1/2 -translate-x-1/2 bottom-[-4px] w-3 h-3 ${balloon.disabled ? 'bg-gray-500 opacity-50' : balloon.color} transform rotate-45 transition-all duration-200`}
                         ></div>
                     </div>
                 ))}
@@ -303,27 +299,28 @@ const VowelOrderFindGame: React.FC = () => {
       )}
 
       {playModeStarted && (
-        <div className="flex flex-col md:flex-row items-start w-full gap-4">
-          <div ref={playAreaRef} className="relative w-full md:w-8/12 h-96 md:h-auto md:aspect-[4/3] bg-gradient-to-b from-sky-300 to-sky-500 rounded-lg p-4 overflow-hidden">
+        <div className="flex flex-col md:flex-row items-start w-full gap-4 flex-grow">
+          <div ref={playAreaRef} className="relative w-full h-full bg-gradient-to-b from-sky-300 to-sky-500 rounded-lg p-4 overflow-hidden">
             <Cloud style={{ top: '10%', left: '15%' }} scale={1} />
             <Cloud style={{ top: '20%', left: '70%' }} scale={1.2} />
             <Cloud style={{ top: '50%', left: '40%' }} scale={0.8} />
             <Cloud style={{ top: '75%', left: '10%' }} scale={1.5} />
             <Cloud style={{ top: '85%', left: '80%' }} scale={1} />
             {playBalloons.map(balloon => (
+              !balloon.popped &&
               <div key={balloon.id} className="absolute" style={{ left: balloon.x, top: balloon.y }}>
                 <div className="relative">
                   <button
                     className={`w-10 h-12 text-xl md:w-12 md:h-16 md:text-2xl lg:w-16 lg:h-20 lg:text-3xl rounded-[50%] flex items-center justify-center text-white font-bold shadow-lg transition-all duration-200
-                      ${balloon.popped ? 'opacity-0 scale-0' : `${balloon.color} hover:${balloon.color.replace('-500', '-600')}`}
+                      ${`${balloon.color} hover:${balloon.color.replace('-500', '-600')}`}
                     `}
                     onClick={() => handlePlayBalloonClick(balloon)}
-                    disabled={balloon.popped || gameOver}
+                    disabled={gameOver}
                   >
                     {balloon.vowel.malayalam}
                   </button>
                   <div
-                    className={`absolute left-1/2 -translate-x-1/2 bottom-[-4px] w-2 h-2 md:w-3 md:h-3 ${balloon.color} transform rotate-45 transition-all duration-200 ${balloon.popped ? 'opacity-0 scale-0' : ''}`}
+                    className={`absolute left-1/2 -translate-x-1/2 bottom-[-4px] w-2 h-2 md:w-3 md:h-3 ${balloon.color} transform rotate-45 transition-all duration-200`}
                   ></div>
                 </div>
               </div>
