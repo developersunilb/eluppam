@@ -152,59 +152,66 @@ const VowelOrderFindGame: React.FC = () => {
   }, [startPlayMode]);
 
   useEffect(() => {
-    if (playModeStarted && playAreaRef.current) {
-      const playAreaWidth = playAreaRef.current.offsetWidth;
-      const playAreaHeight = playAreaRef.current.offsetHeight;
-      
-      let balloonSize = 80;
-      if (window.innerWidth < 768) {
-          balloonSize = 60;
-      } else if (window.innerWidth < 1024) {
-          balloonSize = 70;
-      }
-
-      const balloons: Balloon[] = [];
-
-      const isColliding = (newBalloon: Balloon, existingBalloons: Balloon[]) => {
-        for (const existing of existingBalloons) {
-          const dx = newBalloon.x - existing.x;
-          const dy = newBalloon.y - existing.y;
-          const distance = Math.sqrt(dx * dx + dy * dy);
-          if (distance < balloonSize) {
-            return true;
-          }
+    const resizePlayArea = () => {
+      if (playModeStarted && playAreaRef.current) {
+        const playAreaWidth = playAreaRef.current.offsetWidth;
+        const playAreaHeight = playAreaRef.current.offsetHeight;
+        
+        let balloonSize = 80;
+        if (window.innerWidth < 768) {
+            balloonSize = 60;
+        } else if (window.innerWidth < 1024) {
+            balloonSize = 70;
         }
-        return false;
-      };
 
-      const shuffledVowels = [...MALAYALAM_VOWELS].sort(() => Math.random() - 0.5);
+        const balloons: Balloon[] = [];
 
-      shuffledVowels.forEach((vowel, index) => {
-        let newBalloon: Balloon;
-        let collision = true;
-        let attempts = 0;
+        const isColliding = (newBalloon: Balloon, existingBalloons: Balloon[]) => {
+          for (const existing of existingBalloons) {
+            const dx = newBalloon.x - existing.x;
+            const dy = newBalloon.y - existing.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            if (distance < balloonSize) {
+              return true;
+            }
+          }
+          return false;
+        };
 
-        do {
-          newBalloon = {
-            id: `${vowel.id}-${Date.now()}-${index}`,
-            vowel: vowel,
-            x: Math.random() * (playAreaWidth - balloonSize),
-            y: Math.random() * (playAreaHeight - balloonSize),
-            disabled: false,
-            popped: false,
-            color: BALLOON_COLORS[Math.floor(Math.random() * BALLOON_COLORS.length)],
-          };
-          collision = isColliding(newBalloon, balloons);
-          attempts++;
-        } while (collision && attempts < 100); // Limit attempts to prevent infinite loops
+        const shuffledVowels = [...MALAYALAM_VOWELS].sort(() => Math.random() - 0.5);
 
-        balloons.push(newBalloon);
-      });
+        shuffledVowels.forEach((vowel, index) => {
+          let newBalloon: Balloon;
+          let collision = true;
+          let attempts = 0;
 
-      setPlayBalloons(balloons);
-      setMessage('Pop the vowels in correct Malayalam order!');
-      setCurrentLearnVowelIndex(0);
-    }
+          do {
+            newBalloon = {
+              id: `${vowel.id}-${Date.now()}-${index}`,
+              vowel: vowel,
+              x: Math.random() * (playAreaWidth - balloonSize),
+              y: Math.random() * (playAreaHeight - balloonSize),
+              disabled: false,
+              popped: false,
+              color: BALLOON_COLORS[Math.floor(Math.random() * BALLOON_COLORS.length)],
+            };
+            collision = isColliding(newBalloon, balloons);
+            attempts++;
+          } while (collision && attempts < 100); // Limit attempts to prevent infinite loops
+
+          balloons.push(newBalloon);
+        });
+
+        setPlayBalloons(balloons);
+        setMessage('Pop the vowels in correct Malayalam order!');
+        setCurrentLearnVowelIndex(0);
+      }
+    };
+
+    resizePlayArea();
+
+    window.addEventListener('resize', resizePlayArea);
+    return () => window.removeEventListener('resize', resizePlayArea);
   }, [playModeStarted]);
 
   const handlePlayBalloonClick = useCallback((clickedBalloon: Balloon) => {
@@ -296,8 +303,8 @@ const VowelOrderFindGame: React.FC = () => {
       )}
 
       {playModeStarted && (
-        <div className="flex flex-row items-start w-full gap-4">
-          <div ref={playAreaRef} className="relative w-8/12 h-[30rem] md:h-[35rem] lg:h-[40rem] bg-gradient-to-b from-sky-300 to-sky-500 rounded-lg p-4 overflow-hidden">
+        <div className="flex flex-col md:flex-row items-start w-full gap-4">
+          <div ref={playAreaRef} className="relative w-full md:w-8/12 h-96 md:h-auto md:aspect-[4/3] bg-gradient-to-b from-sky-300 to-sky-500 rounded-lg p-4 overflow-hidden">
             <Cloud style={{ top: '10%', left: '15%' }} scale={1} />
             <Cloud style={{ top: '20%', left: '70%' }} scale={1.2} />
             <Cloud style={{ top: '50%', left: '40%' }} scale={0.8} />
@@ -322,7 +329,7 @@ const VowelOrderFindGame: React.FC = () => {
               </div>
             ))}
           </div>
-          <div className="flex flex-col w-4/12 gap-4">
+          <div className="flex flex-col w-full md:w-4/12 gap-4">
             <div className="w-full bg-gray-100 p-4 rounded-lg shadow-inner">
               <h3 className="text-lg font-bold mb-2">Correctly Popped</h3>
               <div className="flex flex-wrap gap-2">
