@@ -132,7 +132,7 @@ const FruitCatchVocabularyGame: React.FC = () => {
   };
 
   return (
-    <div className="relative flex flex-col items-center justify-between min-h-screen bg-gradient-to-br from-cream-50 to-marigold-50 p-4 overflow-hidden touch-none">
+    <div className="relative flex flex-col items-center justify-between min-h-screen bg-gradient-to-br from-cream-50 to-marigold-50 p-4 overflow-hidden">
       <h1 className="text-5xl font-extrabold text-kerala-green-700 mb-4 drop-shadow-lg">Fruit Catch Vocabulary</h1>
       <div className="flex justify-between w-full max-w-4xl px-4">
         <p className="text-xl text-kerala-green-800">Score: {score}</p>

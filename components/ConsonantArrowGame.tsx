@@ -336,36 +336,46 @@ const ConsonantArrowGame = () => {
     }
   }, [gameState, dragStart, dragCurrent, arrow, drawCloud, getConsonantPositions, drawParrot, drawBow, drawTrajectory, drawArrow]);
 
-  const handleMouseDown = (e: React.MouseEvent) => {
-    if (gameState !== 'ready') return;
-
+  const getEventCoordinates = (e: React.MouseEvent | React.TouchEvent) => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
+    if (!canvas) return null;
     const rect = canvas.getBoundingClientRect();
     const scaleX = canvas.width / 800;
     const scaleY = canvas.height / 600;
-    const x = (e.clientX - rect.left) / scaleX;
-    const y = (e.clientY - rect.top) / scaleY;
 
-    const dist = Math.sqrt((x - parrotPos.x) ** 2 + (y - parrotPos.y) ** 2);
-    if (dist < 80 * scaleX) {
-      setDragStart({ x, y });
+    let clientX, clientY;
+    if ('touches' in e) {
+      if (e.touches.length === 0) return null;
+      clientX = e.touches[0].clientX;
+      clientY = e.touches[0].clientY;
+    } else {
+      clientX = e.clientX;
+      clientY = e.clientY;
+    }
+
+    return {
+      x: (clientX - rect.left) / scaleX,
+      y: (clientY - rect.top) / scaleY,
+    };
+  };
+
+  const handleMouseDown = (e: React.MouseEvent | React.TouchEvent) => {
+    if (gameState !== 'ready') return;
+    const coords = getEventCoordinates(e);
+    if (!coords) return;
+
+    const dist = Math.sqrt((coords.x - parrotPos.x) ** 2 + (coords.y - parrotPos.y) ** 2);
+    if (dist < 80) {
+      setDragStart(coords);
       setGameState('aiming');
     }
   };
 
-  const handleMouseMove = (e: React.MouseEvent) => {
+  const handleMouseMove = (e: React.MouseEvent | React.TouchEvent) => {
     if (gameState !== 'aiming') return;
-
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const rect = canvas.getBoundingClientRect();
-    const scaleX = canvas.width / 800;
-    const scaleY = canvas.height / 600;
-    const x = (e.clientX - rect.left) / scaleX;
-    const y = (e.clientY - rect.top) / scaleY;
-
-    setDragCurrent({ x, y });
+    const coords = getEventCoordinates(e);
+    if (!coords) return;
+    setDragCurrent(coords);
   };
 
   const handleMouseUp = () => {
@@ -395,6 +405,20 @@ const ConsonantArrowGame = () => {
     setDragStart(null);
     setDragCurrent(null);
   };
+
+  useEffect(() => {
+    const preventScroll = (e: TouchEvent) => {
+      if (gameState === 'aiming') {
+        e.preventDefault();
+      }
+    };
+
+    document.addEventListener('touchmove', preventScroll, { passive: false });
+
+    return () => {
+      document.removeEventListener('touchmove', preventScroll);
+    };
+  }, [gameState]);
 
   const updateArrow = useCallback(() => {
     if (!arrow) return;
@@ -536,7 +560,7 @@ const ConsonantArrowGame = () => {
 
       return (
 
-        <div ref={gameContainerRef} className="flex flex-col items-center justify-center bg-gradient-to-b from-blue-100 to-blue-200 p-4 min-h-[calc(40vh-3.375rem)] relative touch-none">
+        <div ref={gameContainerRef} className="flex flex-col items-center justify-center bg-gradient-to-b from-blue-100 to-blue-200 p-4 min-h-[calc(40vh-3.375rem)] relative">
 
           <div ref={innerContainerRef} className="bg-white rounded-lg shadow-2xl p-6 max-w-4xl w-full overflow-hidden">
 
@@ -587,12 +611,12 @@ const ConsonantArrowGame = () => {
               className="border-4 border-blue-300 rounded-lg cursor-crosshair"
 
               onMouseDown={handleMouseDown}
-
               onMouseMove={handleMouseMove}
-
               onMouseUp={handleMouseUp}
-
               onMouseLeave={handleMouseUp}
+              onTouchStart={handleMouseDown}
+              onTouchMove={handleMouseMove}
+              onTouchEnd={handleMouseUp}
 
             />
 

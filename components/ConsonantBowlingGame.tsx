@@ -255,33 +255,45 @@ const ConsonantBowlingGame = () => {
     }
   };
 
-  const handleMouseDown = (e: React.MouseEvent) => {
-    if (gameState !== 'ready') return;
-
+  const getEventCoordinates = (e: React.MouseEvent | React.TouchEvent) => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
+    if (!canvas) return null;
     const rect = canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
 
-    const dist = Math.sqrt((x - ballStartPosition.x) ** 2 + (y - ballStartPosition.y) ** 2);
+    let clientX, clientY;
+    if ('touches' in e) {
+      if (e.touches.length === 0) return null;
+      clientX = e.touches[0].clientX;
+      clientY = e.touches[0].clientY;
+    } else {
+      clientX = e.clientX;
+      clientY = e.clientY;
+    }
+
+    return {
+      x: clientX - rect.left,
+      y: clientY - rect.top,
+    };
+  };
+
+  const handleMouseDown = (e: React.MouseEvent | React.TouchEvent) => {
+    if (gameState !== 'ready') return;
+    const coords = getEventCoordinates(e);
+    if (!coords) return;
+
+    const dist = Math.sqrt((coords.x - ballStartPosition.x) ** 2 + (coords.y - ballStartPosition.y) ** 2);
     if (dist < 40) {
       setDragStart({ x: ballStartPosition.x, y: ballStartPosition.y });
-      setDragCurrent({ x, y });
+      setDragCurrent(coords);
       setGameState('aiming');
     }
   };
 
-  const handleMouseMove = (e: React.MouseEvent) => {
+  const handleMouseMove = (e: React.MouseEvent | React.TouchEvent) => {
     if (gameState !== 'aiming' || !dragStart) return;
-
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const rect = canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-
-    setDragCurrent({ x, y });
+    const coords = getEventCoordinates(e);
+    if (!coords) return;
+    setDragCurrent(coords);
   };
 
   const handleMouseUp = () => {
@@ -306,6 +318,20 @@ const ConsonantBowlingGame = () => {
     setDragStart(null);
     setDragCurrent(null);
   };
+
+  useEffect(() => {
+    const preventScroll = (e: TouchEvent) => {
+      if (gameState === 'aiming') {
+        e.preventDefault();
+      }
+    };
+
+    document.addEventListener('touchmove', preventScroll, { passive: false });
+
+    return () => {
+      document.removeEventListener('touchmove', preventScroll);
+    };
+  }, [gameState]);
 
   const updateBowlingBall = () => {
     if (!bowlingBall) return;
@@ -441,7 +467,7 @@ const ConsonantBowlingGame = () => {
   }, [gameState, dragCurrent, bowlingBall, hitConsonants, targetConsonant, canvasSize, drawGame, updateBowlingBall]);
 
   return (
-    <div ref={gameContainerRef} className="flex flex-col items-center justify-center bg-gradient-to-b from-marigold-200 to-marigold-400 p-4 min-h-[calc(40vh-3.375rem)] relative touch-none">
+    <div ref={gameContainerRef} className="flex flex-col items-center justify-center bg-gradient-to-b from-marigold-200 to-marigold-400 p-4 min-h-[calc(40vh-3.375rem)] relative">
       <div ref={innerContainerRef} className="bg-green-800 rounded-lg shadow-2xl p-6 max-w-4xl w-full overflow-hidden">
         <div className="flex items-center justify-between mb-4">
           <h1 className="text-3xl font-bold text-white">Consonant Bowling</h1>
@@ -470,6 +496,9 @@ const ConsonantBowlingGame = () => {
           onMouseMove={handleMouseMove}
           onMouseUp={handleMouseUp}
           onMouseLeave={handleMouseUp}
+          onTouchStart={handleMouseDown}
+          onTouchMove={handleMouseMove}
+          onTouchEnd={handleMouseUp}
         />
 
         <div className="mt-4 text-center text-gray-300">

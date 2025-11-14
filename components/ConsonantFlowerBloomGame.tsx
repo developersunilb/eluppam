@@ -398,32 +398,47 @@ const ConsonantFlowerBloomGame = () => {
     });
   }, [setHitBuds, setScore, setProjectile, setBees, bloomFlower]);
 
-  const handleMouseDown = useCallback((e: React.MouseEvent<HTMLCanvasElement>) => {
+  const getEventCoordinates = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return null;
+    const rect = canvas.getBoundingClientRect();
+
+    let clientX, clientY;
+    if ('touches' in e) {
+      if (e.touches.length === 0) return null;
+      clientX = e.touches[0].clientX;
+      clientY = e.touches[0].clientY;
+    } else {
+      clientX = e.clientX;
+      clientY = e.clientY;
+    }
+
+    return {
+      x: clientX - rect.left,
+      y: clientY - rect.top,
+    };
+  };
+
+  const handleMouseDown = useCallback((e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
     if (gameState !== 'ready') return;
     
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const rect = canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
+    const coords = getEventCoordinates(e);
+    if (!coords) return;
     
-    const dist = Math.sqrt((x - shooterPos.x) ** 2 + (y - shooterPos.y) ** 2);
+    const dist = Math.sqrt((coords.x - shooterPos.x) ** 2 + (coords.y - shooterPos.y) ** 2);
     if (dist < 50) {
-      setDragStart({ x, y });
+      setDragStart(coords);
       setGameState('aiming');
     }
   }, [gameState, shooterPos]);
   
-  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLCanvasElement>) => {
+  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
     if (gameState !== 'aiming') return;
     
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const rect = canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
+    const coords = getEventCoordinates(e);
+    if (!coords) return;
     
-    setDragCurrent({ x, y });
+    setDragCurrent(coords);
   }, [gameState]);
   
   const handleMouseUp = useCallback(() => {
@@ -448,6 +463,20 @@ const ConsonantFlowerBloomGame = () => {
     setDragStart(null);
     setDragCurrent(null);
   }, [gameState, dragStart, dragCurrent, shooterPos]);
+
+  useEffect(() => {
+    const preventScroll = (e: TouchEvent) => {
+      if (gameState === 'aiming') {
+        e.preventDefault();
+      }
+    };
+
+    document.addEventListener('touchmove', preventScroll, { passive: false });
+
+    return () => {
+      document.removeEventListener('touchmove', preventScroll);
+    };
+  }, [gameState]);
 
   const updateProjectile = useCallback(() => {
     if (!projectile) return;
@@ -547,7 +576,7 @@ const ConsonantFlowerBloomGame = () => {
   }, [gameState, projectile, drawGame, updateProjectile]);
   
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-green-100 to-green-300 p-4 touch-none">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-green-100 to-green-300 p-4">
       <div className="bg-gradient-to-b from-yellow-100 to-green-200 rounded-lg shadow-2xl p-6 max-w-4xl w-full border-4 border-green-600">
         <div className="flex items-center justify-between mb-4">
           <h1 className="text-3xl font-bold text-green-800 drop-shadow-lg">🌸 Garden Bloom Game 🌸</h1>
@@ -576,6 +605,9 @@ const ConsonantFlowerBloomGame = () => {
           onMouseMove={handleMouseMove}
           onMouseUp={handleMouseUp}
           onMouseLeave={handleMouseUp}
+          onTouchStart={handleMouseDown}
+          onTouchMove={handleMouseMove}
+          onTouchEnd={handleMouseUp}
         />
         
         <div className="mt-4 text-center text-green-800">
