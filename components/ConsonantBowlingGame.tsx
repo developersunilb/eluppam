@@ -40,10 +40,10 @@ const ConsonantBowlingGame = () => {
   const [canvasSize, setCanvasSize] = useState({ width: 800, height: 600 });
   const gameContainerRef = useRef<HTMLDivElement>(null);
   const innerContainerRef = useRef<HTMLDivElement>(null);
+  const canvasWrapperRef = useRef<HTMLDivElement>(null);
   const bowlingPinImageRef = useRef<HTMLImageElement | null>(null);
 
   const [shuffledConsonants, setShuffledConsonants] = useState<string[]>([]);
-  const ballStartPosition = { x: 400, y: 550 };
 
   const router = useRouter();
 
@@ -61,7 +61,7 @@ const ConsonantBowlingGame = () => {
    * @param {string[]} allConsonants - The array of all consonants.
    * @param {string[]} currentHitConsonants - The array of consonants that have already been knocked down.
    */
-  const selectNewTarget = (allConsonants: string[], currentHitConsonants: string[]) => {
+  const selectNewTarget = useCallback((allConsonants: string[], currentHitConsonants: string[]) => {
     const availableConsonants = allConsonants.filter((c: string) => !currentHitConsonants.includes(c));
 
     // If all consonants have been knocked down, set the feedback to 'Level Complete'
@@ -73,14 +73,16 @@ const ConsonantBowlingGame = () => {
       setTargetConsonant(newTarget);
       setFeedback(`Knock down the pin with: ${newTarget}`);
     }
-  };
+  }, []);
 
-  const getPinPositions = (scaleX: number, scaleY: number) => {
+  const getPinPositions = useCallback(() => {
     const positions: ConsonantPosition[] = [];
-    const pinSpacingX = 60 * scaleX;
+    if (canvasSize.width === 0) return positions;
+
+    const pinSpacingX = canvasSize.width * (60 / 800);
     const totalWidth = pinSpacingX * (shuffledConsonants.length - 1);
     const startX = (canvasSize.width - totalWidth) / 2;
-    const startY = 100 * scaleY; // Moved down from 50
+    const startY = canvasSize.height * (100 / 600);
 
     shuffledConsonants.forEach((letter, i) => {
         positions.push({ 
@@ -92,7 +94,7 @@ const ConsonantBowlingGame = () => {
     });
 
     return positions;
-  };
+  }, [canvasSize.width, canvasSize.height, shuffledConsonants, hitConsonants]);
 
   /**
    * Draws the bowling alley on the canvas.
@@ -180,32 +182,35 @@ const ConsonantBowlingGame = () => {
 
     const pinImage = bowlingPinImageRef.current;
     if (pinImage) {
-      const pinWidth = 70; // Increased size
-      const pinHeight = 105; // Increased size
+      const pinWidth = canvasSize.width * (70 / 800);
+      const pinHeight = canvasSize.height * (105 / 600);
       ctx.drawImage(pinImage, x - pinWidth / 2, y - pinHeight / 2, pinWidth, pinHeight);
     }
 
     // Letter
     ctx.fillStyle = 'black';
-    ctx.font = 'bold 20px Arial';
+    const fontSize = canvasSize.width * (20 / 800);
+    ctx.font = `bold ${fontSize}px Arial`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText(letter, x, y - 60); // Shifted to top of the pin
+    ctx.fillText(letter, x, y - (canvasSize.height * (60 / 600)));
   }
   
   const drawBowlingBall = (ctx: CanvasRenderingContext2D, x: number, y: number) => {
     ctx.fillStyle = 'black';
     ctx.beginPath();
-    ctx.arc(x, y, 20, 0, Math.PI * 2);
+    const radius = canvasSize.width * (20 / 800);
+    ctx.arc(x, y, radius, 0, Math.PI * 2);
     ctx.fill();
   };
 
-  const drawTrajectory = useCallback((ctx: CanvasRenderingContext2D, scaleX: number, scaleY: number) => {
+  const drawTrajectory = useCallback((ctx: CanvasRenderingContext2D) => {
     if (!dragStart || !dragCurrent) return;
     
     const dx = dragStart.x - dragCurrent.x;
     const dy = dragStart.y - dragCurrent.y;
-    const power = Math.min(Math.sqrt(dx * dx + dy * dy) / 50, 3);
+    const powerDivisor = canvasSize.width > 0 ? canvasSize.width * (50 / 800) : 50;
+    const power = Math.min(Math.sqrt(dx * dx + dy * dy) / powerDivisor, 3);
 
     const vx = dx * power;
     const vy = dy * power;
@@ -225,27 +230,26 @@ const ConsonantBowlingGame = () => {
 
     ctx.stroke();
     ctx.setLineDash([]);
-  }, [dragStart, dragCurrent]);
+  }, [dragStart, dragCurrent, canvasSize.width]);
 
-  const drawGame = (ctx: CanvasRenderingContext2D, width: number, height: number) => {
+  const drawGame = useCallback((ctx: CanvasRenderingContext2D, width: number, height: number) => {
     ctx.clearRect(0, 0, width, height);
-
-    const scaleX = width / 800;
-    const scaleY = height / 600;
 
     drawBowlingAlley(ctx, width, height);
 
-    const positions = getPinPositions(scaleX, scaleY);
+    const positions = getPinPositions();
     positions.forEach((pos: ConsonantPosition) => {
       drawPin(ctx, pos.x, pos.y, pos.letter, pos.hit);
     });
 
     if (gameState === 'ready' || gameState === 'aiming') {
-        drawBowlingBall(ctx, ballStartPosition.x * scaleX, ballStartPosition.y * scaleY);
+        const ballX = width * (400 / 800);
+        const ballY = height * (550 / 600);
+        drawBowlingBall(ctx, ballX, ballY);
     }
 
     if (gameState === 'aiming' && dragStart && dragCurrent) {
-      drawTrajectory(ctx, scaleX, scaleY);
+      drawTrajectory(ctx);
       // Draw the ball being pulled back
       drawBowlingBall(ctx, dragCurrent.x, dragCurrent.y);
     }
@@ -253,7 +257,7 @@ const ConsonantBowlingGame = () => {
     if (bowlingBall && gameState === 'shooting') {
       drawBowlingBall(ctx, bowlingBall.x, bowlingBall.y);
     }
-  };
+  }, [gameState, dragStart, dragCurrent, bowlingBall, getPinPositions, drawTrajectory]);
 
   const getEventCoordinates = (e: React.MouseEvent | React.TouchEvent) => {
     const canvas = canvasRef.current;
@@ -281,9 +285,14 @@ const ConsonantBowlingGame = () => {
     const coords = getEventCoordinates(e);
     if (!coords) return;
 
-    const dist = Math.sqrt((coords.x - ballStartPosition.x) ** 2 + (coords.y - ballStartPosition.y) ** 2);
-    if (dist < 40) {
-      setDragStart({ x: ballStartPosition.x, y: ballStartPosition.y });
+    const ballX = canvasSize.width * (400 / 800);
+    const ballY = canvasSize.height * (550 / 600);
+    const radius = canvasSize.width * (20 / 800);
+    const clickRadius = radius * 2;
+
+    const dist = Math.sqrt((coords.x - ballX) ** 2 + (coords.y - ballY) ** 2);
+    if (dist < clickRadius) {
+      setDragStart({ x: ballX, y: ballY });
       setDragCurrent(coords);
       setGameState('aiming');
     }
@@ -301,7 +310,8 @@ const ConsonantBowlingGame = () => {
 
     const dx = dragStart.x - dragCurrent.x;
     const dy = dragStart.y - dragCurrent.y;
-    const power = Math.min(Math.sqrt(dx * dx + dy * dy) / 50, 3);
+    const powerDivisor = canvasSize.width > 0 ? canvasSize.width * (50 / 800) : 50;
+    const power = Math.min(Math.sqrt(dx * dx + dy * dy) / powerDivisor, 3);
 
     const vx = dx * power;
     const vy = dy * power;
@@ -333,26 +343,27 @@ const ConsonantBowlingGame = () => {
     };
   }, [gameState]);
 
-  const updateBowlingBall = () => {
+  const updateBowlingBall = useCallback(() => {
     if (!bowlingBall) return;
 
     const newTime = bowlingBall.time + 1;
     const newX = bowlingBall.x + bowlingBall.vx * 0.2;
     const newY = bowlingBall.y + bowlingBall.vy * 0.2;
 
-    const positions = getPinPositions(1, 1);
+    const positions = getPinPositions();
     for (const pos of positions) {
       if (!pos.hit) {
+        const collisionDist = canvasSize.width * (35 / 800);
         const dist = Math.sqrt((newX - pos.x) ** 2 + (newY - pos.y) ** 2);
-        if (dist < 35) {
+        if (dist < collisionDist) {
           if (pos.letter === targetConsonant) {
             const newHitConsonants = [...hitConsonants, pos.letter];
             setHitConsonants(newHitConsonants);
-            setScore((prev: number) => prev + 10);
+            setScore((prev) => prev + 10);
             setFeedback('🎳 Strike! Perfect hit!');
             setBowlingBall(null);
             setTimeout(() => {
-              const available = consonants.filter((c: string) => !newHitConsonants.includes(c));
+              const available = consonants.filter((c) => !newHitConsonants.includes(c));
               if (available.length > 0) {
                 selectNewTarget(consonants, newHitConsonants);
                 setGameState('ready');
@@ -381,13 +392,16 @@ const ConsonantBowlingGame = () => {
       return;
     }
 
-    setBowlingBall({
-      ...bowlingBall,
-      x: newX,
-      y: newY,
-      time: newTime
+    setBowlingBall((prev) => {
+      if (!prev) return null;
+      return {
+        ...prev,
+        x: newX,
+        y: newY,
+        time: newTime
+      }
     });
-  };
+  }, [bowlingBall, getPinPositions, canvasSize.width, targetConsonant, hitConsonants, selectNewTarget]);
 
   useEffect(() => {
     if (hitConsonants.length === consonants.length) {
@@ -437,12 +451,9 @@ const ConsonantBowlingGame = () => {
 
   useEffect(() => {
     const handleResize = () => {
-      if (innerContainerRef.current) {
-        const containerWidth = innerContainerRef.current.clientWidth;
-        const availableWidth = containerWidth - (2 * 24) - (2 * 4);
-        const newCanvasWidth = Math.max(0, availableWidth);
-        const newCanvasHeight = (newCanvasWidth / 4) * 3;
-        setCanvasSize({ width: newCanvasWidth, height: newCanvasHeight });
+      if (canvasWrapperRef.current) {
+        const { clientWidth, clientHeight } = canvasWrapperRef.current;
+        setCanvasSize({ width: clientWidth, height: clientHeight });
       }
     };
 
@@ -467,43 +478,45 @@ const ConsonantBowlingGame = () => {
   }, [gameState, dragCurrent, bowlingBall, hitConsonants, targetConsonant, canvasSize, drawGame, updateBowlingBall]);
 
   return (
-    <div ref={gameContainerRef} className="flex flex-col items-center justify-center bg-gradient-to-b from-marigold-200 to-marigold-400 p-4 min-h-[calc(40vh-3.375rem)] relative">
-      <div ref={innerContainerRef} className="bg-green-800 rounded-lg shadow-2xl p-6 max-w-4xl w-full overflow-hidden">
-        <div className="flex items-center justify-between mb-4">
-          <h1 className="text-3xl font-bold text-white">Consonant Bowling</h1>
-          <div className="flex gap-4">
-            <div className="bg-marigold-300 px-4 py-2 rounded-lg">
+    <div ref={gameContainerRef} className="w-full h-screen bg-gradient-to-b from-marigold-200 to-marigold-400 flex items-center justify-center p-4">
+      <div ref={innerContainerRef} className="bg-green-800 rounded-lg shadow-2xl p-6 w-full max-w-4xl h-full flex flex-col">
+        <div className="flex items-center justify-between mb-4 flex-shrink-0">
+          <h1 className="text-2xl md:text-3xl font-bold text-white">Consonant Bowling</h1>
+          <div className="flex gap-2 md:gap-4">
+            <div className="bg-marigold-300 px-3 py-1 md:px-4 md:py-2 rounded-lg text-sm md:text-base">
               <span className="font-semibold">Level: {level}</span>
             </div>
-            <div className="bg-green-300 px-4 py-2 rounded-lg">
+            <div className="bg-green-300 px-3 py-1 md:px-4 md:py-2 rounded-lg text-sm md:text-base">
               <span className="font-semibold">Score: {score}</span>
             </div>
           </div>
         </div>
 
-        <div className="mb-4 text-center">
-          <div className="text-xl font-semibold text-white bg-marigold-500 py-3 px-6 rounded-lg inline-block">
+        <div className="mb-4 text-center flex-shrink-0">
+          <div className="text-lg md:text-xl font-semibold text-white bg-marigold-500 py-2 px-4 rounded-lg inline-block">
             {feedback || 'Drag the ball to aim and shoot!'}
           </div>
         </div>
 
-        <canvas
-          ref={canvasRef}
-          width={canvasSize.width}
-          height={canvasSize.height}
-          className="border-4 border-purple-300 rounded-lg cursor-pointer"
-          onMouseDown={handleMouseDown}
-          onMouseMove={handleMouseMove}
-          onMouseUp={handleMouseUp}
-          onMouseLeave={handleMouseUp}
-          onTouchStart={handleMouseDown}
-          onTouchMove={handleMouseMove}
-          onTouchEnd={handleMouseUp}
-        />
+        <div className="relative flex-grow" ref={canvasWrapperRef}>
+          <canvas
+            ref={canvasRef}
+            width={canvasSize.width}
+            height={canvasSize.height}
+            className="absolute top-0 left-0 w-full h-full border-4 border-purple-300 rounded-lg cursor-pointer"
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+            onMouseLeave={handleMouseUp}
+            onTouchStart={handleMouseDown}
+            onTouchMove={handleMouseMove}
+            onTouchEnd={handleMouseUp}
+          />
+        </div>
 
-        <div className="mt-4 text-center text-gray-300">
-          <p className="text-sm">Click and drag the bowling ball to aim, then release to shoot!</p>
-          <p className="text-sm mt-1">Hit: {hitConsonants.join(', ') || 'None yet'}</p>
+        <div className="mt-4 text-center text-gray-300 flex-shrink-0">
+          <p className="text-xs md:text-sm">Click and drag the bowling ball to aim, then release to shoot!</p>
+          <p className="text-xs md:text-sm mt-1">Hit: {hitConsonants.join(', ') || 'None yet'}</p>
         </div>
       </div>
 
