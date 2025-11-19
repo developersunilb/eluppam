@@ -288,7 +288,7 @@ const VowelLegoGame = () => {
         const handleResize = () => {
           if (canvasWrapperRef.current) {
             const { clientWidth } = canvasWrapperRef.current;
-            const clientHeight = clientWidth * (600 / 800); // Maintain 4:3 Aspect Ratio
+            const clientHeight = clientWidth * (600 / 800); // Maintain 4:3 aspect ratio
             setCanvasSize({ width: clientWidth, height: clientHeight });
           }
         };
@@ -329,24 +329,41 @@ const VowelLegoGame = () => {
           return () => cancelAnimationFrame(animationId);
         }
       }, [blocks, selectedBlock, matchedPairs, animatingBlocks, draggedBlock, isBoxOpen, isLoading, canvasSize, drawGame, animateMatching]);
+
+      const getEventCoordinates = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
+        const canvas = canvasRef.current;
+        if (!canvas) return null;
+        const rect = canvas.getBoundingClientRect();
+    
+        let clientX, clientY;
+        if ('touches' in e) {
+          if (e.touches.length === 0) return null;
+          clientX = e.touches[0].clientX;
+          clientY = e.touches[0].clientY;
+        } else {
+          clientX = e.clientX;
+          clientY = e.clientY;
+        }
+    
+        return {
+          x: clientX - rect.left,
+          y: clientY - rect.top,
+        };
+      };
   
     const handleCanvasClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
   
       if (animatingBlocks.length > 0 || isProcessingMatch.current) return;
       
-      const canvas = canvasRef.current;
-      if (!canvas) return;
-  
-      const rect = canvas.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
+      const coords = getEventCoordinates(e);
+      if (!coords) return;
       
       const clickedBlock = [...blocks]
         .reverse()
         .find(block => {
           if (block.matched) return false;
-          const dx = x - block.x;
-          const dy = y - block.y;
+          const dx = coords.x - block.x;
+          const dy = coords.y - block.y;
           const cos = Math.cos(-block.rotation);
           const sin = Math.sin(-block.rotation);
           const rotatedX = dx * cos - dy * sin;
@@ -425,46 +442,40 @@ const VowelLegoGame = () => {
       }
     };
   
-    const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
       if (animatingBlocks.length > 0) return;
       
-      const canvas = canvasRef.current;
-      if (!canvas) return;
-      const rect = canvas.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      
+      const coords = getEventCoordinates(e);
+      if (!coords) return;
+
       const clickedBlock = [...blocks]
         .reverse()
         .find(block => {
           if (block.matched) return false;
-          const dx = x - block.x;
-          const dy = y - block.y;
+          const dx = coords.x - block.x;
+          const dy = coords.y - block.y;
           return Math.sqrt(dx * dx + dy * dy) <= block.width / 2;
         });
       
       if (clickedBlock) {
         setDraggedBlock(clickedBlock);
-        setDragOffset({ x: x - clickedBlock.x, y: y - clickedBlock.y });
+        setDragOffset({ x: coords.x - clickedBlock.x, y: coords.y - clickedBlock.y });
       }
     };
   
-    const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
       if (!draggedBlock) return;
   
-      const canvas = canvasRef.current;
-      if (!canvas) return;
-      const rect = canvas.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
+      const coords = getEventCoordinates(e);
+      if (!coords) return;
   
       const chestWidth = canvasSize.width * (150 / 800);
       const chestHeight = canvasSize.height * (100 / 600);
       const chestX = (canvasSize.width - chestWidth) / 2;
       const chestY = canvasSize.height * (520 / 600) - chestHeight;
   
-      const newX = x - dragOffset.x;
-      const newY = y - dragOffset.y;
+      const newX = coords.x - dragOffset.x;
+      const newY = coords.y - dragOffset.y;
   
       if (
         newX > chestX - draggedBlock.width / 2 &&
@@ -495,79 +506,33 @@ const VowelLegoGame = () => {
       setIsSorted(false);
     };
   
-        const handleSortMatchedPairs = () => {
-  
-      
-  
-          setMatchedPairs(prev => {
-  
-      
-  
-            const sorted = [...prev].sort((a, b) => {
-  
-      
-  
-              const indexA = malayalamVowelOrder.indexOf(a.vowel);
-  
-      
-  
-              const indexB = malayalamVowelOrder.indexOf(b.vowel);
-  
-      
-  
-              return indexA - indexB;
-  
-      
-  
-            });
-  
-      
-  
-            return sorted;
-  
-      
-  
-          });
-  
-      
-  
-          setIsSorted(true);
-  
-      
-  
+    const handleSortMatchedPairs = () => {
+      setMatchedPairs(prev => {
+        const sorted = [...prev].sort((a, b) => {
+          const indexA = malayalamVowelOrder.indexOf(a.vowel);
+          const indexB = malayalamVowelOrder.indexOf(b.vowel);
+          return indexA - indexB;
+        });
+        return sorted;
+      });
+      setIsSorted(true);
+    };
+
+    useEffect(() => {
+        const preventScroll = (e: TouchEvent) => {
+          if (draggedBlock) {
+            e.preventDefault();
+          }
         };
-  
     
+        document.addEventListener('touchmove', preventScroll, { passive: false });
+    
+        return () => {
+          document.removeEventListener('touchmove', preventScroll);
+        };
+      }, [draggedBlock]);
   
-        useEffect(() => {
-  
-            const preventScroll = (e: TouchEvent) => {
-  
-              if (draggedBlock) {
-  
-                e.preventDefault();
-  
-              }
-  
-            };
-  
-        
-  
-            document.addEventListener('touchmove', preventScroll, { passive: false });
-  
-        
-  
-            return () => {
-  
-              document.removeEventListener('touchmove', preventScroll);
-  
-            };
-  
-          }, [draggedBlock]);
-  
-      
-  
-      return (
+  return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-green-100 via-blue-100 to-purple-100 p-4">
       <div className="flex flex-col md:flex-row gap-6 max-w-7xl w-full">
         <div className="flex-1 bg-white rounded-2xl shadow-2xl p-6 border-4 border-green-400">
@@ -603,6 +568,9 @@ const VowelLegoGame = () => {
               onMouseMove={handleMouseMove}
               onMouseUp={handleMouseUp}
               onMouseLeave={handleMouseUp}
+              onTouchStart={handleMouseDown}
+              onTouchMove={handleMouseMove}
+              onTouchEnd={handleMouseUp}
               className="absolute top-0 left-0 w-full h-full border-4 border-green-400 rounded-lg cursor-pointer shadow-xl"
             />
           </div>
