@@ -80,7 +80,7 @@ export const wordFormationGameData = {
 export interface Game {
   name: string;
   slug: string;
-  icon: string;
+  icon: string | JSX.Element; // Allow string or JSX.Element
   level: 'Novice' | 'Intermediate' | 'Advanced';
   component: React.ComponentType<any>;
 }
@@ -123,7 +123,7 @@ export const gamesData: Game[] = [
 
   { name: 'Malayalam Mahjong', slug: 'malayalam-mahjong', icon: '/game/assets/image/gamespagecommonicon/malayalam-mahjong.png', level: 'Novice', component: Mahjong3DGame2 },
   { name: 'Consonant Memory Grid', slug: 'consonant-memory-grid', icon: '🧠', level: 'Novice', component: ConsonantMemoryGridGame },
-  { name: 'Vowel Lego Match', slug: 'vowel-lego-match', icon: '🧱', level: 'Novice', component: VowelLegoMatchGame },
+  { name: 'Vowel Lego Match', slug: 'vowel-lego-match', icon: <img src="/game/assets/image/vowellegoicon.png" alt="Vowel Lego Match Icon" width={64} height={64} className="object-contain" />, level: 'Novice', component: VowelLegoMatchGame },
   { name: 'Malayalam Vowel Maze', slug: 'malayalam-vowel-maze', icon: '🗺️', level: 'Novice', component: MalayalamVowelMaze },
   { name: 'Fill In The Blanks', slug: 'fill-in-the-blanks', icon: '✏️', level: 'Advanced', component: FillInTheBlanksGame },
   { name: 'Word Formation Game', slug: 'word-formation', icon: '🛠️', level: 'Intermediate', component: WordFormationGame },
