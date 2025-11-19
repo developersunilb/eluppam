@@ -422,7 +422,7 @@ const VowelLegoGame = () => {
             };
   
     const playClappingSound = () => {
-      const audio = new Audio('/audio/chestopenclose.mp3');
+      const audio = new Audio('/audio/clap2.mp3');
       audio.play();
     };
 
