@@ -235,50 +235,54 @@ const VowelOrderFindGame: React.FC = () => {
   }, [currentLearnVowelIndex, playModeStarted, playAudio, gameOver]);
 
   return (
-    <div className="relative flex flex-col items-center h-full bg-marigold-400 p-4 overflow-hidden">
+    <div className="relative flex flex-col items-center min-h-screen bg-marigold-400 p-4 overflow-hidden">
       <h1 className="text-5xl font-extrabold text-white mb-6 drop-shadow-lg">Vowel Order Find</h1>
       <p className="text-xl text-white mb-4">{message}</p>
 
       <audio ref={audioRef} />
 
-      {!learnModeActive && !playModeAvailable && !playModeStarted && (
-        <button
-          onClick={initializeLearnMode}
-          className="px-8 py-3 bg-green-500 text-white text-xl font-semibold rounded-full shadow-xl hover:bg-green-600 transition-colors duration-300 mb-8"
-        >
-          Learn Vowels
-        </button>
-      )}
+      <div className={`relative w-full bg-gradient-to-b from-sky-300 to-sky-500 rounded-lg p-4 overflow-hidden flex items-center justify-center flex-grow
+          ${!learnModeActive && !playModeStarted ? 'opacity-50 grayscale pointer-events-none' : ''}
+      `}>
+          <Cloud style={{ top: '10%', left: '5%' }} scale={0.8} />
+          <Cloud style={{ top: '80%', left: '15%' }} scale={1.2} />
+          <Cloud style={{ top: '30%', left: '80%' }} scale={1} />
+          <Cloud style={{ top: '60%', left: '90%' }} scale={0.9} />
+          <div className="flex flex-wrap justify-center items-center gap-4 relative z-10">
+              {learnBalloons.map(balloon => (
+                  <div
+                      key={balloon.id}
+                      className={`relative transition-all duration-300 ${
+                          balloon.popped ? 'opacity-0 pointer-events-none' : ''
+                      }`}
+                  >
+                      <button
+                          className={`w-16 h-20 rounded-[50%] flex items-center justify-center text-white text-3xl font-bold shadow-lg transition-all duration-200
+                          ${balloon.disabled || balloon.popped ? 'bg-gray-500 opacity-50 cursor-not-allowed' : `${balloon.color} hover:${balloon.color.replace('-500', '-600')}`}
+                          `}
+                          onClick={() => handleLearnBalloonClick(balloon)}
+                          disabled={balloon.disabled || balloon.popped}
+                      >
+                          {balloon.vowel.malayalam}
+                      </button>
+                      <div
+                          className={`absolute left-1/2 -translate-x-1/2 bottom-[-4px] w-3 h-3 ${balloon.disabled || balloon.popped ? 'bg-gray-500 opacity-50' : balloon.color} transform rotate-45 transition-all duration-200`}
+                      ></div>
+                  </div>
+              ))}
+          </div>
+      </div>
 
-      {learnModeActive && (
-        <div className="relative w-full max-w-5xl bg-gradient-to-b from-sky-300 to-sky-500 rounded-lg p-4 overflow-hidden flex items-center justify-center min-h-[20rem] md:min-h-[30rem] lg:min-h-[40rem]">
-            <Cloud style={{ top: '10%', left: '5%' }} scale={0.8} />
-            <Cloud style={{ top: '80%', left: '15%' }} scale={1.2} />
-            <Cloud style={{ top: '30%', left: '80%' }} scale={1} />
-            <Cloud style={{ top: '60%', left: '90%' }} scale={0.9} />
-            <div className="flex flex-wrap justify-center items-center gap-4 relative z-10">
-                {learnBalloons.map(balloon => (
-                    <div
-                        key={balloon.id}
-                        className={`relative transition-all duration-300 ${
-                            balloon.popped ? 'opacity-0 pointer-events-none' : ''
-                        }`}
-                    >
-                        <button
-                            className={`w-16 h-20 rounded-[50%] flex items-center justify-center text-white text-3xl font-bold shadow-lg transition-all duration-200
-                            ${balloon.disabled || balloon.popped ? 'bg-gray-500 opacity-50 cursor-not-allowed' : `${balloon.color} hover:${balloon.color.replace('-500', '-600')}`}
-                            `}
-                            onClick={() => handleLearnBalloonClick(balloon)}
-                            disabled={balloon.disabled || balloon.popped}
-                        >
-                            {balloon.vowel.malayalam}
-                        </button>
-                        <div
-                            className={`absolute left-1/2 -translate-x-1/2 bottom-[-4px] w-3 h-3 ${balloon.disabled || balloon.popped ? 'bg-gray-500 opacity-50' : balloon.color} transform rotate-45 transition-all duration-200`}
-                        ></div>
-                    </div>
-                ))}
-            </div>
+      {!learnModeActive && !playModeAvailable && !playModeStarted && (
+        <div className="absolute inset-0 flex flex-col items-center justify-center z-20">
+          <h1 className="text-5xl font-extrabold text-white mb-6 drop-shadow-lg">Vowel Order Find</h1>
+          <p className="text-xl text-white mb-4">{message}</p>
+          <button
+            onClick={initializeLearnMode}
+            className="px-8 py-3 bg-green-500 text-white text-xl font-semibold rounded-full shadow-xl hover:bg-green-600 transition-colors duration-300"
+          >
+            Learn Vowels
+          </button>
         </div>
       )}
 
