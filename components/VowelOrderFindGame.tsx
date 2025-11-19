@@ -269,27 +269,28 @@ const VowelOrderFindGame: React.FC = () => {
               ))}
           </div>
 
-          {!learnModeActive && playModeAvailable && !playModeStarted && (
-            <div className="absolute inset-0 flex flex-col items-center justify-center z-30">
-              <p className="text-3xl text-white font-bold mb-8">{message}</p>
-              <div className="flex gap-4">
-                <button
-                  onClick={initializeLearnMode}
-                  className="px-8 py-3 bg-green-500 text-white text-xl font-semibold rounded-full shadow-xl hover:bg-green-600 transition-colors duration-300"
-                >
-                  Learn Again
-                </button>
-                <button
-                  onClick={startPlayMode}
-                  className={`px-8 py-3 bg-purple-500 text-white text-xl font-semibold rounded-full shadow-xl hover:bg-purple-600 transition-colors duration-300 ${!playModeAvailable ? 'opacity-50 cursor-not-allowed' : ''}`}
-                  disabled={!playModeAvailable}
-                >
-                  Ready to Play!
-                </button>
-              </div>
-            </div>
-          )}
       </div>
+
+      {!learnModeActive && playModeAvailable && !playModeStarted && (
+        <div className="absolute inset-0 flex flex-col items-center justify-center z-30">
+          <p className="text-3xl text-white font-bold mb-8">{message}</p>
+          <div className="flex gap-4">
+            <button
+              onClick={initializeLearnMode}
+              className="px-8 py-3 bg-green-500 text-white text-xl font-semibold rounded-full shadow-xl hover:bg-green-600 transition-colors duration-300"
+            >
+              Learn Again
+            </button>
+            <button
+              onClick={startPlayMode}
+              className={`px-8 py-3 bg-purple-500 text-white text-xl font-semibold rounded-full shadow-xl hover:bg-purple-600 transition-colors duration-300 ${!playModeAvailable ? 'opacity-50 cursor-not-allowed' : ''}`}
+              disabled={!playModeAvailable}
+            >
+              Ready to Play!
+            </button>
+          </div>
+        </div>
+      )}
 
       {!learnModeActive && !playModeAvailable && !playModeStarted && (
         <div className="absolute inset-0 flex flex-col items-center justify-center z-20">
