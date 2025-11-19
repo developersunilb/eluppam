@@ -105,8 +105,8 @@ const ConsonantBowlingGame = () => {
    * @param {number} height - The height of the canvas.
    */
   const drawBowlingAlley = (ctx: CanvasRenderingContext2D, width: number, height: number) => {
-    const laneBottomWidth = 600;
-    const laneTopWidth = 300;
+    const laneBottomWidth = width * 0.75; // Proportional width
+    const laneTopWidth = width * 0.375; // Proportional width
     const laneBottomX = (width - laneBottomWidth) / 2;
     const laneTopX = (width - laneTopWidth) / 2;
 
@@ -137,33 +137,40 @@ const ConsonantBowlingGame = () => {
     ctx.strokeStyle = '#3A1F0F'; // Darker shade for lines
     ctx.lineWidth = 1;
 
+    // Gutter widths proportional to the canvas width
+    const leftGutterTopWidth = width * (50 / 800);
+    const leftGutterBottomWidth = width * (100 / 800);
+    const rightGutterTopWidth = width * (50 / 800);
+    const rightGutterBottomWidth = width * (100 / 800);
+
+
     // Left Gutter
     ctx.beginPath();
-    ctx.moveTo(laneTopX - 50, 0);
+    ctx.moveTo(laneTopX - leftGutterTopWidth, 0);
     ctx.lineTo(laneTopX, 0);
     ctx.lineTo(laneBottomX, height);
-    ctx.lineTo(laneBottomX - 100, height);
+    ctx.lineTo(laneBottomX - leftGutterBottomWidth, height);
     ctx.closePath();
     ctx.fill();
-    for (let i = 0; i < 50; i += 5) {
+    for (let i = 0; i < leftGutterTopWidth; i += 5) {
       ctx.beginPath();
-      ctx.moveTo(laneTopX - 50 + i, 0);
-      ctx.lineTo(laneBottomX - 100 + (i * 2), height);
+      ctx.moveTo(laneTopX - leftGutterTopWidth + i, 0);
+      ctx.lineTo(laneBottomX - leftGutterBottomWidth + (i * (leftGutterBottomWidth / leftGutterTopWidth)), height);
       ctx.stroke();
     }
 
     // Right Gutter
     ctx.beginPath();
     ctx.moveTo(laneTopX + laneTopWidth, 0);
-    ctx.lineTo(laneTopX + laneTopWidth + 50, 0);
-    ctx.lineTo(laneBottomX + laneBottomWidth + 100, height);
+    ctx.lineTo(laneTopX + laneTopWidth + rightGutterTopWidth, 0);
+    ctx.lineTo(laneBottomX + laneBottomWidth + rightGutterBottomWidth, height);
     ctx.lineTo(laneBottomX + laneBottomWidth, height);
     ctx.closePath();
     ctx.fill();
-    for (let i = 0; i < 50; i += 5) {
+    for (let i = 0; i < rightGutterTopWidth; i += 5) {
       ctx.beginPath();
       ctx.moveTo(laneTopX + laneTopWidth + i, 0);
-      ctx.lineTo(laneBottomX + laneBottomWidth + (i * 2), height);
+      ctx.lineTo(laneBottomX + laneBottomWidth + (i * (rightGutterBottomWidth/rightGutterTopWidth)), height);
       ctx.stroke();
     }
   };
@@ -233,6 +240,20 @@ const ConsonantBowlingGame = () => {
   }, [dragStart, dragCurrent, canvasSize.width]);
 
   const drawGame = useCallback((ctx: CanvasRenderingContext2D, width: number, height: number) => {
+    // DEBUGGING: Clear canvas with a solid color to see its bounds
+    ctx.fillStyle = 'lightblue';
+    ctx.fillRect(0, 0, width, height);
+
+    // DEBUGGING: Draw a simple, centered rectangle to check for layout issues.
+    const rectWidth = width * 0.5;
+    const rectHeight = height * 0.5;
+    const rectX = (width - rectWidth) / 2;
+    const rectY = (height - rectHeight) / 2;
+
+    ctx.fillStyle = 'red';
+    ctx.fillRect(rectX, rectY, rectWidth, rectHeight);
+    
+    /*
     ctx.clearRect(0, 0, width, height);
 
     drawBowlingAlley(ctx, width, height);
@@ -257,6 +278,7 @@ const ConsonantBowlingGame = () => {
     if (bowlingBall && gameState === 'shooting') {
       drawBowlingBall(ctx, bowlingBall.x, bowlingBall.y);
     }
+    */
   }, [gameState, dragStart, dragCurrent, bowlingBall, getPinPositions, drawTrajectory]);
 
   const getEventCoordinates = (e: React.MouseEvent | React.TouchEvent) => {
@@ -465,11 +487,28 @@ const ConsonantBowlingGame = () => {
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
+    if (!canvas || canvasSize.width === 0) return;
 
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
+
+    const dpr = window.devicePixelRatio || 1;
+
+    // Set the backing store size to match the display size multiplied by dpr.
+    canvas.width = canvasSize.width * dpr;
+    canvas.height = canvasSize.height * dpr;
+
+    // The canvas's CSS dimensions are controlled by Tailwind 'w-full h-full'
+    // and are equal to canvasSize.width and canvasSize.height.
+
+    // Scale the context to ensure everything is drawn at the correct resolution.
+    ctx.save();
+    ctx.scale(dpr, dpr);
+
+    // We pass the logical (CSS) size to the drawing function.
     drawGame(ctx, canvasSize.width, canvasSize.height);
+
+    ctx.restore();
 
     if (gameState === 'shooting' && bowlingBall) {
       const animationId = requestAnimationFrame(updateBowlingBall);
@@ -478,8 +517,8 @@ const ConsonantBowlingGame = () => {
   }, [gameState, dragCurrent, bowlingBall, hitConsonants, targetConsonant, canvasSize, drawGame, updateBowlingBall]);
 
   return (
-    <div ref={gameContainerRef} className="w-full h-screen bg-gradient-to-b from-marigold-200 to-marigold-400 flex items-center justify-center p-4">
-      <div ref={innerContainerRef} className="bg-green-800 rounded-lg shadow-2xl p-6 w-full max-w-4xl h-full flex flex-col">
+    <div ref={gameContainerRef} className="w-full h-screen bg-gradient-to-b from-marigold-200 to-marigold-400 flex items-center justify-center">
+      <div ref={innerContainerRef} className="bg-green-800 rounded-lg shadow-2xl w-full max-w-4xl h-full flex flex-col">
         <div className="flex items-center justify-between mb-4 flex-shrink-0">
           <h1 className="text-2xl md:text-3xl font-bold text-white">Consonant Bowling</h1>
           <div className="flex gap-2 md:gap-4">
