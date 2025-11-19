@@ -1707,9 +1707,9 @@ export const positionalWords = [
 ];
 
 export const mockLeaderboardData = [
-  { id: '1', name: 'PlayerOne', score: 1200 },
-  { id: '2', name: 'PlayerTwo', score: 1150 },
-  { id: '3', name: 'PlayerThree', score: 1100 },
-  { id: '4', name: 'PlayerFour', score: 1050 },
-  { id: '5', name: 'PlayerFive', score: 1000 },
+  { id: '1', name: 'PlayerOne', score: 1200, avatar: '/path/to/default-avatar.png' },
+  { id: '2', name: 'PlayerTwo', score: 1150, avatar: '/path/to/default-avatar.png' },
+  { id: '3', name: 'PlayerThree', score: 1100, avatar: '/path/to/default-avatar.png' },
+  { id: '4', name: 'PlayerFour', score: 1050, avatar: '/path/to/default-avatar.png' },
+  { id: '5', name: 'PlayerFive', score: 1000, avatar: '/path/to/default-avatar.png' },
 ];
