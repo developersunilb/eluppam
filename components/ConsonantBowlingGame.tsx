@@ -470,6 +470,18 @@ const ConsonantBowlingGame = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  // Effect for resizing the canvas bitmap
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas || canvasSize.width === 0) return;
+
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = canvasSize.width * dpr;
+    canvas.height = canvasSize.height * dpr;
+  }, [canvasSize]);
+
+
+  // Effect for drawing the game
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas || canvasSize.width === 0) return;
@@ -479,18 +491,9 @@ const ConsonantBowlingGame = () => {
 
     const dpr = window.devicePixelRatio || 1;
 
-    // Set the backing store size to match the display size multiplied by dpr.
-    canvas.width = canvasSize.width * dpr;
-    canvas.height = canvasSize.height * dpr;
-
-    // The canvas's CSS dimensions are controlled by Tailwind 'w-full h-full'
-    // and are equal to canvasSize.width and canvasSize.height.
-
-    // Scale the context to ensure everything is drawn at the correct resolution.
     ctx.save();
     ctx.scale(dpr, dpr);
 
-    // We pass the logical (CSS) size to the drawing function.
     drawGame(ctx, canvasSize.width, canvasSize.height);
 
     ctx.restore();
