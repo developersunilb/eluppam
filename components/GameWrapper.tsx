@@ -18,7 +18,7 @@ export default function GameWrapper({ children }: GameWrapperProps) {
   // if a game component is not passed as children (though in our refactor, it always will be).
 
   return (
-    <div className="min-h-screen bg-marigold-100 flex flex-col items-center justify-center p-4 relative">
+    <div className="w-full flex-grow bg-marigold-100 flex flex-col items-center justify-center relative">
       <CloseButton />
       {children ? (
         children
