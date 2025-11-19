@@ -112,7 +112,9 @@ export default function GamesPage() {
                             {game.slug === 'malayalam-mahjong' ? (
                               <img src={'/game/assets/image/gamespagecommonicon/malmahjong.png'} alt="Malayalam Mahjong" width={64} height={64} className="object-contain" />
                             ) : (
-                              typeof game.icon === 'string' ? (
+                              typeof game.icon === 'string' && game.icon.startsWith('/') && (game.icon.endsWith('.png') || game.icon.endsWith('.jpg') || game.icon.endsWith('.jpeg') || game.icon.endsWith('.gif') || game.icon.endsWith('.svg')) ? (
+                                <img src={game.icon} alt={game.name} width={64} height={64} className="object-contain" />
+                              ) : typeof game.icon === 'string' ? (
                                 <span className="text-5xl sm:text-6xl">{game.icon}</span>
                               ) : (
                                 game.icon
