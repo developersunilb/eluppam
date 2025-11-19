@@ -44,6 +44,7 @@ const ConsonantBowlingGame = () => {
   const bowlingPinImageRef = useRef<HTMLImageElement | null>(null);
 
   const [shuffledConsonants, setShuffledConsonants] = useState<string[]>([]);
+  const [isImageLoaded, setIsImageLoaded] = useState(false);
 
   const router = useRouter();
 
@@ -439,13 +440,9 @@ const ConsonantBowlingGame = () => {
     img.src = '/game/assets/image/bowling/bowlingpin.png';
     img.onload = () => {
       bowlingPinImageRef.current = img;
-      // Force a re-render to draw the image once loaded
-      if (canvasRef.current) {
-        const ctx = canvasRef.current.getContext('2d');
-        if (ctx) drawGame(ctx, canvasSize.width, canvasSize.height);
-      }
+      setIsImageLoaded(true); // Trigger a re-render instead of drawing directly
     };
-  }, [canvasSize, drawGame]);
+  }, []);
 
   useEffect(() => {
     let shuffled = shuffleArray(consonants);
@@ -484,7 +481,7 @@ const ConsonantBowlingGame = () => {
   // Effect for drawing the game
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (!canvas || canvasSize.width === 0) return;
+    if (!canvas || canvasSize.width === 0 || !isImageLoaded) return; // Don't draw until image is loaded
 
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
@@ -502,7 +499,7 @@ const ConsonantBowlingGame = () => {
       const animationId = requestAnimationFrame(updateBowlingBall);
       return () => cancelAnimationFrame(animationId);
     }
-  }, [gameState, dragCurrent, bowlingBall, hitConsonants, targetConsonant, canvasSize, drawGame, updateBowlingBall]);
+  }, [gameState, dragCurrent, bowlingBall, hitConsonants, targetConsonant, canvasSize, drawGame, updateBowlingBall, isImageLoaded]);
 
   return (
     <div ref={gameContainerRef} className="w-full h-screen bg-gradient-to-b from-marigold-200 to-marigold-400 flex items-center justify-center">
