@@ -1705,3 +1705,11 @@ export const positionalWords = [
     { malayalam: 'വലത്', transliteration: 'valathu', meaning: 'Right', audioSrc: '' },
     { malayalam: 'ഇടത്', transliteration: 'edathu', meaning: 'Left', audioSrc: '' },
 ];
+
+export const mockLeaderboardData = [
+  { id: '1', name: 'PlayerOne', score: 1200 },
+  { id: '2', name: 'PlayerTwo', score: 1150 },
+  { id: '3', name: 'PlayerThree', score: 1100 },
+  { id: '4', name: 'PlayerFour', score: 1050 },
+  { id: '5', name: 'PlayerFive', score: 1000 },
+];
