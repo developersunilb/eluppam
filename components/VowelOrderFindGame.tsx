@@ -235,10 +235,10 @@ const VowelOrderFindGame: React.FC = () => {
   }, [currentLearnVowelIndex, playModeStarted, playAudio, gameOver]);
 
   return (
-    <div className="relative flex flex-col items-center min-h-screen bg-marigold-400 overflow-hidden">
+    <div className="relative flex flex-col items-center min-h-screen w-full bg-marigold-400 p-4 overflow-hidden">
       <audio ref={audioRef} />
 
-      <div className={`relative w-full bg-gradient-to-b from-sky-300 to-sky-500 rounded-lg p-4 overflow-hidden flex items-center justify-center flex-grow
+      <div className={`relative w-full bg-gradient-to-b from-sky-300 to-sky-500 rounded-lg overflow-hidden flex items-center justify-center flex-grow
           ${!learnModeActive && !playModeStarted ? 'opacity-50 grayscale pointer-events-none' : ''}
       `}>
           <Cloud style={{ top: '10%', left: '5%' }} scale={0.8} />
