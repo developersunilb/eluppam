@@ -258,11 +258,15 @@ const VowelOrderFindGame: React.FC = () => {
             <Cloud style={{ top: '60%', left: '90%' }} scale={0.9} />
             <div className="flex flex-wrap justify-center items-center gap-4 relative z-10">
                 {learnBalloons.map(balloon => (
-                    !balloon.popped &&
-                    <div key={balloon.id} className="relative">
+                    <div
+                        key={balloon.id}
+                        className={`relative transition-all duration-300 ${
+                            balloon.popped ? 'opacity-0 pointer-events-none' : ''
+                        }`}
+                    >
                         <button
                             className={`w-16 h-20 rounded-[50%] flex items-center justify-center text-white text-3xl font-bold shadow-lg transition-all duration-200
-                            ${balloon.disabled ? 'bg-gray-500 opacity-50 cursor-not-allowed' : `${balloon.color} hover:${balloon.color.replace('-500', '-600')}`}
+                            ${balloon.disabled || balloon.popped ? 'bg-gray-500 opacity-50 cursor-not-allowed' : `${balloon.color} hover:${balloon.color.replace('-500', '-600')}`}
                             `}
                             onClick={() => handleLearnBalloonClick(balloon)}
                             disabled={balloon.disabled || balloon.popped}
@@ -270,7 +274,7 @@ const VowelOrderFindGame: React.FC = () => {
                             {balloon.vowel.malayalam}
                         </button>
                         <div
-                            className={`absolute left-1/2 -translate-x-1/2 bottom-[-4px] w-3 h-3 ${balloon.disabled ? 'bg-gray-500 opacity-50' : balloon.color} transform rotate-45 transition-all duration-200`}
+                            className={`absolute left-1/2 -translate-x-1/2 bottom-[-4px] w-3 h-3 ${balloon.disabled || balloon.popped ? 'bg-gray-500 opacity-50' : balloon.color} transform rotate-45 transition-all duration-200`}
                         ></div>
                     </div>
                 ))}
