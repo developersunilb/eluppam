@@ -495,19 +495,79 @@ const VowelLegoGame = () => {
       setIsSorted(false);
     };
   
-    const handleSortMatchedPairs = () => {
-      setMatchedPairs(prev => {
-        const sorted = [...prev].sort((a, b) => {
-          const indexA = malayalamVowelOrder.indexOf(a.vowel);
-          const indexB = malayalamVowelOrder.indexOf(b.vowel);
-          return indexA - indexB;
-        });
-        return sorted;
-      });
-      setIsSorted(true);
-    };
+        const handleSortMatchedPairs = () => {
   
-  return (
+      
+  
+          setMatchedPairs(prev => {
+  
+      
+  
+            const sorted = [...prev].sort((a, b) => {
+  
+      
+  
+              const indexA = malayalamVowelOrder.indexOf(a.vowel);
+  
+      
+  
+              const indexB = malayalamVowelOrder.indexOf(b.vowel);
+  
+      
+  
+              return indexA - indexB;
+  
+      
+  
+            });
+  
+      
+  
+            return sorted;
+  
+      
+  
+          });
+  
+      
+  
+          setIsSorted(true);
+  
+      
+  
+        };
+  
+    
+  
+        useEffect(() => {
+  
+            const preventScroll = (e: TouchEvent) => {
+  
+              if (draggedBlock) {
+  
+                e.preventDefault();
+  
+              }
+  
+            };
+  
+        
+  
+            document.addEventListener('touchmove', preventScroll, { passive: false });
+  
+        
+  
+            return () => {
+  
+              document.removeEventListener('touchmove', preventScroll);
+  
+            };
+  
+          }, [draggedBlock]);
+  
+      
+  
+      return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-green-100 via-blue-100 to-purple-100 p-4">
       <div className="flex flex-col md:flex-row gap-6 max-w-7xl w-full">
         <div className="flex-1 bg-white rounded-2xl shadow-2xl p-6 border-4 border-green-400">
