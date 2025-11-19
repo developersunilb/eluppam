@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 
 interface Block {
   id: string;
@@ -40,6 +40,8 @@ const VowelLegoGame = () => {
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const [isSorted, setIsSorted] = useState(false); // New state for sorting
   const [isLoading, setIsLoading] = useState(true);
+  const [canvasSize, setCanvasSize] = useState({ width: 800, height: 600 });
+  const canvasWrapperRef = useRef<HTMLDivElement>(null);
   
   // Custom Malayalam vowel order
   const malayalamVowelOrder = [
@@ -99,13 +101,10 @@ const VowelLegoGame = () => {
   
       const newBlocks: Block[] = [];
   
-      const heapBaseX = 200; // Center of the heap base
-  
-      const heapBaseY = 500; // Bottom of the heap
-  
-      const heapWidth = 300; // Width at the base
-  
-      const heapHeight = 200; // Height of the heap
+      const heapBaseX = canvasSize.width * (200 / 800);
+      const heapBaseY = canvasSize.height * (500 / 600);
+      const heapWidth = canvasSize.width * (300 / 800);
+      const heapHeight = canvasSize.height * (200 / 600);
   
       const maxAttempts = 100; // Max attempts to find a non-colliding position
   
@@ -193,9 +192,9 @@ const VowelLegoGame = () => {
   
             y: blockY,
   
-            width: 70,
+            width: canvasSize.width * (70 / 800),
   
-            height: 70,
+            height: canvasSize.height * (70 / 600),
   
             rotation: angle,
   
@@ -241,15 +240,15 @@ const VowelLegoGame = () => {
   
     
   
-    const drawGame = (ctx: CanvasRenderingContext2D) => {
+    const drawGame = (ctx: CanvasRenderingContext2D, width: number, height: number) => {
   
-      ctx.clearRect(0, 0, 800, 600);
+      ctx.clearRect(0, 0, width, height);
   
       
   
       // Background
   
-      const gradient = ctx.createLinearGradient(0, 0, 0, 600);
+      const gradient = ctx.createLinearGradient(0, 0, 0, height);
   
       gradient.addColorStop(0, '#E8F5E9');
   
@@ -257,7 +256,7 @@ const VowelLegoGame = () => {
   
       ctx.fillStyle = gradient;
   
-      ctx.fillRect(0, 0, 800, 600);
+      ctx.fillRect(0, 0, width, height);
   
       
   
@@ -265,17 +264,17 @@ const VowelLegoGame = () => {
   
       ctx.fillStyle = '#8D6E63';
   
-      ctx.fillRect(0, 520, 800, 80);
+      ctx.fillRect(0, height * (520 / 600), width, height * (80 / 600));
   
       
   
       // Draw the treasure chest image
       const img = isBoxOpen ? treasureChestOpenImageRef.current : treasureChestImageRef.current;
       if (img) {
-        const chestWidth = 250;
-        const chestHeight = 150; // Adjust height as needed for the GIF
-        const chestX = 800 - chestWidth - 50;
-        const chestY = 520 - chestHeight; // Position above the ground
+        const chestWidth = width * (250 / 800);
+        const chestHeight = height * (150 / 600);
+        const chestX = width - chestWidth - (width * (50 / 800));
+        const chestY = height * (520 / 600) - chestHeight;
         ctx.drawImage(img, chestX, chestY, chestWidth, chestHeight);
       }
       // Commented out original Treasure Chest drawing
@@ -308,186 +307,6 @@ const VowelLegoGame = () => {
     };
   
   
-  
-    useEffect(() => {
-      if (isLoading) return; // Don't draw until assets are loaded
-  
-      const canvas = canvasRef.current;
-  
-      if (!canvas) return;
-  
-      
-  
-      const ctx = canvas.getContext('2d');
-  
-      if (!ctx) return;
-  
-      drawGame(ctx);
-  
-      
-  
-      if (animatingBlocks.length > 0) {
-  
-        const animationId = requestAnimationFrame(animateMatching);
-  
-        return () => cancelAnimationFrame(animationId);
-  
-      }
-  
-    }, [blocks, selectedBlock, matchedPairs, animatingBlocks, draggedBlock, isBoxOpen, isLoading]);
-  
-    
-  
-    // Commented out the original drawTreasureChest function
-    /*
-    const drawTreasureChest = (ctx: CanvasRenderingContext2D, isOpen: boolean) => {
-  
-      const chestWidth = 250;
-  
-      const chestHeight = 80;
-  
-      const chestX = 800 - chestWidth - 50;
-  
-      const chestY = 520 - chestHeight;
-  
-      const lidHeight = 30;
-  
-      const lidCurve = 15;
-  
-  
-  
-      // Chest Body
-  
-      ctx.fillStyle = '#8B4513'; // Brown
-  
-      ctx.strokeStyle = '#5D4037'; // Darker Brown
-  
-      ctx.lineWidth = 3;
-  
-  
-  
-      ctx.beginPath();
-  
-      ctx.rect(chestX, chestY, chestWidth, chestHeight);
-  
-      ctx.fill();
-  
-      ctx.stroke();
-  
-  
-  
-      // Metal bands on chest body
-  
-      ctx.fillStyle = '#A9A9A9'; // Dark Gray
-  
-      ctx.fillRect(chestX + 10, chestY, 10, chestHeight);
-  
-      ctx.fillRect(chestX + chestWidth - 20, chestY, 10, chestHeight);
-  
-      ctx.fillRect(chestX, chestY + chestHeight / 2 - 5, chestWidth, 10);
-  
-  
-  
-      // Lid
-  
-      const currentLidY = isOpen ? chestY - lidHeight - 20 : chestY - lidHeight;
-  
-      const lidRotation = isOpen ? -0.3 : 0; // Slight rotation when open
-  
-  
-  
-      ctx.save();
-  
-      ctx.translate(chestX + chestWidth / 2, currentLidY + lidHeight / 2);
-  
-      ctx.rotate(lidRotation);
-  
-      ctx.translate(-(chestX + chestWidth / 2), -(currentLidY + lidHeight / 2));
-  
-  
-  
-      ctx.fillStyle = '#A0522D'; // Sienna;
-  
-      ctx.strokeStyle = '#5D4037';
-  
-      
-  
-      ctx.beginPath();
-  
-      ctx.moveTo(chestX, currentLidY + lidHeight);
-  
-      ctx.lineTo(chestX, currentLidY + lidCurve);
-  
-      ctx.arcTo(chestX, currentLidY, chestX + lidCurve, currentLidY, lidCurve);
-  
-      ctx.lineTo(chestX + chestWidth - lidCurve, currentLidY);
-  
-      ctx.arcTo(chestX + chestWidth, currentLidY, chestX + chestWidth, currentLidY + lidCurve, lidCurve);
-  
-      ctx.lineTo(chestX + chestWidth, currentLidY + lidHeight);
-  
-      ctx.closePath();
-  
-      ctx.fill();
-  
-      ctx.stroke();
-  
-  
-  
-      // Metal band on lid
-  
-      ctx.fillStyle = '#A9A9A9';
-  
-      ctx.fillRect(chestX, currentLidY + lidHeight / 2 - 5, chestWidth, 10);
-  
-  
-  
-      // Lock
-  
-      ctx.fillStyle = '#FFD700'; // Gold
-  
-      ctx.beginPath();
-  
-      ctx.rect(chestX + chestWidth / 2 - 10, currentLidY + lidHeight - 5, 20, 15);
-  
-      ctx.fill();
-  
-      ctx.stroke();
-  
-  
-  
-      ctx.beginPath();
-  
-      ctx.arc(chestX + chestWidth / 2, currentLidY + lidHeight + 5, 5, 0, Math.PI * 2);
-  
-      ctx.fill();
-  
-      ctx.stroke();
-  
-  
-  
-      ctx.restore();
-  
-  
-  
-      // Label
-  
-      ctx.fillStyle = '#FFFFFF';
-  
-      ctx.font = 'bold 16px Arial';
-  
-      ctx.textAlign = 'center';
-  
-      ctx.textBaseline = 'middle';
-  
-      ctx.fillText('സ്വരാക്ഷരങ്ങൾ', chestX + chestWidth / 2, chestY + chestHeight / 2);
-  
-    };
-    */
-  
-  
-  
-    
   
     const drawLegoBlock = (ctx: CanvasRenderingContext2D, block: Block, isSelected: boolean, opacity: number = 1, scale: number = 1) => {
   
@@ -943,6 +762,3669 @@ const VowelLegoGame = () => {
   
     
   
+    const animateMatching = useCallback(() => {
+  
+      setAnimatingBlocks(prev => {
+  
+        return prev.map(anim => {
+  
+          const newProgress = anim.progress + 0.03; // Faster animation
+  
+          const bucketX = canvasSize.width * (650 / 800);
+          const bucketY = canvasSize.height * (400 / 600);
+          const lidDisappearY = bucketY - (canvasSize.height * (20 / 600)); // Disappear just above the lid
+          const targetX = bucketX + (canvasSize.width * (60 / 800));
+  
+          
+  
+          let newX, newY, newOpacity, newScale;
+  
+  
+  
+          if (newProgress < 0.5) {
+  
+            // Rise up and move towards bucket opening
+  
+            const riseProgress = newProgress / 0.5;
+  
+            newX = anim.block.x + (targetX - anim.block.x) * riseProgress;
+  
+            newY = anim.block.y - riseProgress * (anim.block.y - lidDisappearY);
+  
+            newOpacity = 1;
+  
+            newScale = 1;
+  
+          } else if (newProgress < 1) {
+  
+            // Fade out and shrink at the lid
+  
+            const fadeProgress = (newProgress - 0.5) / 0.5;
+  
+            newX = targetX;
+  
+            newY = lidDisappearY;
+  
+            newOpacity = 1 - fadeProgress;
+  
+            newScale = 1 - fadeProgress * 0.5; // Shrink slightly
+  
+          } else {
+  
+            // Animation complete, block should be fully transparent and tiny
+  
+            newX = targetX;
+  
+            newY = lidDisappearY;
+  
+            newOpacity = 0;
+  
+            newScale = 0;
+  
+          }
+  
+          
+  
+          return {
+  
+            ...anim,
+  
+            progress: newProgress,
+  
+            block: { ...anim.block, x: newX, y: newY, opacity: newOpacity, scale: newScale }
+  
+          };
+  
+        }).filter(anim => anim.block.opacity > 0); // Remove fully faded blocks
+  
+      });
+  
+    }, [canvasSize.width, canvasSize.height, animatingBlocks]);
+  
+    
+  
+    const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
+  
+      if (animatingBlocks.length > 0) return;
+  
+      
+  
+      const canvas = canvasRef.current;
+  
+      if (!canvas) return;
+  
+      const rect = canvas.getBoundingClientRect();
+  
+      const x = e.clientX - rect.left;
+  
+      const y = e.clientY - rect.top;
+  
+      
+  
+      const clickedBlock = [...blocks]
+  
+        .reverse()
+  
+        .find(block => {
+  
+          if (block.matched) return false;
+  
+          const dx = x - block.x;
+  
+          const dy = y - block.y;
+  
+          const cos = Math.cos(-block.rotation);
+  
+          const sin = Math.sin(-block.rotation);
+  
+          const rotatedX = dx * cos - dy * sin;
+  
+          const rotatedY = dx * sin + dy * cos;
+  
+          return Math.abs(rotatedX) <= block.width / 2 && Math.abs(rotatedY) <= block.height / 2;
+  
+        });
+  
+      
+  
+      if (clickedBlock) {
+  
+        if (!selectedBlock) {
+  
+          setSelectedBlock(clickedBlock);
+  
+        } else if (selectedBlock.id === clickedBlock.id) {
+  
+          setSelectedBlock(null);
+  
+        } else if (selectedBlock.vowel === clickedBlock.vowel) {
+  
+          // Match found!
+  
+          handleMatch(selectedBlock, clickedBlock);
+  
+        } else {
+  
+          setSelectedBlock(clickedBlock);
+  
+        }
+  
+      } else {
+  
+        setSelectedBlock(null);
+  
+      }
+  
+    };
+  
+    
+  
+            const handleMatch = (block1: Block, block2: Block) => {
+  
+    
+  
+              if (isProcessingMatch.current) return; // Prevent multiple calls
+  
+    
+  
+              isProcessingMatch.current = true;
+  
+    
+  
+        
+  
+    
+  
+              const vowelData = vowels.find(v => v.vowel === block1.vowel);
+  
+    
+  
+        
+  
+    
+  
+              playClappingSound();
+  
+    
+  
+        
+  
+    
+  
+              // Open the box
+  
+    
+  
+              setIsBoxOpen(true);
+  
+    
+  
+              playChestOpenSound();
+  
+    
+  
+        
+  
+    
+  
+              // Start animation
+  
+    
+  
+              setAnimatingBlocks([
+  
+    
+  
+                { id: block1.id, block: { ...block1, opacity: 1, scale: 1 }, progress: 0 },
+  
+    
+  
+                { id: block2.id, block: { ...block2, opacity: 1, scale: 1 }, progress: 0 }
+  
+    
+  
+              ]);
+  
+    
+  
+        
+  
+    
+  
+              setSelectedBlock(null);
+  
+    
+  
+        
+  
+    
+  
+                    // Close the box and add to matched pairs after animation
+  
+    
+  
+        
+  
+    
+  
+                    setTimeout(() => {
+  
+    
+  
+        
+  
+    
+  
+                      if (vowelData && !matchedPairs.find(p => p.vowel === vowelData.vowel)) {
+  
+    
+  
+        
+  
+    
+  
+                        setMatchedPairs(prev => [...prev, vowelData]);
+  
+    
+  
+        
+  
+    
+  
+                        setScore(prev => prev + 10);
+  
+    
+  
+        
+  
+    
+  
+                      }
+  
+    
+  
+        
+  
+    
+  
+                      setAnimatingBlocks([]);
+  
+    
+  
+        
+  
+    
+  
+                      setBlocks(prev => prev.map(b => 
+  
+    
+  
+        
+  
+    
+  
+                        b.id === block1.id || b.id === block2.id ? { ...b, matched: true } : b
+  
+    
+  
+        
+  
+    
+  
+                      ));
+  
+    
+  
+        
+  
+    
+  
+                    }, 1000); // Blocks disappear after 1 second
+  
+    
+  
+        
+  
+    
+  
+              
+  
+    
+  
+        
+  
+    
+  
+                    // Close the box and allow new matches after 2 seconds
+  
+    
+  
+        
+  
+    
+  
+                    setTimeout(() => {
+  
+    
+  
+        
+  
+    
+  
+                      setIsBoxOpen(false);
+  
+    
+  
+        
+  
+    
+  
+                      playChestCloseSound();
+  
+    
+  
+        
+  
+    
+  
+                      isProcessingMatch.current = false; // Allow new matches after everything is done
+  
+    
+  
+        
+  
+    
+  
+                    }, 2000);
+  
+    
+  
+            };
+  
+    
+  
+    const playClappingSound = () => {
+  
+      const audio = new Audio('/audio/chestopenclose.mp3');
+  
+      audio.play();
+  
+    };
+
+    const playChestOpenSound = () => {
+      if (chestOpenAudioRef.current) {
+        chestOpenAudioRef.current.pause();
+        chestOpenAudioRef.current.currentTime = 0;
+        chestOpenAudioRef.current.play();
+      }
+    };
+
+    const playChestCloseSound = () => {
+      if (chestCloseAudioRef.current) {
+        chestCloseAudioRef.current.pause();
+        chestCloseAudioRef.current.currentTime = 0;
+        chestCloseAudioRef.current.play();
+      }
+    };
+  
+    
+  
+    const animateMatching = useCallback(() => {
+  
+      setAnimatingBlocks(prev => {
+  
+        return prev.map(anim => {
+  
+          const newProgress = anim.progress + 0.03; // Faster animation
+  
+          const bucketX = canvasSize.width * (650 / 800);
+          const bucketY = canvasSize.height * (400 / 600);
+          const lidDisappearY = bucketY - (canvasSize.height * (20 / 600)); // Disappear just above the lid
+          const targetX = bucketX + (canvasSize.width * (60 / 800));
+  
+          
+  
+          let newX, newY, newOpacity, newScale;
+  
+  
+  
+          if (newProgress < 0.5) {
+  
+            // Rise up and move towards bucket opening
+  
+            const riseProgress = newProgress / 0.5;
+  
+            newX = anim.block.x + (targetX - anim.block.x) * riseProgress;
+  
+            newY = anim.block.y - riseProgress * (anim.block.y - lidDisappearY);
+  
+            newOpacity = 1;
+  
+            newScale = 1;
+  
+          } else if (newProgress < 1) {
+  
+            // Fade out and shrink at the lid
+  
+            const fadeProgress = (newProgress - 0.5) / 0.5;
+  
+            newX = targetX;
+  
+            newY = lidDisappearY;
+  
+            newOpacity = 1 - fadeProgress;
+  
+            newScale = 1 - fadeProgress * 0.5; // Shrink slightly
+  
+          } else {
+  
+            // Animation complete, block should be fully transparent and tiny
+  
+            newX = targetX;
+  
+            newY = lidDisappearY;
+  
+            newOpacity = 0;
+  
+            newScale = 0;
+  
+          }
+  
+          
+  
+          return {
+  
+            ...anim,
+  
+            progress: newProgress,
+  
+            block: { ...anim.block, x: newX, y: newY, opacity: newOpacity, scale: newScale }
+  
+          };
+  
+        }).filter(anim => anim.block.opacity > 0); // Remove fully faded blocks
+  
+      });
+  
+    }, [canvasSize.width, canvasSize.height, animatingBlocks]);
+  
+    
+  
+    const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
+  
+      if (animatingBlocks.length > 0) return;
+  
+      
+  
+      const canvas = canvasRef.current;
+  
+      if (!canvas) return;
+  
+      const rect = canvas.getBoundingClientRect();
+  
+      const x = e.clientX - rect.left;
+  
+      const y = e.clientY - rect.top;
+  
+      
+  
+      const clickedBlock = [...blocks]
+  
+        .reverse()
+  
+        .find(block => {
+  
+          if (block.matched) return false;
+  
+          const dx = x - block.x;
+  
+          const dy = y - block.y;
+  
+          const cos = Math.cos(-block.rotation);
+  
+          const sin = Math.sin(-block.rotation);
+  
+          const rotatedX = dx * cos - dy * sin;
+  
+          const rotatedY = dx * sin + dy * cos;
+  
+          return Math.abs(rotatedX) <= block.width / 2 && Math.abs(rotatedY) <= block.height / 2;
+  
+        });
+  
+      
+  
+      if (clickedBlock) {
+  
+        if (!selectedBlock) {
+  
+          setSelectedBlock(clickedBlock);
+  
+        } else if (selectedBlock.id === clickedBlock.id) {
+  
+          setSelectedBlock(null);
+  
+        } else if (selectedBlock.vowel === clickedBlock.vowel) {
+  
+          // Match found!
+  
+          handleMatch(selectedBlock, clickedBlock);
+  
+        } else {
+  
+          setSelectedBlock(clickedBlock);
+  
+        }
+  
+      } else {
+  
+        setSelectedBlock(null);
+  
+      }
+  
+    };
+  
+    
+  
+            const handleMatch = (block1: Block, block2: Block) => {
+  
+    
+  
+              if (isProcessingMatch.current) return; // Prevent multiple calls
+  
+    
+  
+              isProcessingMatch.current = true;
+  
+    
+  
+        
+  
+    
+  
+              const vowelData = vowels.find(v => v.vowel === block1.vowel);
+  
+    
+  
+        
+  
+    
+  
+              playClappingSound();
+  
+    
+  
+        
+  
+    
+  
+              // Open the box
+  
+    
+  
+              setIsBoxOpen(true);
+  
+    
+  
+              playChestOpenSound();
+  
+    
+  
+        
+  
+    
+  
+              // Start animation
+  
+    
+  
+              setAnimatingBlocks([
+  
+    
+  
+                { id: block1.id, block: { ...block1, opacity: 1, scale: 1 }, progress: 0 },
+  
+    
+  
+                { id: block2.id, block: { ...block2, opacity: 1, scale: 1 }, progress: 0 }
+  
+    
+  
+              ]);
+  
+    
+  
+        
+  
+    
+  
+              setSelectedBlock(null);
+  
+    
+  
+        
+  
+    
+  
+                    // Close the box and add to matched pairs after animation
+  
+    
+  
+        
+  
+    
+  
+                    setTimeout(() => {
+  
+    
+  
+        
+  
+    
+  
+                      if (vowelData && !matchedPairs.find(p => p.vowel === vowelData.vowel)) {
+  
+    
+  
+        
+  
+    
+  
+                        setMatchedPairs(prev => [...prev, vowelData]);
+  
+    
+  
+        
+  
+    
+  
+                        setScore(prev => prev + 10);
+  
+    
+  
+        
+  
+    
+  
+                      }
+  
+    
+  
+        
+  
+    
+  
+                      setAnimatingBlocks([]);
+  
+    
+  
+        
+  
+    
+  
+                      setBlocks(prev => prev.map(b => 
+  
+    
+  
+        
+  
+    
+  
+                        b.id === block1.id || b.id === block2.id ? { ...b, matched: true } : b
+  
+    
+  
+        
+  
+    
+  
+                      ));
+  
+    
+  
+        
+  
+    
+  
+                    }, 1000); // Blocks disappear after 1 second
+  
+    
+  
+        
+  
+    
+  
+              
+  
+    
+  
+        
+  
+    
+  
+                    // Close the box and allow new matches after 2 seconds
+  
+    
+  
+        
+  
+    
+  
+                    setTimeout(() => {
+  
+    
+  
+        
+  
+    
+  
+                      setIsBoxOpen(false);
+  
+    
+  
+        
+  
+    
+  
+                      playChestCloseSound();
+  
+    
+  
+        
+  
+    
+  
+                      isProcessingMatch.current = false; // Allow new matches after everything is done
+  
+    
+  
+        
+  
+    
+  
+                    }, 2000);
+  
+    
+  
+            };
+  
+    
+  
+    const playClappingSound = () => {
+  
+      const audio = new Audio('/audio/chestopenclose.mp3');
+  
+      audio.play();
+  
+    };
+
+    const playChestOpenSound = () => {
+      if (chestOpenAudioRef.current) {
+        chestOpenAudioRef.current.pause();
+        chestOpenAudioRef.current.currentTime = 0;
+        chestOpenAudioRef.current.play();
+      }
+    };
+
+    const playChestCloseSound = () => {
+      if (chestCloseAudioRef.current) {
+        chestCloseAudioRef.current.pause();
+        chestCloseAudioRef.current.currentTime = 0;
+        chestCloseAudioRef.current.play();
+      }
+    };
+  
+    
+  
+    const animateMatching = useCallback(() => {
+  
+      setAnimatingBlocks(prev => {
+  
+        return prev.map(anim => {
+  
+          const newProgress = anim.progress + 0.03; // Faster animation
+  
+          const bucketX = canvasSize.width * (650 / 800);
+          const bucketY = canvasSize.height * (400 / 600);
+          const lidDisappearY = bucketY - (canvasSize.height * (20 / 600)); // Disappear just above the lid
+          const targetX = bucketX + (canvasSize.width * (60 / 800));
+  
+          
+  
+          let newX, newY, newOpacity, newScale;
+  
+  
+  
+          if (newProgress < 0.5) {
+  
+            // Rise up and move towards bucket opening
+  
+            const riseProgress = newProgress / 0.5;
+  
+            newX = anim.block.x + (targetX - anim.block.x) * riseProgress;
+  
+            newY = anim.block.y - riseProgress * (anim.block.y - lidDisappearY);
+  
+            newOpacity = 1;
+  
+            newScale = 1;
+  
+          } else if (newProgress < 1) {
+  
+            // Fade out and shrink at the lid
+  
+            const fadeProgress = (newProgress - 0.5) / 0.5;
+  
+            newX = targetX;
+  
+            newY = lidDisappearY;
+  
+            newOpacity = 1 - fadeProgress;
+  
+            newScale = 1 - fadeProgress * 0.5; // Shrink slightly
+  
+          } else {
+  
+            // Animation complete, block should be fully transparent and tiny
+  
+            newX = targetX;
+  
+            newY = lidDisappearY;
+  
+            newOpacity = 0;
+  
+            newScale = 0;
+  
+          }
+  
+          
+  
+          return {
+  
+            ...anim,
+  
+            progress: newProgress,
+  
+            block: { ...anim.block, x: newX, y: newY, opacity: newOpacity, scale: newScale }
+  
+          };
+  
+        }).filter(anim => anim.block.opacity > 0); // Remove fully faded blocks
+  
+      });
+  
+    }, [canvasSize.width, canvasSize.height, animatingBlocks]);
+  
+    
+  
+    const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
+  
+      if (animatingBlocks.length > 0) return;
+  
+      
+  
+      const canvas = canvasRef.current;
+  
+      if (!canvas) return;
+  
+      const rect = canvas.getBoundingClientRect();
+  
+      const x = e.clientX - rect.left;
+  
+      const y = e.clientY - rect.top;
+  
+      
+  
+      const clickedBlock = [...blocks]
+  
+        .reverse()
+  
+        .find(block => {
+  
+          if (block.matched) return false;
+  
+          const dx = x - block.x;
+  
+          const dy = y - block.y;
+  
+          const cos = Math.cos(-block.rotation);
+  
+          const sin = Math.sin(-block.rotation);
+  
+          const rotatedX = dx * cos - dy * sin;
+  
+          const rotatedY = dx * sin + dy * cos;
+  
+          return Math.abs(rotatedX) <= block.width / 2 && Math.abs(rotatedY) <= block.height / 2;
+  
+        });
+  
+      
+  
+      if (clickedBlock) {
+  
+        if (!selectedBlock) {
+  
+          setSelectedBlock(clickedBlock);
+  
+        } else if (selectedBlock.id === clickedBlock.id) {
+  
+          setSelectedBlock(null);
+  
+        } else if (selectedBlock.vowel === clickedBlock.vowel) {
+  
+          // Match found!
+  
+          handleMatch(selectedBlock, clickedBlock);
+  
+        } else {
+  
+          setSelectedBlock(clickedBlock);
+  
+        }
+  
+      } else {
+  
+        setSelectedBlock(null);
+  
+      }
+  
+    };
+  
+    
+  
+            const handleMatch = (block1: Block, block2: Block) => {
+  
+    
+  
+              if (isProcessingMatch.current) return; // Prevent multiple calls
+  
+    
+  
+              isProcessingMatch.current = true;
+  
+    
+  
+        
+  
+    
+  
+              const vowelData = vowels.find(v => v.vowel === block1.vowel);
+  
+    
+  
+        
+  
+    
+  
+              playClappingSound();
+  
+    
+  
+        
+  
+    
+  
+              // Open the box
+  
+    
+  
+              setIsBoxOpen(true);
+  
+    
+  
+              playChestOpenSound();
+  
+    
+  
+        
+  
+    
+  
+              // Start animation
+  
+    
+  
+              setAnimatingBlocks([
+  
+    
+  
+                { id: block1.id, block: { ...block1, opacity: 1, scale: 1 }, progress: 0 },
+  
+    
+  
+                { id: block2.id, block: { ...block2, opacity: 1, scale: 1 }, progress: 0 }
+  
+    
+  
+              ]);
+  
+    
+  
+        
+  
+    
+  
+              setSelectedBlock(null);
+  
+    
+  
+        
+  
+    
+  
+                    // Close the box and add to matched pairs after animation
+  
+    
+  
+        
+  
+    
+  
+                    setTimeout(() => {
+  
+    
+  
+        
+  
+    
+  
+                      if (vowelData && !matchedPairs.find(p => p.vowel === vowelData.vowel)) {
+  
+    
+  
+        
+  
+    
+  
+                        setMatchedPairs(prev => [...prev, vowelData]);
+  
+    
+  
+        
+  
+    
+  
+                        setScore(prev => prev + 10);
+  
+    
+  
+        
+  
+    
+  
+                      }
+  
+    
+  
+        
+  
+    
+  
+                      setAnimatingBlocks([]);
+  
+    
+  
+        
+  
+    
+  
+                      setBlocks(prev => prev.map(b => 
+  
+    
+  
+        
+  
+    
+  
+                        b.id === block1.id || b.id === block2.id ? { ...b, matched: true } : b
+  
+    
+  
+        
+  
+    
+  
+                      ));
+  
+    
+  
+        
+  
+    
+  
+                    }, 1000); // Blocks disappear after 1 second
+  
+    
+  
+        
+  
+    
+  
+              
+  
+    
+  
+        
+  
+    
+  
+                    // Close the box and allow new matches after 2 seconds
+  
+    
+  
+        
+  
+    
+  
+                    setTimeout(() => {
+  
+    
+  
+        
+  
+    
+  
+                      setIsBoxOpen(false);
+  
+    
+  
+        
+  
+    
+  
+                      playChestCloseSound();
+  
+    
+  
+        
+  
+    
+  
+                      isProcessingMatch.current = false; // Allow new matches after everything is done
+  
+    
+  
+        
+  
+    
+  
+                    }, 2000);
+  
+    
+  
+            };
+  
+    
+  
+    const playClappingSound = () => {
+  
+      const audio = new Audio('/audio/chestopenclose.mp3');
+  
+      audio.play();
+  
+    };
+
+    const playChestOpenSound = () => {
+      if (chestOpenAudioRef.current) {
+        chestOpenAudioRef.current.pause();
+        chestOpenAudioRef.current.currentTime = 0;
+        chestOpenAudioRef.current.play();
+      }
+    };
+
+    const playChestCloseSound = () => {
+      if (chestCloseAudioRef.current) {
+        chestCloseAudioRef.current.pause();
+        chestCloseAudioRef.current.currentTime = 0;
+        chestCloseAudioRef.current.play();
+      }
+    };
+  
+    
+  
+    const animateMatching = useCallback(() => {
+  
+      setAnimatingBlocks(prev => {
+  
+        return prev.map(anim => {
+  
+          const newProgress = anim.progress + 0.03; // Faster animation
+  
+          const bucketX = canvasSize.width * (650 / 800);
+          const bucketY = canvasSize.height * (400 / 600);
+          const lidDisappearY = bucketY - (canvasSize.height * (20 / 600)); // Disappear just above the lid
+          const targetX = bucketX + (canvasSize.width * (60 / 800));
+  
+          
+  
+          let newX, newY, newOpacity, newScale;
+  
+  
+  
+          if (newProgress < 0.5) {
+  
+            // Rise up and move towards bucket opening
+  
+            const riseProgress = newProgress / 0.5;
+  
+            newX = anim.block.x + (targetX - anim.block.x) * riseProgress;
+  
+            newY = anim.block.y - riseProgress * (anim.block.y - lidDisappearY);
+  
+            newOpacity = 1;
+  
+            newScale = 1;
+  
+          } else if (newProgress < 1) {
+  
+            // Fade out and shrink at the lid
+  
+            const fadeProgress = (newProgress - 0.5) / 0.5;
+  
+            newX = targetX;
+  
+            newY = lidDisappearY;
+  
+            newOpacity = 1 - fadeProgress;
+  
+            newScale = 1 - fadeProgress * 0.5; // Shrink slightly
+  
+          } else {
+  
+            // Animation complete, block should be fully transparent and tiny
+  
+            newX = targetX;
+  
+            newY = lidDisappearY;
+  
+            newOpacity = 0;
+  
+            newScale = 0;
+  
+          }
+  
+          
+  
+          return {
+  
+            ...anim,
+  
+            progress: newProgress,
+  
+            block: { ...anim.block, x: newX, y: newY, opacity: newOpacity, scale: newScale }
+  
+          };
+  
+        }).filter(anim => anim.block.opacity > 0); // Remove fully faded blocks
+  
+      });
+  
+    }, [canvasSize.width, canvasSize.height, animatingBlocks]);
+  
+    
+  
+    const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
+  
+      if (animatingBlocks.length > 0) return;
+  
+      
+  
+      const canvas = canvasRef.current;
+  
+      if (!canvas) return;
+  
+      const rect = canvas.getBoundingClientRect();
+  
+      const x = e.clientX - rect.left;
+  
+      const y = e.clientY - rect.top;
+  
+      
+  
+      const clickedBlock = [...blocks]
+  
+        .reverse()
+  
+        .find(block => {
+  
+          if (block.matched) return false;
+  
+          const dx = x - block.x;
+  
+          const dy = y - block.y;
+  
+          const cos = Math.cos(-block.rotation);
+  
+          const sin = Math.sin(-block.rotation);
+  
+          const rotatedX = dx * cos - dy * sin;
+  
+          const rotatedY = dx * sin + dy * cos;
+  
+          return Math.abs(rotatedX) <= block.width / 2 && Math.abs(rotatedY) <= block.height / 2;
+  
+        });
+  
+      
+  
+      if (clickedBlock) {
+  
+        if (!selectedBlock) {
+  
+          setSelectedBlock(clickedBlock);
+  
+        } else if (selectedBlock.id === clickedBlock.id) {
+  
+          setSelectedBlock(null);
+  
+        } else if (selectedBlock.vowel === clickedBlock.vowel) {
+  
+          // Match found!
+  
+          handleMatch(selectedBlock, clickedBlock);
+  
+        } else {
+  
+          setSelectedBlock(clickedBlock);
+  
+        }
+  
+      } else {
+  
+        setSelectedBlock(null);
+  
+      }
+  
+    };
+  
+    
+  
+            const handleMatch = (block1: Block, block2: Block) => {
+  
+    
+  
+              if (isProcessingMatch.current) return; // Prevent multiple calls
+  
+    
+  
+              isProcessingMatch.current = true;
+  
+    
+  
+        
+  
+    
+  
+              const vowelData = vowels.find(v => v.vowel === block1.vowel);
+  
+    
+  
+        
+  
+    
+  
+              playClappingSound();
+  
+    
+  
+        
+  
+    
+  
+              // Open the box
+  
+    
+  
+              setIsBoxOpen(true);
+  
+    
+  
+              playChestOpenSound();
+  
+    
+  
+        
+  
+    
+  
+              // Start animation
+  
+    
+  
+              setAnimatingBlocks([
+  
+    
+  
+                { id: block1.id, block: { ...block1, opacity: 1, scale: 1 }, progress: 0 },
+  
+    
+  
+                { id: block2.id, block: { ...block2, opacity: 1, scale: 1 }, progress: 0 }
+  
+    
+  
+              ]);
+  
+    
+  
+        
+  
+    
+  
+              setSelectedBlock(null);
+  
+    
+  
+        
+  
+    
+  
+                    // Close the box and add to matched pairs after animation
+  
+    
+  
+        
+  
+    
+  
+                    setTimeout(() => {
+  
+    
+  
+        
+  
+    
+  
+                      if (vowelData && !matchedPairs.find(p => p.vowel === vowelData.vowel)) {
+  
+    
+  
+        
+  
+    
+  
+                        setMatchedPairs(prev => [...prev, vowelData]);
+  
+    
+  
+        
+  
+    
+  
+                        setScore(prev => prev + 10);
+  
+    
+  
+        
+  
+    
+  
+                      }
+  
+    
+  
+        
+  
+    
+  
+                      setAnimatingBlocks([]);
+  
+    
+  
+        
+  
+    
+  
+                      setBlocks(prev => prev.map(b => 
+  
+    
+  
+        
+  
+    
+  
+                        b.id === block1.id || b.id === block2.id ? { ...b, matched: true } : b
+  
+    
+  
+        
+  
+    
+  
+                      ));
+  
+    
+  
+        
+  
+    
+  
+                    }, 1000); // Blocks disappear after 1 second
+  
+    
+  
+        
+  
+    
+  
+              
+  
+    
+  
+        
+  
+    
+  
+                    // Close the box and allow new matches after 2 seconds
+  
+    
+  
+        
+  
+    
+  
+                    setTimeout(() => {
+  
+    
+  
+        
+  
+    
+  
+                      setIsBoxOpen(false);
+  
+    
+  
+        
+  
+    
+  
+                      playChestCloseSound();
+  
+    
+  
+        
+  
+    
+  
+                      isProcessingMatch.current = false; // Allow new matches after everything is done
+  
+    
+  
+        
+  
+    
+  
+                    }, 2000);
+  
+    
+  
+            };
+  
+    
+  
+    const playClappingSound = () => {
+  
+      const audio = new Audio('/audio/chestopenclose.mp3');
+  
+      audio.play();
+  
+    };
+
+    const playChestOpenSound = () => {
+      if (chestOpenAudioRef.current) {
+        chestOpenAudioRef.current.pause();
+        chestOpenAudioRef.current.currentTime = 0;
+        chestOpenAudioRef.current.play();
+      }
+    };
+
+    const playChestCloseSound = () => {
+      if (chestCloseAudioRef.current) {
+        chestCloseAudioRef.current.pause();
+        chestCloseAudioRef.current.currentTime = 0;
+        chestCloseAudioRef.current.play();
+      }
+    };
+  
+    
+  
+    const animateMatching = useCallback(() => {
+  
+      setAnimatingBlocks(prev => {
+  
+        return prev.map(anim => {
+  
+          const newProgress = anim.progress + 0.03; // Faster animation
+  
+          const bucketX = canvasSize.width * (650 / 800);
+          const bucketY = canvasSize.height * (400 / 600);
+          const lidDisappearY = bucketY - (canvasSize.height * (20 / 600)); // Disappear just above the lid
+          const targetX = bucketX + (canvasSize.width * (60 / 800));
+  
+          
+  
+          let newX, newY, newOpacity, newScale;
+  
+  
+  
+          if (newProgress < 0.5) {
+  
+            // Rise up and move towards bucket opening
+  
+            const riseProgress = newProgress / 0.5;
+  
+            newX = anim.block.x + (targetX - anim.block.x) * riseProgress;
+  
+            newY = anim.block.y - riseProgress * (anim.block.y - lidDisappearY);
+  
+            newOpacity = 1;
+  
+            newScale = 1;
+  
+          } else if (newProgress < 1) {
+  
+            // Fade out and shrink at the lid
+  
+            const fadeProgress = (newProgress - 0.5) / 0.5;
+  
+            newX = targetX;
+  
+            newY = lidDisappearY;
+  
+            newOpacity = 1 - fadeProgress;
+  
+            newScale = 1 - fadeProgress * 0.5; // Shrink slightly
+  
+          } else {
+  
+            // Animation complete, block should be fully transparent and tiny
+  
+            newX = targetX;
+  
+            newY = lidDisappearY;
+  
+            newOpacity = 0;
+  
+            newScale = 0;
+  
+          }
+  
+          
+  
+          return {
+  
+            ...anim,
+  
+            progress: newProgress,
+  
+            block: { ...anim.block, x: newX, y: newY, opacity: newOpacity, scale: newScale }
+  
+          };
+  
+        }).filter(anim => anim.block.opacity > 0); // Remove fully faded blocks
+  
+      });
+  
+    }, [canvasSize.width, canvasSize.height, animatingBlocks]);
+  
+    
+  
+    const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
+  
+      if (animatingBlocks.length > 0) return;
+  
+      
+  
+      const canvas = canvasRef.current;
+  
+      if (!canvas) return;
+  
+      const rect = canvas.getBoundingClientRect();
+  
+      const x = e.clientX - rect.left;
+  
+      const y = e.clientY - rect.top;
+  
+      
+  
+      const clickedBlock = [...blocks]
+  
+        .reverse()
+  
+        .find(block => {
+  
+          if (block.matched) return false;
+  
+          const dx = x - block.x;
+  
+          const dy = y - block.y;
+  
+          const cos = Math.cos(-block.rotation);
+  
+          const sin = Math.sin(-block.rotation);
+  
+          const rotatedX = dx * cos - dy * sin;
+  
+          const rotatedY = dx * sin + dy * cos;
+  
+          return Math.abs(rotatedX) <= block.width / 2 && Math.abs(rotatedY) <= block.height / 2;
+  
+        });
+  
+      
+  
+      if (clickedBlock) {
+  
+        if (!selectedBlock) {
+  
+          setSelectedBlock(clickedBlock);
+  
+        } else if (selectedBlock.id === clickedBlock.id) {
+  
+          setSelectedBlock(null);
+  
+        } else if (selectedBlock.vowel === clickedBlock.vowel) {
+  
+          // Match found!
+  
+          handleMatch(selectedBlock, clickedBlock);
+  
+        } else {
+  
+          setSelectedBlock(clickedBlock);
+  
+        }
+  
+      } else {
+  
+        setSelectedBlock(null);
+  
+      }
+  
+    };
+  
+    
+  
+            const handleMatch = (block1: Block, block2: Block) => {
+  
+    
+  
+              if (isProcessingMatch.current) return; // Prevent multiple calls
+  
+    
+  
+              isProcessingMatch.current = true;
+  
+    
+  
+        
+  
+    
+  
+              const vowelData = vowels.find(v => v.vowel === block1.vowel);
+  
+    
+  
+        
+  
+    
+  
+              playClappingSound();
+  
+    
+  
+        
+  
+    
+  
+              // Open the box
+  
+    
+  
+              setIsBoxOpen(true);
+  
+    
+  
+              playChestOpenSound();
+  
+    
+  
+        
+  
+    
+  
+              // Start animation
+  
+    
+  
+              setAnimatingBlocks([
+  
+    
+  
+                { id: block1.id, block: { ...block1, opacity: 1, scale: 1 }, progress: 0 },
+  
+    
+  
+                { id: block2.id, block: { ...block2, opacity: 1, scale: 1 }, progress: 0 }
+  
+    
+  
+              ]);
+  
+    
+  
+        
+  
+    
+  
+              setSelectedBlock(null);
+  
+    
+  
+        
+  
+    
+  
+                    // Close the box and add to matched pairs after animation
+  
+    
+  
+        
+  
+    
+  
+                    setTimeout(() => {
+  
+    
+  
+        
+  
+    
+  
+                      if (vowelData && !matchedPairs.find(p => p.vowel === vowelData.vowel)) {
+  
+    
+  
+        
+  
+    
+  
+                        setMatchedPairs(prev => [...prev, vowelData]);
+  
+    
+  
+        
+  
+    
+  
+                        setScore(prev => prev + 10);
+  
+    
+  
+        
+  
+    
+  
+                      }
+  
+    
+  
+        
+  
+    
+  
+                      setAnimatingBlocks([]);
+  
+    
+  
+        
+  
+    
+  
+                      setBlocks(prev => prev.map(b => 
+  
+    
+  
+        
+  
+    
+  
+                        b.id === block1.id || b.id === block2.id ? { ...b, matched: true } : b
+  
+    
+  
+        
+  
+    
+  
+                      ));
+  
+    
+  
+        
+  
+    
+  
+                    }, 1000); // Blocks disappear after 1 second
+  
+    
+  
+        
+  
+    
+  
+              
+  
+    
+  
+        
+  
+    
+  
+                    // Close the box and allow new matches after 2 seconds
+  
+    
+  
+        
+  
+    
+  
+                    setTimeout(() => {
+  
+    
+  
+        
+  
+    
+  
+                      setIsBoxOpen(false);
+  
+    
+  
+        
+  
+    
+  
+                      playChestCloseSound();
+  
+    
+  
+        
+  
+    
+  
+                      isProcessingMatch.current = false; // Allow new matches after everything is done
+  
+    
+  
+        
+  
+    
+  
+                    }, 2000);
+  
+    
+  
+            };
+  
+    
+  
+    const playClappingSound = () => {
+  
+      const audio = new Audio('/audio/chestopenclose.mp3');
+  
+      audio.play();
+  
+    };
+
+    const playChestOpenSound = () => {
+      if (chestOpenAudioRef.current) {
+        chestOpenAudioRef.current.pause();
+        chestOpenAudioRef.current.currentTime = 0;
+        chestOpenAudioRef.current.play();
+      }
+    };
+
+    const playChestCloseSound = () => {
+      if (chestCloseAudioRef.current) {
+        chestCloseAudioRef.current.pause();
+        chestCloseAudioRef.current.currentTime = 0;
+        chestCloseAudioRef.current.play();
+      }
+    };
+  
+    
+  
+    const animateMatching = useCallback(() => {
+  
+      setAnimatingBlocks(prev => {
+  
+        return prev.map(anim => {
+  
+          const newProgress = anim.progress + 0.03; // Faster animation
+  
+          const bucketX = canvasSize.width * (650 / 800);
+          const bucketY = canvasSize.height * (400 / 600);
+          const lidDisappearY = bucketY - (canvasSize.height * (20 / 600)); // Disappear just above the lid
+          const targetX = bucketX + (canvasSize.width * (60 / 800));
+  
+          
+  
+          let newX, newY, newOpacity, newScale;
+  
+  
+  
+          if (newProgress < 0.5) {
+  
+            // Rise up and move towards bucket opening
+  
+            const riseProgress = newProgress / 0.5;
+  
+            newX = anim.block.x + (targetX - anim.block.x) * riseProgress;
+  
+            newY = anim.block.y - riseProgress * (anim.block.y - lidDisappearY);
+  
+            newOpacity = 1;
+  
+            newScale = 1;
+  
+          } else if (newProgress < 1) {
+  
+            // Fade out and shrink at the lid
+  
+            const fadeProgress = (newProgress - 0.5) / 0.5;
+  
+            newX = targetX;
+  
+            newY = lidDisappearY;
+  
+            newOpacity = 1 - fadeProgress;
+  
+            newScale = 1 - fadeProgress * 0.5; // Shrink slightly
+  
+          } else {
+  
+            // Animation complete, block should be fully transparent and tiny
+  
+            newX = targetX;
+  
+            newY = lidDisappearY;
+  
+            newOpacity = 0;
+  
+            newScale = 0;
+  
+          }
+  
+          
+  
+          return {
+  
+            ...anim,
+  
+            progress: newProgress,
+  
+            block: { ...anim.block, x: newX, y: newY, opacity: newOpacity, scale: newScale }
+  
+          };
+  
+        }).filter(anim => anim.block.opacity > 0); // Remove fully faded blocks
+  
+      });
+  
+    }, [canvasSize.width, canvasSize.height, animatingBlocks]);
+  
+    
+  
+    const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
+  
+      if (animatingBlocks.length > 0) return;
+  
+      
+  
+      const canvas = canvasRef.current;
+  
+      if (!canvas) return;
+  
+      const rect = canvas.getBoundingClientRect();
+  
+      const x = e.clientX - rect.left;
+  
+      const y = e.clientY - rect.top;
+  
+      
+  
+      const clickedBlock = [...blocks]
+  
+        .reverse()
+  
+        .find(block => {
+  
+          if (block.matched) return false;
+  
+          const dx = x - block.x;
+  
+          const dy = y - block.y;
+  
+          const cos = Math.cos(-block.rotation);
+  
+          const sin = Math.sin(-block.rotation);
+  
+          const rotatedX = dx * cos - dy * sin;
+  
+          const rotatedY = dx * sin + dy * cos;
+  
+          return Math.abs(rotatedX) <= block.width / 2 && Math.abs(rotatedY) <= block.height / 2;
+  
+        });
+  
+      
+  
+      if (clickedBlock) {
+  
+        if (!selectedBlock) {
+  
+          setSelectedBlock(clickedBlock);
+  
+        } else if (selectedBlock.id === clickedBlock.id) {
+  
+          setSelectedBlock(null);
+  
+        } else if (selectedBlock.vowel === clickedBlock.vowel) {
+  
+          // Match found!
+  
+          handleMatch(selectedBlock, clickedBlock);
+  
+        } else {
+  
+          setSelectedBlock(clickedBlock);
+  
+        }
+  
+      } else {
+  
+        setSelectedBlock(null);
+  
+      }
+  
+    };
+  
+    
+  
+            const handleMatch = (block1: Block, block2: Block) => {
+  
+    
+  
+              if (isProcessingMatch.current) return; // Prevent multiple calls
+  
+    
+  
+              isProcessingMatch.current = true;
+  
+    
+  
+        
+  
+    
+  
+              const vowelData = vowels.find(v => v.vowel === block1.vowel);
+  
+    
+  
+        
+  
+    
+  
+              playClappingSound();
+  
+    
+  
+        
+  
+    
+  
+              // Open the box
+  
+    
+  
+              setIsBoxOpen(true);
+  
+    
+  
+              playChestOpenSound();
+  
+    
+  
+        
+  
+    
+  
+              // Start animation
+  
+    
+  
+              setAnimatingBlocks([
+  
+    
+  
+                { id: block1.id, block: { ...block1, opacity: 1, scale: 1 }, progress: 0 },
+  
+    
+  
+                { id: block2.id, block: { ...block2, opacity: 1, scale: 1 }, progress: 0 }
+  
+    
+  
+              ]);
+  
+    
+  
+        
+  
+    
+  
+              setSelectedBlock(null);
+  
+    
+  
+        
+  
+    
+  
+                    // Close the box and add to matched pairs after animation
+  
+    
+  
+        
+  
+    
+  
+                    setTimeout(() => {
+  
+    
+  
+        
+  
+    
+  
+                      if (vowelData && !matchedPairs.find(p => p.vowel === vowelData.vowel)) {
+  
+    
+  
+        
+  
+    
+  
+                        setMatchedPairs(prev => [...prev, vowelData]);
+  
+    
+  
+        
+  
+    
+  
+                        setScore(prev => prev + 10);
+  
+    
+  
+        
+  
+    
+  
+                      }
+  
+    
+  
+        
+  
+    
+  
+                      setAnimatingBlocks([]);
+  
+    
+  
+        
+  
+    
+  
+                      setBlocks(prev => prev.map(b => 
+  
+    
+  
+        
+  
+    
+  
+                        b.id === block1.id || b.id === block2.id ? { ...b, matched: true } : b
+  
+    
+  
+        
+  
+    
+  
+                      ));
+  
+    
+  
+        
+  
+    
+  
+                    }, 1000); // Blocks disappear after 1 second
+  
+    
+  
+        
+  
+    
+  
+              
+  
+    
+  
+        
+  
+    
+  
+                    // Close the box and allow new matches after 2 seconds
+  
+    
+  
+        
+  
+    
+  
+                    setTimeout(() => {
+  
+    
+  
+        
+  
+    
+  
+                      setIsBoxOpen(false);
+  
+    
+  
+        
+  
+    
+  
+                      playChestCloseSound();
+  
+    
+  
+        
+  
+    
+  
+                      isProcessingMatch.current = false; // Allow new matches after everything is done
+  
+    
+  
+        
+  
+    
+  
+                    }, 2000);
+  
+    
+  
+            };
+  
+    
+  
+    const playClappingSound = () => {
+  
+      const audio = new Audio('/audio/chestopenclose.mp3');
+  
+      audio.play();
+  
+    };
+
+    const playChestOpenSound = () => {
+      if (chestOpenAudioRef.current) {
+        chestOpenAudioRef.current.pause();
+        chestOpenAudioRef.current.currentTime = 0;
+        chestOpenAudioRef.current.play();
+      }
+    };
+
+    const playChestCloseSound = () => {
+      if (chestCloseAudioRef.current) {
+        chestCloseAudioRef.current.pause();
+        chestCloseAudioRef.current.currentTime = 0;
+        chestCloseAudioRef.current.play();
+      }
+    };
+  
+    
+  
+    const animateMatching = useCallback(() => {
+  
+      setAnimatingBlocks(prev => {
+  
+        return prev.map(anim => {
+  
+          const newProgress = anim.progress + 0.03; // Faster animation
+  
+          const bucketX = canvasSize.width * (650 / 800);
+          const bucketY = canvasSize.height * (400 / 600);
+          const lidDisappearY = bucketY - (canvasSize.height * (20 / 600)); // Disappear just above the lid
+          const targetX = bucketX + (canvasSize.width * (60 / 800));
+  
+          
+  
+          let newX, newY, newOpacity, newScale;
+  
+  
+  
+          if (newProgress < 0.5) {
+  
+            // Rise up and move towards bucket opening
+  
+            const riseProgress = newProgress / 0.5;
+  
+            newX = anim.block.x + (targetX - anim.block.x) * riseProgress;
+  
+            newY = anim.block.y - riseProgress * (anim.block.y - lidDisappearY);
+  
+            newOpacity = 1;
+  
+            newScale = 1;
+  
+          } else if (newProgress < 1) {
+  
+            // Fade out and shrink at the lid
+  
+            const fadeProgress = (newProgress - 0.5) / 0.5;
+  
+            newX = targetX;
+  
+            newY = lidDisappearY;
+  
+            newOpacity = 1 - fadeProgress;
+  
+            newScale = 1 - fadeProgress * 0.5; // Shrink slightly
+  
+          } else {
+  
+            // Animation complete, block should be fully transparent and tiny
+  
+            newX = targetX;
+  
+            newY = lidDisappearY;
+  
+            newOpacity = 0;
+  
+            newScale = 0;
+  
+          }
+  
+          
+  
+          return {
+  
+            ...anim,
+  
+            progress: newProgress,
+  
+            block: { ...anim.block, x: newX, y: newY, opacity: newOpacity, scale: newScale }
+  
+          };
+  
+        }).filter(anim => anim.block.opacity > 0); // Remove fully faded blocks
+  
+      });
+  
+    }, [canvasSize.width, canvasSize.height, animatingBlocks]);
+  
+    
+  
+    const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
+  
+      if (animatingBlocks.length > 0) return;
+  
+      
+  
+      const canvas = canvasRef.current;
+  
+      if (!canvas) return;
+  
+      const rect = canvas.getBoundingClientRect();
+  
+      const x = e.clientX - rect.left;
+  
+      const y = e.clientY - rect.top;
+  
+      
+  
+      const clickedBlock = [...blocks]
+  
+        .reverse()
+  
+        .find(block => {
+  
+          if (block.matched) return false;
+  
+          const dx = x - block.x;
+  
+          const dy = y - block.y;
+  
+          const cos = Math.cos(-block.rotation);
+  
+          const sin = Math.sin(-block.rotation);
+  
+          const rotatedX = dx * cos - dy * sin;
+  
+          const rotatedY = dx * sin + dy * cos;
+  
+          return Math.abs(rotatedX) <= block.width / 2 && Math.abs(rotatedY) <= block.height / 2;
+  
+        });
+  
+      
+  
+      if (clickedBlock) {
+  
+        if (!selectedBlock) {
+  
+          setSelectedBlock(clickedBlock);
+  
+        } else if (selectedBlock.id === clickedBlock.id) {
+  
+          setSelectedBlock(null);
+  
+        } else if (selectedBlock.vowel === clickedBlock.vowel) {
+  
+          // Match found!
+  
+          handleMatch(selectedBlock, clickedBlock);
+  
+        } else {
+  
+          setSelectedBlock(clickedBlock);
+  
+        }
+  
+      } else {
+  
+        setSelectedBlock(null);
+  
+      }
+  
+    };
+  
+    
+  
+            const handleMatch = (block1: Block, block2: Block) => {
+  
+    
+  
+              if (isProcessingMatch.current) return; // Prevent multiple calls
+  
+    
+  
+              isProcessingMatch.current = true;
+  
+    
+  
+        
+  
+    
+  
+              const vowelData = vowels.find(v => v.vowel === block1.vowel);
+  
+    
+  
+        
+  
+    
+  
+              playClappingSound();
+  
+    
+  
+        
+  
+    
+  
+              // Open the box
+  
+    
+  
+              setIsBoxOpen(true);
+  
+    
+  
+              playChestOpenSound();
+  
+    
+  
+        
+  
+    
+  
+              // Start animation
+  
+    
+  
+              setAnimatingBlocks([
+  
+    
+  
+                { id: block1.id, block: { ...block1, opacity: 1, scale: 1 }, progress: 0 },
+  
+    
+  
+                { id: block2.id, block: { ...block2, opacity: 1, scale: 1 }, progress: 0 }
+  
+    
+  
+              ]);
+  
+    
+  
+        
+  
+    
+  
+              setSelectedBlock(null);
+  
+    
+  
+        
+  
+    
+  
+                    // Close the box and add to matched pairs after animation
+  
+    
+  
+        
+  
+    
+  
+                    setTimeout(() => {
+  
+    
+  
+        
+  
+    
+  
+                      if (vowelData && !matchedPairs.find(p => p.vowel === vowelData.vowel)) {
+  
+    
+  
+        
+  
+    
+  
+                        setMatchedPairs(prev => [...prev, vowelData]);
+  
+    
+  
+        
+  
+    
+  
+                        setScore(prev => prev + 10);
+  
+    
+  
+        
+  
+    
+  
+                      }
+  
+    
+  
+        
+  
+    
+  
+                      setAnimatingBlocks([]);
+  
+    
+  
+        
+  
+    
+  
+                      setBlocks(prev => prev.map(b => 
+  
+    
+  
+        
+  
+    
+  
+                        b.id === block1.id || b.id === block2.id ? { ...b, matched: true } : b
+  
+    
+  
+        
+  
+    
+  
+                      ));
+  
+    
+  
+        
+  
+    
+  
+                    }, 1000); // Blocks disappear after 1 second
+  
+    
+  
+        
+  
+    
+  
+              
+  
+    
+  
+        
+  
+    
+  
+                    // Close the box and allow new matches after 2 seconds
+  
+    
+  
+        
+  
+    
+  
+                    setTimeout(() => {
+  
+    
+  
+        
+  
+    
+  
+                      setIsBoxOpen(false);
+  
+    
+  
+        
+  
+    
+  
+                      playChestCloseSound();
+  
+    
+  
+        
+  
+    
+  
+                      isProcessingMatch.current = false; // Allow new matches after everything is done
+  
+    
+  
+        
+  
+    
+  
+                    }, 2000);
+  
+    
+  
+            };
+  
+    
+  
+    const playClappingSound = () => {
+  
+      const audio = new Audio('/audio/chestopenclose.mp3');
+  
+      audio.play();
+  
+    };
+
+    const playChestOpenSound = () => {
+      if (chestOpenAudioRef.current) {
+        chestOpenAudioRef.current.pause();
+        chestOpenAudioRef.current.currentTime = 0;
+        chestOpenAudioRef.current.play();
+      }
+    };
+
+    const playChestCloseSound = () => {
+      if (chestCloseAudioRef.current) {
+        chestCloseAudioRef.current.pause();
+        chestCloseAudioRef.current.currentTime = 0;
+        chestCloseAudioRef.current.play();
+      }
+    };
+  
+    
+  
+    const animateMatching = useCallback(() => {
+  
+      setAnimatingBlocks(prev => {
+  
+        return prev.map(anim => {
+  
+          const newProgress = anim.progress + 0.03; // Faster animation
+  
+          const bucketX = canvasSize.width * (650 / 800);
+          const bucketY = canvasSize.height * (400 / 600);
+          const lidDisappearY = bucketY - (canvasSize.height * (20 / 600)); // Disappear just above the lid
+          const targetX = bucketX + (canvasSize.width * (60 / 800));
+  
+          
+  
+          let newX, newY, newOpacity, newScale;
+  
+  
+  
+          if (newProgress < 0.5) {
+  
+            // Rise up and move towards bucket opening
+  
+            const riseProgress = newProgress / 0.5;
+  
+            newX = anim.block.x + (targetX - anim.block.x) * riseProgress;
+  
+            newY = anim.block.y - riseProgress * (anim.block.y - lidDisappearY);
+  
+            newOpacity = 1;
+  
+            newScale = 1;
+  
+          } else if (newProgress < 1) {
+  
+            // Fade out and shrink at the lid
+  
+            const fadeProgress = (newProgress - 0.5) / 0.5;
+  
+            newX = targetX;
+  
+            newY = lidDisappearY;
+  
+            newOpacity = 1 - fadeProgress;
+  
+            newScale = 1 - fadeProgress * 0.5; // Shrink slightly
+  
+          } else {
+  
+            // Animation complete, block should be fully transparent and tiny
+  
+            newX = targetX;
+  
+            newY = lidDisappearY;
+  
+            newOpacity = 0;
+  
+            newScale = 0;
+  
+          }
+  
+          
+  
+          return {
+  
+            ...anim,
+  
+            progress: newProgress,
+  
+            block: { ...anim.block, x: newX, y: newY, opacity: newOpacity, scale: newScale }
+  
+          };
+  
+        }).filter(anim => anim.block.opacity > 0); // Remove fully faded blocks
+  
+      });
+  
+    }, [canvasSize.width, canvasSize.height, animatingBlocks]);
+  
+    
+  
+    const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
+  
+      if (animatingBlocks.length > 0) return;
+  
+      
+  
+      const canvas = canvasRef.current;
+  
+      if (!canvas) return;
+  
+      const rect = canvas.getBoundingClientRect();
+  
+      const x = e.clientX - rect.left;
+  
+      const y = e.clientY - rect.top;
+  
+      
+  
+      const clickedBlock = [...blocks]
+  
+        .reverse()
+  
+        .find(block => {
+  
+          if (block.matched) return false;
+  
+          const dx = x - block.x;
+  
+          const dy = y - block.y;
+  
+          const cos = Math.cos(-block.rotation);
+  
+          const sin = Math.sin(-block.rotation);
+  
+          const rotatedX = dx * cos - dy * sin;
+  
+          const rotatedY = dx * sin + dy * cos;
+  
+          return Math.abs(rotatedX) <= block.width / 2 && Math.abs(rotatedY) <= block.height / 2;
+  
+        });
+  
+      
+  
+      if (clickedBlock) {
+  
+        if (!selectedBlock) {
+  
+          setSelectedBlock(clickedBlock);
+  
+        } else if (selectedBlock.id === clickedBlock.id) {
+  
+          setSelectedBlock(null);
+  
+        } else if (selectedBlock.vowel === clickedBlock.vowel) {
+  
+          // Match found!
+  
+          handleMatch(selectedBlock, clickedBlock);
+  
+        } else {
+  
+          setSelectedBlock(clickedBlock);
+  
+        }
+  
+      } else {
+  
+        setSelectedBlock(null);
+  
+      }
+  
+    };
+  
+    
+  
+            const handleMatch = (block1: Block, block2: Block) => {
+  
+    
+  
+              if (isProcessingMatch.current) return; // Prevent multiple calls
+  
+    
+  
+              isProcessingMatch.current = true;
+  
+    
+  
+        
+  
+    
+  
+              const vowelData = vowels.find(v => v.vowel === block1.vowel);
+  
+    
+  
+        
+  
+    
+  
+              playClappingSound();
+  
+    
+  
+        
+  
+    
+  
+              // Open the box
+  
+    
+  
+              setIsBoxOpen(true);
+  
+    
+  
+              playChestOpenSound();
+  
+    
+  
+        
+  
+    
+  
+              // Start animation
+  
+    
+  
+              setAnimatingBlocks([
+  
+    
+  
+                { id: block1.id, block: { ...block1, opacity: 1, scale: 1 }, progress: 0 },
+  
+    
+  
+                { id: block2.id, block: { ...block2, opacity: 1, scale: 1 }, progress: 0 }
+  
+    
+  
+              ]);
+  
+    
+  
+        
+  
+    
+  
+              setSelectedBlock(null);
+  
+    
+  
+        
+  
+    
+  
+                    // Close the box and add to matched pairs after animation
+  
+    
+  
+        
+  
+    
+  
+                    setTimeout(() => {
+  
+    
+  
+        
+  
+    
+  
+                      if (vowelData && !matchedPairs.find(p => p.vowel === vowelData.vowel)) {
+  
+    
+  
+        
+  
+    
+  
+                        setMatchedPairs(prev => [...prev, vowelData]);
+  
+    
+  
+        
+  
+    
+  
+                        setScore(prev => prev + 10);
+  
+    
+  
+        
+  
+    
+  
+                      }
+  
+    
+  
+        
+  
+    
+  
+                      setAnimatingBlocks([]);
+  
+    
+  
+        
+  
+    
+  
+                      setBlocks(prev => prev.map(b => 
+  
+    
+  
+        
+  
+    
+  
+                        b.id === block1.id || b.id === block2.id ? { ...b, matched: true } : b
+  
+    
+  
+        
+  
+    
+  
+                      ));
+  
+    
+  
+        
+  
+    
+  
+                    }, 1000); // Blocks disappear after 1 second
+  
+    
+  
+        
+  
+    
+  
+              
+  
+    
+  
+        
+  
+    
+  
+                    // Close the box and allow new matches after 2 seconds
+  
+    
+  
+        
+  
+    
+  
+                    setTimeout(() => {
+  
+    
+  
+        
+  
+    
+  
+                      setIsBoxOpen(false);
+  
+    
+  
+        
+  
+    
+  
+                      playChestCloseSound();
+  
+    
+  
+        
+  
+    
+  
+                      isProcessingMatch.current = false; // Allow new matches after everything is done
+  
+    
+  
+        
+  
+    
+  
+                    }, 2000);
+  
+    
+  
+            };
+  
+    
+  
+    const playClappingSound = () => {
+  
+      const audio = new Audio('/audio/chestopenclose.mp3');
+  
+      audio.play();
+  
+    };
+
+    const playChestOpenSound = () => {
+      if (chestOpenAudioRef.current) {
+        chestOpenAudioRef.current.pause();
+        chestOpenAudioRef.current.currentTime = 0;
+        chestOpenAudioRef.current.play();
+      }
+    };
+
+    const playChestCloseSound = () => {
+      if (chestCloseAudioRef.current) {
+        chestCloseAudioRef.current.pause();
+        chestCloseAudioRef.current.currentTime = 0;
+        chestCloseAudioRef.current.play();
+      }
+    };
+  
+    
+  
+    const animateMatching = useCallback(() => {
+  
+      setAnimatingBlocks(prev => {
+  
+        return prev.map(anim => {
+  
+          const newProgress = anim.progress + 0.03; // Faster animation
+  
+          const bucketX = canvasSize.width * (650 / 800);
+          const bucketY = canvasSize.height * (400 / 600);
+          const lidDisappearY = bucketY - (canvasSize.height * (20 / 600)); // Disappear just above the lid
+          const targetX = bucketX + (canvasSize.width * (60 / 800));
+  
+          
+  
+          let newX, newY, newOpacity, newScale;
+  
+  
+  
+          if (newProgress < 0.5) {
+  
+            // Rise up and move towards bucket opening
+  
+            const riseProgress = newProgress / 0.5;
+  
+            newX = anim.block.x + (targetX - anim.block.x) * riseProgress;
+  
+            newY = anim.block.y - riseProgress * (anim.block.y - lidDisappearY);
+  
+            newOpacity = 1;
+  
+            newScale = 1;
+  
+          } else if (newProgress < 1) {
+  
+            // Fade out and shrink at the lid
+  
+            const fadeProgress = (newProgress - 0.5) / 0.5;
+  
+            newX = targetX;
+  
+            newY = lidDisappearY;
+  
+            newOpacity = 1 - fadeProgress;
+  
+            newScale = 1 - fadeProgress * 0.5; // Shrink slightly
+  
+          } else {
+  
+            // Animation complete, block should be fully transparent and tiny
+  
+            newX = targetX;
+  
+            newY = lidDisappearY;
+  
+            newOpacity = 0;
+  
+            newScale = 0;
+  
+          }
+  
+          
+  
+          return {
+  
+            ...anim,
+  
+            progress: newProgress,
+  
+            block: { ...anim.block, x: newX, y: newY, opacity: newOpacity, scale: newScale }
+  
+          };
+  
+        }).filter(anim => anim.block.opacity > 0); // Remove fully faded blocks
+  
+      });
+  
+    }, [canvasSize.width, canvasSize.height, animatingBlocks]);
+  
+    
+  
+    const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
+  
+      if (animatingBlocks.length > 0) return;
+  
+      
+  
+      const canvas = canvasRef.current;
+  
+      if (!canvas) return;
+  
+      const rect = canvas.getBoundingClientRect();
+  
+      const x = e.clientX - rect.left;
+  
+      const y = e.clientY - rect.top;
+  
+      
+  
+      const clickedBlock = [...blocks]
+  
+        .reverse()
+  
+        .find(block => {
+  
+          if (block.matched) return false;
+  
+          const dx = x - block.x;
+  
+          const dy = y - block.y;
+  
+          const cos = Math.cos(-block.rotation);
+  
+          const sin = Math.sin(-block.rotation);
+  
+          const rotatedX = dx * cos - dy * sin;
+  
+          const rotatedY = dx * sin + dy * cos;
+  
+          return Math.abs(rotatedX) <= block.width / 2 && Math.abs(rotatedY) <= block.height / 2;
+  
+        });
+  
+      
+  
+      if (clickedBlock) {
+  
+        if (!selectedBlock) {
+  
+          setSelectedBlock(clickedBlock);
+  
+        } else if (selectedBlock.id === clickedBlock.id) {
+  
+          setSelectedBlock(null);
+  
+        } else if (selectedBlock.vowel === clickedBlock.vowel) {
+  
+          // Match found!
+  
+          handleMatch(selectedBlock, clickedBlock);
+  
+        } else {
+  
+          setSelectedBlock(clickedBlock);
+  
+        }
+  
+      } else {
+  
+        setSelectedBlock(null);
+  
+      }
+  
+    };
+  
+    
+  
+            const handleMatch = (block1: Block, block2: Block) => {
+  
+    
+  
+              if (isProcessingMatch.current) return; // Prevent multiple calls
+  
+    
+  
+              isProcessingMatch.current = true;
+  
+    
+  
+        
+  
+    
+  
+              const vowelData = vowels.find(v => v.vowel === block1.vowel);
+  
+    
+  
+        
+  
+    
+  
+              playClappingSound();
+  
+    
+  
+        
+  
+    
+  
+              // Open the box
+  
+    
+  
+              setIsBoxOpen(true);
+  
+    
+  
+              playChestOpenSound();
+  
+    
+  
+        
+  
+    
+  
+              // Start animation
+  
+    
+  
+              setAnimatingBlocks([
+  
+    
+  
+                { id: block1.id, block: { ...block1, opacity: 1, scale: 1 }, progress: 0 },
+  
+    
+  
+                { id: block2.id, block: { ...block2, opacity: 1, scale: 1 }, progress: 0 }
+  
+    
+  
+              ]);
+  
+    
+  
+        
+  
+    
+  
+              setSelectedBlock(null);
+  
+    
+  
+        
+  
+    
+  
+                    // Close the box and add to matched pairs after animation
+  
+    
+  
+        
+  
+    
+  
+                    setTimeout(() => {
+  
+    
+  
+        
+  
+    
+  
+                      if (vowelData && !matchedPairs.find(p => p.vowel === vowelData.vowel)) {
+  
+    
+  
+        
+  
+    
+  
+                        setMatchedPairs(prev => [...prev, vowelData]);
+  
+    
+  
+        
+  
+    
+  
+                        setScore(prev => prev + 10);
+  
+    
+  
+        
+  
+    
+  
+                      }
+  
+    
+  
+        
+  
+    
+  
+                      setAnimatingBlocks([]);
+  
+    
+  
+        
+  
+    
+  
+                      setBlocks(prev => prev.map(b => 
+  
+    
+  
+        
+  
+    
+  
+                        b.id === block1.id || b.id === block2.id ? { ...b, matched: true } : b
+  
+    
+  
+        
+  
+    
+  
+                      ));
+  
+    
+  
+        
+  
+    
+  
+                    }, 1000); // Blocks disappear after 1 second
+  
+    
+  
+        
+  
+    
+  
+              
+  
+    
+  
+        
+  
+    
+  
+                    // Close the box and allow new matches after 2 seconds
+  
+    
+  
+        
+  
+    
+  
+                    setTimeout(() => {
+  
+    
+  
+        
+  
+    
+  
+                      setIsBoxOpen(false);
+  
+    
+  
+        
+  
+    
+  
+                      playChestCloseSound();
+  
+    
+  
+        
+  
+    
+  
+                      isProcessingMatch.current = false; // Allow new matches after everything is done
+  
+    
+  
+        
+  
+    
+  
+                    }, 2000);
+  
+    
+  
+            };
+  
+    
+  
+    const playClappingSound = () => {
+  
+      const audio = new Audio('/audio/chestopenclose.mp3');
+  
+      audio.play();
+  
+    };
+
+    const playChestOpenSound = () => {
+      if (chestOpenAudioRef.current) {
+        chestOpenAudioRef.current.pause();
+        chestOpenAudioRef.current.currentTime = 0;
+        chestOpenAudioRef.current.play();
+      }
+    };
+
+    const playChestCloseSound = () => {
+      if (chestCloseAudioRef.current) {
+        chestCloseAudioRef.current.pause();
+        chestCloseAudioRef.current.currentTime = 0;
+        chestCloseAudioRef.current.play();
+      }
+    };
+  
+    
+  
     const animateMatching = () => {
   
       setAnimatingBlocks(prev => {
@@ -951,13 +4433,10 @@ const VowelLegoGame = () => {
   
           const newProgress = anim.progress + 0.03; // Faster animation
   
-          const bucketX = 650;
-  
-          const bucketY = 400; // Bucket top
-  
-          const lidDisappearY = bucketY - 20; // Disappear just above the lid
-  
-          const targetX = bucketX + 60; // Center of the bucket opening
+          const bucketX = canvasSize.width * (650 / 800);
+          const bucketY = canvasSize.height * (400 / 600);
+          const lidDisappearY = bucketY - (canvasSize.height * (20 / 600)); // Disappear just above the lid
+          const targetX = bucketX + (canvasSize.width * (60 / 800));
   
           
   
@@ -1093,13 +4572,10 @@ const VowelLegoGame = () => {
   
   
   
-      const chestWidth = 150;
-  
-      const chestHeight = 100;
-  
-      const chestX = (800 - chestWidth) / 2;
-  
-      const chestY = 520 - chestHeight;
+      const chestWidth = canvasSize.width * (150 / 800);
+      const chestHeight = canvasSize.height * (100 / 600);
+      const chestX = (canvasSize.width - chestWidth) / 2;
+      const chestY = canvasSize.height * (520 / 600) - chestHeight;
   
   
   
@@ -1222,17 +4698,17 @@ const VowelLegoGame = () => {
             </button>
           </div>
           
-          <canvas
-            ref={canvasRef}
-            width={800}
-            height={600}
-            onClick={handleCanvasClick}
-            onMouseDown={handleMouseDown}
-            onMouseMove={handleMouseMove}
-            onMouseUp={handleMouseUp}
-            onMouseLeave={handleMouseUp}
-            className="border-4 border-green-400 rounded-lg cursor-pointer shadow-xl"
-          />
+          <div ref={canvasWrapperRef} className="relative w-full" style={{ paddingTop: '75%' /* 4:3 Aspect Ratio */ }}>
+            <canvas
+              ref={canvasRef}
+              onClick={handleCanvasClick}
+              onMouseDown={handleMouseDown}
+              onMouseMove={handleMouseMove}
+              onMouseUp={handleMouseUp}
+              onMouseLeave={handleMouseUp}
+              className="absolute top-0 left-0 w-full h-full border-4 border-green-400 rounded-lg cursor-pointer shadow-xl"
+            />
+          </div>
           
           <div className="mt-4 bg-blue-50 rounded-lg p-3 border-2 border-blue-200">
             <p className="text-sm text-gray-700">
